@@ -19,9 +19,12 @@
               <mdb-modal-title>Logout</mdb-modal-title>
             </mdb-modal-header>
             <mdb-modal-body>Are you sure you want to log out?</mdb-modal-body>
+            <div v-if="loading" class="container-loading">
+              <img src="@/assets/images/loading.gif" alt="Loading Icon">
+            </div>
             <mdb-modal-footer>
               <mdb-btn color="success" v-on:click="logout">Logout</mdb-btn>
-              <mdb-btn color="secondary" @click.native="showModal = false">Cancle</mdb-btn>
+              <mdb-btn color="gray" @click.native="showModal = false">Cancle</mdb-btn>
             </mdb-modal-footer>
           </mdb-modal>
         </mdb-navbar-toggler>
@@ -31,6 +34,9 @@
 </template>
 
 <script>
+import { ADMIN_LOGOUT } from './../graphql/mutations/adminLogout';
+import { ADMIN_AUTH_TOKEN } from '@/assets/resources/scripts/serviceConst';
+
 import router from '@/router'
 import {
   mdbNavbar,
@@ -65,6 +71,7 @@ export default {
   },
   data () {
     return {
+      loading: false,
       showModal: false,
     }
   },
@@ -75,8 +82,21 @@ export default {
   },
   methods: {
     async logout () {
-      // TODO: API logout, clear token localStorage, ...
-      this.$router.push(this.loginPage);
+      this.loading = true
+      const adminLogoutResponse = await this.$apollo.mutate({
+        mutation: ADMIN_LOGOUT
+      });
+      const error = adminLogoutResponse.data.result;
+      this.logoutSuccessful = error.requestResolved
+
+      if (error.requestResolved) {
+        localStorage.removeItem(ADMIN_AUTH_TOKEN);
+        this.$router.push(this.loginPage);
+      } else {
+        alert('error.message');
+      }
+
+      this.loading = false
     }
   }
 };
