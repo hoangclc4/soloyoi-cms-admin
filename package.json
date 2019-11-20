@@ -6,14 +6,26 @@
   "private": true,
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
-    "start": "npm run dev",
+    "start": "export NODE_ENV=local && npm run dev",
+    "start:dev": "export NODE_ENV=develop && npm run dev",
     "unit": "jest --config test/unit/jest.conf.js --coverage",
     "e2e": "node test/e2e/runner.js",
     "test": "npm run unit && npm run e2e",
     "build": "node build/build.js"
   },
   "dependencies": {
+    "apollo-cache-inmemory": "^1.6.3",
+    "apollo-client": "^2.6.4",
+    "apollo-link": "^1.2.13",
+    "apollo-link-context": "^1.0.19",
+    "apollo-link-error": "^1.1.12",
+    "apollo-link-http": "^1.5.16",
+    "graphql": "^14.5.8",
+    "graphql-tag": "^2.10.1",
+    "mdbvue": "5.8.3",
     "vue": "^2.5.2",
+    "vue-apollo": "^3.0.0",
+    "vue-multiselect": "^2.1.6",
     "vue-router": "^3.0.1"
   },
   "devDependencies": {
