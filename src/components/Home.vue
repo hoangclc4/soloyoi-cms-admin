@@ -91,7 +91,7 @@ export default {
 
       if (error.requestResolved) {
         localStorage.removeItem(ADMIN_AUTH_TOKEN);
-        this.$router.push(this.loginPage);
+        this.$router.replace(this.loginPage);
       } else {
         alert('error.message');
       }
