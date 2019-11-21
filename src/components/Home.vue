@@ -9,7 +9,7 @@
           <mdb-nav-item waves-fixed>Home</mdb-nav-item>
           <mdb-nav-item waves-fixed>Restaurant</mdb-nav-item>
           <mdb-nav-item waves-fixed>User</mdb-nav-item>
-          <mdb-nav-item waves-fixed v-on:click="notificationTab()">Notification</mdb-nav-item>
+          <mdb-nav-item waves-fixed v-on:click="notification()">Notification</mdb-nav-item>
           <mdb-nav-item waves-fixed>Master</mdb-nav-item>
         </mdb-navbar-nav>
         <mdb-btn color="success" @click.native="showModal = true">LOGOUT</mdb-btn>
@@ -18,22 +18,26 @@
             <mdb-modal-title>Logout</mdb-modal-title>
           </mdb-modal-header>
           <mdb-modal-body>Are you sure you want to log out?</mdb-modal-body>
+          <div v-if="loading" class="container-loading">
+            <img src="@/assets/images/loading.gif" alt="Loading Icon">
+          </div>
           <mdb-modal-footer>
             <mdb-btn color="success" v-on:click="logout">Logout</mdb-btn>
-            <mdb-btn color="secondary" @click.native="showModal = false">Cancle</mdb-btn>
+            <mdb-btn color="gray" @click.native="showModal = false">Cancle</mdb-btn>
           </mdb-modal-footer>
         </mdb-modal>
       </mdb-navbar-toggler>
     </mdb-navbar>
     <section>
-      <section>
-        Home
-      </section>
+      Comming soon ....
     </section>
   </mdb-container>
 </template>
 
 <script>
+import { ADMIN_LOGOUT } from './../graphql/mutations/adminLogout';
+import { ADMIN_AUTH_TOKEN } from '@/assets/resources/scripts/serviceConst';
+
 import router from '@/router'
 import {
   mdbNavbar,
@@ -74,21 +78,37 @@ export default {
   },
   data () {
     return {
-      showModal: false
+      loading: false,
+      showModal: false,
     }
   },
   created () {
     const routes = router.options.routes;
     this.notificationTab = routes.filter(route => route.name === 'Notification Tab')[0]
     Object.assign(this.notificationTab, {props: true});
+    this.loginPage = routes.filter(route => route.name === 'Login')[0]
+    Object.assign(this.loginPage, {props: true});
   },
   methods: {
-    async logout () {
-      // TODO: API logout, clear token localStorage, ...
-      this.$router.push(this.loginPage);
-    },
-    async notificationTab () {
+    async notification () {
       this.$router.push(this.notificationTab);
+    },
+    async logout () {
+      this.loading = true
+      const adminLogoutResponse = await this.$apollo.mutate({
+        mutation: ADMIN_LOGOUT
+      });
+      const error = adminLogoutResponse.data.result;
+      this.logoutSuccessful = error.requestResolved
+
+      if (error.requestResolved) {
+        localStorage.removeItem(ADMIN_AUTH_TOKEN);
+        this.$router.replace(this.loginPage);
+      } else {
+        alert('error.message');
+      }
+
+      this.loading = false
     }
   }
 };

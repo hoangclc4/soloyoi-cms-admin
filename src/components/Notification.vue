@@ -6,41 +6,34 @@
       </mdb-navbar-brand>
       <mdb-navbar-toggler>
         <mdb-navbar-nav left>
-          <mdb-nav-item waves-fixed v-on:click="seenHome = true; homeTab()">Home</mdb-nav-item>
-          <mdb-nav-item waves-fixed>Restaurant</mdb-nav-item>
-          <mdb-nav-item waves-fixed>User</mdb-nav-item>
+          <mdb-nav-item waves-fixed v-on:click="homeTab()">Home</mdb-nav-item>
+          <mdb-nav-item waves-fixed v-on:click="homeTab()">Restaurant</mdb-nav-item>
+          <mdb-nav-item waves-fixed v-on:click="homeTab()">User</mdb-nav-item>
           <mdb-nav-item waves-fixed>Notification</mdb-nav-item>
-          <mdb-nav-item waves-fixed>Master</mdb-nav-item>
+          <mdb-nav-item waves-fixed v-on:click="homeTab()">Master</mdb-nav-item>
         </mdb-navbar-nav>
-        <mdb-btn color="success" @click.native="showModal = true">LOGOUT</mdb-btn>
-        <mdb-modal :show="showModal" @close="showModal = false">
-          <mdb-modal-header>
-            <mdb-modal-title>Logout</mdb-modal-title>
-          </mdb-modal-header>
-          <mdb-modal-body>Are you sure you want to log out?</mdb-modal-body>
-          <mdb-modal-footer>
-            <mdb-btn color="success" v-on:click="logout">Logout</mdb-btn>
-            <mdb-btn color="secondary" @click.native="showModal = false">Cancle</mdb-btn>
-          </mdb-modal-footer>
-        </mdb-modal>
       </mdb-navbar-toggler>
     </mdb-navbar>
     <section>
-      <mdb-btn color="default" @click.native="create=true">NEW <mdb-icon icon="plus" class="ml-1"/></mdb-btn>
-      <mdb-modal :show="create" @close="create = false">
-        <mdb-modal-header class="text-center">
-          <mdb-modal-title tag="h4" bold class="w-100">New notification</mdb-modal-title>
-        </mdb-modal-header>
-        <mdb-modal-body class="mx-3 grey-text">
-          <mdb-input label="Notification message" type="text" class="mb-5" v-model="notifyMessage" required/>
-          <mdb-input label="Notification link" type="text" v-model="notifyLink" required/>
-        </mdb-modal-body>
-        <mdb-modal-footer center>
-          <mdb-btn @click.native="create = false" color="default" v-on:click="createNotification">Create</mdb-btn>
-        </mdb-modal-footer>
-      </mdb-modal>
       <section>
-        <mdb-datatable :data="dataNotify" striped bordered responsive focus @selectRow="notiDetail(dataNotify.rows[$event])"/>
+        <mdb-btn class="new-notify" color="default" @click.native="create=true">NEW <mdb-icon icon="plus" class="ml-1"/></mdb-btn>
+        <mdb-modal :show="create" @close="create = false">
+          <mdb-modal-header class="text-center">
+            <mdb-modal-title tag="h4" bold class="w-100">New notification</mdb-modal-title>
+          </mdb-modal-header>
+          <mdb-modal-body class="mx-3 grey-text">
+            <mdb-input label="Notification message" type="text" class="mb-5" v-model="notifyMessage" required/>
+            <mdb-input label="Notification link" type="text" v-model="notifyLink" required/>
+          </mdb-modal-body>
+          <mdb-modal-footer center>
+            <mdb-btn @click.native="create = false" color="default" v-on:click="createNotification">Create</mdb-btn>
+          </mdb-modal-footer>
+        </mdb-modal>
+      </section>
+      <section>
+        <section>
+          <mdb-datatable :data="data" striped bordered :pagination="false" focus @selectRow="notiDetail(data.rows[$event])"/>
+        </section>
       </section>
       <mdb-modal :show="detail" @close="detail = false">
         <mdb-modal-header class="text-center">
@@ -51,7 +44,7 @@
           <mdb-input label="Notification link" type="text" v-model="notifyLinkEdit" required/>
         </mdb-modal-body>
         <mdb-modal-footer center>
-          <mdb-btn @click.native="detail = false" color="default" v-on:click="updateNotification">Update</mdb-btn>
+          <mdb-btn @click.native="detail = false" color="default" v-on:click="updateNotification()">Update</mdb-btn>
           <mdb-btn @click.native="detail = false" color="red" v-on:click="deleteNotification">Delete</mdb-btn>
           <mdb-btn @click.native="detail = false" color="gray">Cancle</mdb-btn>
         </mdb-modal-footer>
@@ -61,7 +54,12 @@
 </template>
 
 <script>
+import { NOTIFICATION_ADMIN_LIST } from './../graphql/queries/notificationAdminList';
+import { CREATE_NOTIFICATION_ADMIN } from './../graphql/mutations/createNotificationAdmin';
+import { UPDATE_NOTIFICATION_ADMIN } from './../graphql/mutations/updateNotificationAdmin';
+import { DELETE_NOTIFICATION_ADMIN } from './../graphql/mutations/deleteNotificationAdmin';
 import router from '@/router'
+
 import {
   mdbNavbar,
   mdbBtn,
@@ -79,6 +77,30 @@ import {
   mdbIcon,
   mdbInput,
 } from "mdbvue";
+
+const getAllNoti = async (apollo) => {
+  return await apollo.query({
+    query: NOTIFICATION_ADMIN_LIST,
+    variables: {
+      pager: {
+        limit: 1000,
+        pageNum: 1
+      }
+    }
+  })
+};
+
+const mutationAPI = async (apollo, api, variables ) => {
+  const { data } = await apollo.mutate({
+    mutation: api,
+    variables
+  })
+  if (data.result.requestResolved) {
+    window.location.reload();
+  } else {
+    alert(createResponse.data.result.message);
+  }
+};
 
 export default {
   name: "Home",
@@ -102,7 +124,8 @@ export default {
   data () {
     return {
       showModal: false,
-      dataNotify: null,
+      columns: [],
+      rows: [],
       create: false,
       detail: false,
       notifyMessage: '',
@@ -112,71 +135,46 @@ export default {
       adminNotifyId: null
     }
   },
-  created () {
+  async created () {
     const routes = router.options.routes;
-    this.homePage = routes.filter(route => route.name === 'Home')[0]
+    this.homePage = routes.filter(route => route.name === 'Home')[0];
     Object.assign(this.homePage, {props: true});
-    this.loginPage = routes.filter(route => route.name === 'Login')[0]
-    Object.assign(this.loginPage, {props: true});
-    // TODO: API get All Notification
-    const dataNotify = {
-      columns: [
-        {
-          label: "ID",
-          field: "adminNotifyId",
-        },
-        {
-          label: "Message",
-          field: "notifyMessage",
-        },
-        {
-          label: "Link",
-          field: "notifyLink",
-        },
-        {
-          label: "Date",
-          field: "createdAt",
-        }
-      ],
-      rows: [{
-        adminNotifyId: 1,
-        notifyMessage: "Notification message 1 Notification message 1 Notification message 1 Notification message 1",
-        notifyLink: "Notification link 1 Notification link 1 Notification link 1 Notification link 1 Notification link 1",
-        createdAt: new Date()
-      },
-      {
-        adminNotifyId: 2,
-        notifyMessage: "Notification message 2",
-        notifyLink: "Notification link 2",
-        createdAt: new Date()
-      },
-      {
-        adminNotifyId: 3,
-        notifyMessage: "Notification message 3",
-        notifyLink: "Notification link 3",
-        createdAt: new Date()
-      },
-      {
-        adminNotifyId: 4,
-        notifyMessage: "Notification message 4",
-        notifyLink: "Notification link 4",
-        createdAt: new Date()
-      },
-      {
-        adminNotifyId: 5,
-        notifyMessage: "Notification message 5",
-        notifyLink: "Notification link 5",
-        createdAt: new Date()
-      }]
-    };
-    this.dataNotify = dataNotify;
   },
-
-  methods: {
-    async logout () {
-      // TODO: API logout, clear token localStorage, ...
-      this.$router.push(this.loginPage);
+  computed: {
+    data() {
+      return {
+        columns: this.columns,
+        rows: this.rows
+      };
     },
+  },
+  async mounted() {
+    const columns = [
+      {
+        label: "ID",
+        field: "adminNotifyId",
+      },
+      {
+        label: "Message",
+        field: "notifyMessage",
+      },
+      {
+        label: "Link",
+        field: "notifyLink",
+      },
+      {
+        label: "Date",
+        field: "createdAt",
+      }
+    ]
+    this.columns = columns;
+    const { data } = await getAllNoti(this.$apollo);
+    const list = data.result.response.notificationAdmins;
+    list.map( i => {
+      this.rows.push(i);
+    })
+  },
+  methods: {
     async homeTab () {
       this.$router.push(this.homePage);
     },
@@ -191,8 +189,7 @@ export default {
         notifyMessage: this.notifyMessage,
         notifyLink: this.notifyLink
       };
-      // TODO: Add API create Notification
-      this.dataNotify.rows.push({...input, createdAt: new Date()});
+      await mutationAPI(this.$apollo, CREATE_NOTIFICATION_ADMIN, { input });
     },
     async updateNotification() {
       const input = {
@@ -200,13 +197,13 @@ export default {
         notifyLink: this.notifyLinkEdit,
         adminNotifyId: this.adminNotifyId
       };
-      // TODO: Add API Update Notification
+      await mutationAPI(this.$apollo, UPDATE_NOTIFICATION_ADMIN, { input });
     },
     async deleteNotification() {
       const input = {
         adminNotifyId: this.adminNotifyId
       }
-      // TODO: Add API delete Notification
+      await mutationAPI(this.$apollo, DELETE_NOTIFICATION_ADMIN, { input });
     }
   }
 };
@@ -221,5 +218,9 @@ h4 {
 
 .custom-section {
   min-height: 90vh;
+}
+.new-notify {
+  margin: 20px;
+  float: left;
 }
 </style>

@@ -41,8 +41,8 @@
   </div>
 </template>
 <script>
-// import { RESTAURANT_LOGIN } from './../graphql/mutations/restaurantLogin'
-// import { RES_AUTH_TOKEN, RES_ID } from '@/assets/resources/scripts/serviceConst';
+import { ADMIN_LOGIN } from './../graphql/mutations/adminLogin'
+import { ADMIN_AUTH_TOKEN } from '@/assets/resources/scripts/serviceConst';
 import router from '@/router'
 
 export default {
@@ -53,8 +53,7 @@ export default {
       loginError: null,
       loginSuccessful: false,
       username: '',
-      password: '',
-      homePage: null,
+      password: ''
     }
   },
   created () {
@@ -64,37 +63,29 @@ export default {
   },
   methods: {
     async loginSubmit () {
-      const input = {
-        username: this.username,
-        password: this.password,
+      this.loading = true
+      const adminLoginResponse = await this.$apollo.mutate({
+        mutation: ADMIN_LOGIN,
+        variables: {
+          input: {
+            username: this.username,
+            password: this.password
+          }
+        },
+      });
+      const error = adminLoginResponse.data.result.error
+      const response = adminLoginResponse.data.result.response
+      this.loginSuccessful = error.requestResolved
+
+      if (error.requestResolved) {
+        this.loginError = null
+        localStorage.setItem(ADMIN_AUTH_TOKEN, response.token);
+        this.$router.push(this.homePage);
+      } else {
+        this.loginError = error.message
       }
-      // TODO: API login, save token localStorage
-      this.$router.push(this.homePage);
-    //   const restaurantLoginResponse = await this.$apollo.mutate({
-    //     mutation: RESTAURANT_LOGIN,
-    //     variables: {
-    //       input: {
-    //         username: this.username,
-    //         email: this.email,
-    //         password: this.password
-    //       }
-    //     },
-    //   })
 
-    //   const error = restaurantLoginResponse.data.result.error
-    //   const response = restaurantLoginResponse.data.result.response
-    //   this.loginSuccessful = error.requestResolved
-
-    //   if (error.requestResolved) {
-    //     this.loginError = null
-    //     localStorage.setItem(RES_AUTH_TOKEN, response.token);
-    //     localStorage.setItem(RES_ID, response.restaurant.restaurantId);
-    //     this.$router.replace(this.profilePage);
-    //   } else {
-    //     this.loginError = error.message
-    //   }
-
-    //   this.loading = false
+      this.loading = false
     }
   }
 }
