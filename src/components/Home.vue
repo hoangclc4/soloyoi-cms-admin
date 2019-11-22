@@ -1,35 +1,36 @@
 <template>
-  <mdb-container>
-    <mdb-container class="mt-5">
-      <mdb-navbar dark color="stylish" scrolling>
-        <mdb-navbar-brand tag="a" href="#/home">
-          CMS ADMIN
-        </mdb-navbar-brand>
-        <mdb-navbar-toggler>
-          <mdb-navbar-nav left>
-            <mdb-nav-item waves-fixed>Home</mdb-nav-item>
-            <mdb-nav-item waves-fixed>Restaurant</mdb-nav-item>
-            <mdb-nav-item waves-fixed>User</mdb-nav-item>
-            <mdb-nav-item waves-fixed>Notification</mdb-nav-item>
-            <mdb-nav-item waves-fixed>Master</mdb-nav-item>
-          </mdb-navbar-nav>
-          <mdb-btn color="success" @click.native="showModal = true">LOGOUT</mdb-btn>
-          <mdb-modal :show="showModal" @close="showModal = false">
-            <mdb-modal-header>
-              <mdb-modal-title>Logout</mdb-modal-title>
-            </mdb-modal-header>
-            <mdb-modal-body>Are you sure you want to log out?</mdb-modal-body>
-            <div v-if="loading" class="container-loading">
-              <img src="@/assets/images/loading.gif" alt="Loading Icon">
-            </div>
-            <mdb-modal-footer>
-              <mdb-btn color="success" v-on:click="logout">Logout</mdb-btn>
-              <mdb-btn color="gray" @click.native="showModal = false">Cancle</mdb-btn>
-            </mdb-modal-footer>
-          </mdb-modal>
-        </mdb-navbar-toggler>
-      </mdb-navbar>
-    </mdb-container>
+  <mdb-container class="mt-5">
+    <mdb-navbar dark color="stylish" scrolling>
+      <mdb-navbar-brand tag="a" href="#/home">
+        CMS ADMIN
+      </mdb-navbar-brand>
+      <mdb-navbar-toggler>
+        <mdb-navbar-nav left>
+          <mdb-nav-item waves-fixed>Home</mdb-nav-item>
+          <mdb-nav-item waves-fixed>Restaurant</mdb-nav-item>
+          <mdb-nav-item waves-fixed>User</mdb-nav-item>
+          <mdb-nav-item waves-fixed v-on:click="notification()">Notification</mdb-nav-item>
+          <mdb-nav-item waves-fixed>Master</mdb-nav-item>
+        </mdb-navbar-nav>
+        <mdb-btn color="success" @click.native="showModal = true">LOGOUT</mdb-btn>
+        <mdb-modal :show="showModal" @close="showModal = false">
+          <mdb-modal-header>
+            <mdb-modal-title>Logout</mdb-modal-title>
+          </mdb-modal-header>
+          <mdb-modal-body>Are you sure you want to log out?</mdb-modal-body>
+          <div v-if="loading" class="container-loading">
+            <img src="@/assets/images/loading.gif" alt="Loading Icon">
+          </div>
+          <mdb-modal-footer>
+            <mdb-btn color="success" v-on:click="logout">Logout</mdb-btn>
+            <mdb-btn color="gray" @click.native="showModal = false">Cancle</mdb-btn>
+          </mdb-modal-footer>
+        </mdb-modal>
+      </mdb-navbar-toggler>
+    </mdb-navbar>
+    <section>
+      Comming soon ....
+    </section>
   </mdb-container>
 </template>
 
@@ -50,7 +51,10 @@ import {
   mdbModalHeader,
   mdbModalTitle,
   mdbModalBody,
-  mdbModalFooter
+  mdbModalFooter,
+  mdbDatatable,
+  mdbIcon,
+  mdbInput,
 } from "mdbvue";
 
 export default {
@@ -67,7 +71,10 @@ export default {
     mdbModalHeader,
     mdbModalTitle,
     mdbModalBody,
-    mdbModalFooter
+    mdbModalFooter,
+    mdbDatatable,
+    mdbIcon,
+    mdbInput,
   },
   data () {
     return {
@@ -77,10 +84,15 @@ export default {
   },
   created () {
     const routes = router.options.routes;
+    this.notificationTab = routes.filter(route => route.name === 'Notification Tab')[0]
+    Object.assign(this.notificationTab, {props: true});
     this.loginPage = routes.filter(route => route.name === 'Login')[0]
     Object.assign(this.loginPage, {props: true});
   },
   methods: {
+    async notification () {
+      this.$router.push(this.notificationTab);
+    },
     async logout () {
       this.loading = true
       const adminLogoutResponse = await this.$apollo.mutate({

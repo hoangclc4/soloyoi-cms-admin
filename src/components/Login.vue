@@ -53,8 +53,7 @@ export default {
       loginError: null,
       loginSuccessful: false,
       username: '',
-      password: '',
-      homePage: null,
+      password: ''
     }
   },
   created () {
