@@ -9,7 +9,8 @@ import VueApollo from 'vue-apollo'
 import { getEnvParams } from './../assets/resources/scripts/rdsENV';
 import { ADMIN_AUTH_TOKEN } from './../assets/resources/scripts/serviceConst';
 
-const { uri } = getEnvParams();
+// const { uri } = getEnvParams();
+const uri = 'http://ec2-52-197-102-185.ap-northeast-1.compute.amazonaws.com/graphql';
 
 const httpLink = new HttpLink({
   uri

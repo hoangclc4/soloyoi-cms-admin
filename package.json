@@ -11,7 +11,9 @@
     "unit": "jest --config test/unit/jest.conf.js --coverage",
     "e2e": "node test/e2e/runner.js",
     "test": "npm run unit && npm run e2e",
-    "build": "node build/build.js"
+    "build": "node build/build.js",
+    "start-docker": "docker-compose -f ./docker-compose.yml up --build",
+    "stop-docker": "docker-compose -f ./docker-compose.yml down"
   },
   "dependencies": {
     "apollo-cache-inmemory": "^1.6.3",
