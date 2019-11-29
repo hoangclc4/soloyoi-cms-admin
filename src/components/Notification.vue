@@ -46,7 +46,7 @@
         <mdb-modal-footer center>
           <mdb-btn @click.native="detail = false" color="default" v-on:click="updateNotification()">Update</mdb-btn>
           <mdb-btn @click.native="detail = false" color="red" v-on:click="deleteNotification">Delete</mdb-btn>
-          <mdb-btn @click.native="detail = false" color="gray">Cancle</mdb-btn>
+          <mdb-btn @click.native="detail = false" color="gray">Cancel</mdb-btn>
         </mdb-modal-footer>
       </mdb-modal>
     </section>
@@ -90,13 +90,16 @@ const getAllNoti = async (apollo) => {
   })
 };
 
-const mutationAPI = async (apollo, api, variables ) => {
+const mutationAPI = async (apollo, api, variables, router ) => {
   const { data } = await apollo.mutate({
     mutation: api,
     variables
   })
   if (data.result.requestResolved) {
-    window.location.reload();
+    router.go({
+      path: '/home/notification',
+      force: true
+    })
   } else {
     alert(createResponse.data.result.message);
   }
@@ -189,7 +192,7 @@ export default {
         notifyMessage: this.notifyMessage,
         notifyLink: this.notifyLink
       };
-      await mutationAPI(this.$apollo, CREATE_NOTIFICATION_ADMIN, { input });
+      await mutationAPI(this.$apollo, CREATE_NOTIFICATION_ADMIN, { input }, this.$router);
     },
     async updateNotification() {
       const input = {
@@ -197,13 +200,13 @@ export default {
         notifyLink: this.notifyLinkEdit,
         adminNotifyId: this.adminNotifyId
       };
-      await mutationAPI(this.$apollo, UPDATE_NOTIFICATION_ADMIN, { input });
+      await mutationAPI(this.$apollo, UPDATE_NOTIFICATION_ADMIN, { input }, this.$router);
     },
     async deleteNotification() {
       const input = {
         adminNotifyId: this.adminNotifyId
       }
-      await mutationAPI(this.$apollo, DELETE_NOTIFICATION_ADMIN, { input });
+      await mutationAPI(this.$apollo, DELETE_NOTIFICATION_ADMIN, { input }, this.$router);
     }
   }
 };

@@ -12,6 +12,7 @@ const routeList = navBarList.map(nav => {
   }
 })
 export default new Router({
+  mode: 'history',
   routes: [
     ...routeList,
     {
