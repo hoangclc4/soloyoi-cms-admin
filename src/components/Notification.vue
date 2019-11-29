@@ -46,7 +46,7 @@
         <mdb-modal-footer center>
           <mdb-btn @click.native="detail = false" color="default" v-on:click="updateNotification()">Update</mdb-btn>
           <mdb-btn @click.native="detail = false" color="red" v-on:click="deleteNotification">Delete</mdb-btn>
-          <mdb-btn @click.native="detail = false" color="gray">Cancle</mdb-btn>
+          <mdb-btn @click.native="detail = false" color="gray">Cancel</mdb-btn>
         </mdb-modal-footer>
       </mdb-modal>
     </section>
