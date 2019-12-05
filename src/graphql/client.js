@@ -9,8 +9,7 @@ import VueApollo from 'vue-apollo'
 import { getEnvParams } from './../assets/resources/scripts/rdsENV';
 import { ADMIN_AUTH_TOKEN } from './../assets/resources/scripts/serviceConst';
 
-// const { uri } = getEnvParams();
-const uri = 'http://ec2-52-197-102-185.ap-northeast-1.compute.amazonaws.com/graphql';
+const uri = getEnvParams();
 
 const httpLink = new HttpLink({
   uri
@@ -43,7 +42,20 @@ const links = new ApolloLink.from([errorLink, authMiddleware, httpLink])
 export const apolloClient = new ApolloClient({
   link: links,
   cache: new InMemoryCache(),
-  connectToDevTools: true
+  connectToDevTools: true,
+  defaultOptions: {
+    watchQuery: {
+      fetchPolicy: 'cache-and-network',
+      errorPolicy: 'ignore',
+    },
+    query: {
+      fetchPolicy: 'network-only',
+      errorPolicy: 'all',
+    },
+    mutate: {
+      errorPolicy: 'all',
+    },
+  },
 })
 
 // Install the Vue plugin
