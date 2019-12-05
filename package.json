@@ -6,8 +6,9 @@
   "private": true,
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
-    "start": "export NODE_ENV=local && npm run dev",
-    "start:dev": "export NODE_ENV=develop && npm run dev",
+    "start": "npm run dev",
+    "stag": "webpack-dev-server --inline --progress --config build/webpack.stg.conf.js",
+    "start:stg": "npm run stag",
     "unit": "jest --config test/unit/jest.conf.js --coverage",
     "e2e": "node test/e2e/runner.js",
     "test": "npm run unit && npm run e2e",

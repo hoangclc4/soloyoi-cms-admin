@@ -23,7 +23,7 @@
           </div>
           <mdb-modal-footer>
             <mdb-btn color="success" v-on:click="logout">Logout</mdb-btn>
-            <mdb-btn color="gray" @click.native="showModal = false">Cancle</mdb-btn>
+            <mdb-btn color="gray" @click.native="showModal = false">Cancel</mdb-btn>
           </mdb-modal-footer>
         </mdb-modal>
       </mdb-navbar-toggler>
