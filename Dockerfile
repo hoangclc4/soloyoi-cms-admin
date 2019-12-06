@@ -8,4 +8,4 @@ COPY . /CmsAdmin
 
 RUN yarn
 
-CMD [ "yarn", "start" ]
+CMD [ "yarn", "start:stg" ]
