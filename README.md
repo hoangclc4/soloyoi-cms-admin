@@ -1,30 +1,27 @@
-# food-connection-cms-admin
+## Installation
 
-> Content System Management for Admin
-
-## Build Setup
-
-``` bash
-# install dependencies
-npm install
-
-# serve with hot reload at localhost:8080
-npm run dev
-
-# build for production with minification
-npm run build
-
-# build for production and view the bundle analyzer report
-npm run build --report
-
-# run unit tests
-npm run unit
-
-# run e2e tests
-npm run e2e
-
-# run all tests
-npm test
+```bash
+$ npm install -g quasar-cli
+$ yarn install
 ```
 
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+## Running the app
+
+```bash
+# development
+$ quasar dev
+
+
+# Running Unit test
+$ quasar test --unit jest
+
+# Running e2e test
+$ quasar test --e2e cypress
+
+# Other command using Yarn
+# Unit testing: Watch file, it is used during write test suite
+$ yarn test:unit:watch
+
+# Running e2e testing in debug mode
+$ yarn test:e2e
+```

@@ -1,4 +1,4 @@
-import gql from 'graphql-tag'
+import gql from 'graphql-tag';
 
 export const UPDATE_NOTIFICATION_ADMIN = gql`
   mutation updateNotificationAdmin($input: UpdateNotificationAdminCondition!) {
@@ -8,4 +8,4 @@ export const UPDATE_NOTIFICATION_ADMIN = gql`
       errorCode
     }
   }
-`
+`;

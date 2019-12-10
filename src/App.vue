@@ -1,12 +1,13 @@
 <template>
-  <div id="app">
-    <!-- Render every route content -->
-    <router-view/>
+  <div id="q-app">
+    <router-view />
   </div>
 </template>
 
 <script>
 export default {
-  name: 'App'
-}
+  name: 'App',
+};
 </script>
+
+<style></style>
