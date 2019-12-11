@@ -23,7 +23,7 @@ or download from: https://github.com/nvm-sh/nvm#install--update-script
 ## Installation
 
 ```bash
-$ npm install -g quasar-cli
+$ npm install -g @quasar/cli
 $ yarn install
 ```
 
