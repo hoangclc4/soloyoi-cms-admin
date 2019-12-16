@@ -4,7 +4,7 @@ const routes = [
     redirect: '/home',
     name: 'top-layout',
     meta: { requiresAuth: true },
-    component: () => import('layouts/TopLayout.vue'),
+    component: () => import('layouts/TopLayout'),
     children: [
       { path: 'home', name: 'home', component: () => import('pages/Home') },
       {
@@ -39,7 +39,7 @@ const routes = [
       {
         path: 'login',
         name: 'login',
-        component: () => import('pages/login'),
+        component: () => import('pages/Login'),
       },
       // {
       //   path: 'forgot-password',

@@ -17,11 +17,11 @@ function initialState(allState) {
 /**
  * @description clear all state and localStorage
  * @author AnhTQ
- * @date 2019-12-10
+ * @date 2019-12-16
  * @export
  * @param {*} state
  */
-export function clearData(state) {
+export function clearDataMutation(state) {
   initialState(state.allState);
   LocalStorage.clear();
 }

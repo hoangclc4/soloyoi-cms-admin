@@ -101,7 +101,7 @@
                 <q-btn
                   flat
                   :label="$t('auth.logout')"
-                  @click="callAPILogout()"
+                  @click="logout()"
                   color="negative"
                   v-close-popup
                 />
@@ -140,9 +140,10 @@ export default {
   },
   computed: {},
   methods: {
-    ...mapActions('auth', ['logoutAction']),
+    ...mapActions('common', ['clearDataAction']),
 
-    async callAPILogout() {
+    async logout() {
+      // Call API Logout
       const apolloCl = this.$apollo.provider.defaultClient;
       await apolloCl
         .mutate({
@@ -152,19 +153,21 @@ export default {
           // Logout Success
           if (response.data.result.requestResolved === true) {
             this.$q.loading.hide();
-            this.logoutAction();
+
+            // Clear all state action
+            this.clearDataAction();
+
             this.$router.push({ name: 'login' });
           }
           // Logout Failed
           else {
-            this.$q.notify(this.$t('auth.somethingWrong'));
             this.$q.loading.hide();
+            this.$q.notify(this.$t('auth.somethingWrong'));
           }
         })
         .catch((error) => {
-          this.$q.notify(error);
           this.$q.loading.hide();
-          this.$router.push({ name: 'login' });
+          this.$q.notify(error);
         });
     },
   },

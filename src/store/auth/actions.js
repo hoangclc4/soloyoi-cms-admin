@@ -22,14 +22,3 @@ export function validateTokenAction({ state }) {
 export function saveCurrentUserAction({ commit }, data) {
   commit('saveCurrentUserMutation', data);
 }
-
-/**
- * @description call mutation to clear all state and localStorage
- * @author AnhTQ
- * @date 2019-12-10
- * @export
- * @param {*} { commit }
- */
-export function logoutAction({ commit }) {
-  commit('common/clearData', null, { root: true });
-}

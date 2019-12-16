@@ -17,7 +17,7 @@
               flat
               :label="$t('delete')"
               color="negative"
-              @click="callAPIDeleteSelectedNotification()"
+              @click="deleteSelectedNotification()"
               v-close-popup
             />
           </q-card-actions>
@@ -25,7 +25,7 @@
       </q-dialog>
       <q-table
         :title="$t('notifications.pageTitle')"
-        :data="notifications"
+        :data="getNotificationsGetter"
         :columns="columns"
         row-key="adminNotifyId"
         :filter="filter"
@@ -108,7 +108,7 @@
                   type="submit"
                   color="primary"
                   icon-right="send"
-                  @click="callAPISendNewNotification()"
+                  @click="sendNewNotification()"
                   v-close-popup
                 />
               </q-card-actions>
@@ -124,7 +124,7 @@
 import { NOTIFICATION_ADMIN_LIST } from './../graphql/queries/notificationAdminList';
 import { CREATE_NOTIFICATION_ADMIN } from './../graphql/mutations/createNotificationAdmin';
 import { DELETE_NOTIFICATION_ADMIN } from './../graphql/mutations/deleteNotificationAdmin';
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 
 export default {
   name: 'notifications',
@@ -174,13 +174,15 @@ export default {
     };
   },
   computed: {
-    ...mapState('notifications', ['notifications']),
+    ...mapGetters('notifications', ['getNotificationsGetter']),
   },
   methods: {
     ...mapActions('notifications', ['saveNotificationsAction']),
-    async callAPISendNewNotification() {
+
+    async sendNewNotification() {
       this.loadingTable = true;
 
+      // Call API send new notification
       const apolloCl = this.$apollo.provider.defaultClient;
       await apolloCl
         .mutate({
@@ -195,29 +197,28 @@ export default {
         .then((response) => {
           // Send New Notifications Success
           if (response.data.result.requestResolved === true) {
-            this.callAPISyncNotifications();
+            this.fetchNotifications();
 
             this.newMessage = { message: '', link: '' };
             this.loadingTable = false;
           }
           // Send New Notifications Failed
           else {
-            this.$q.notify(this.$t('notifications.fetchNotificationsFailed'));
-
             this.loadingTable = false;
+            this.$q.notify(this.$t('notifications.fetchNotificationsFailed'));
           }
         })
         .catch((error) => {
-          this.$q.notify(error);
-
           this.loadingTable = false;
+          this.$q.notify(error);
         });
     },
-    async callAPIDeleteSelectedNotification() {
+    async deleteSelectedNotification() {
       this.loadingTable = true;
       const apolloCl = this.$apollo.provider.defaultClient;
 
       for (let i = this.selected.length - 1; i >= 0; i--) {
+        // Call API delete selected notification
         await apolloCl
           .mutate({
             mutation: DELETE_NOTIFICATION_ADMIN,
@@ -234,21 +235,22 @@ export default {
             }
           })
           .catch((error) => {
+            this.loadingTable = false;
             this.$q.notify(this.$t('notifications.fetchNotificationsFailed'));
             this.$q.notify(error);
-            this.loadingTable = false;
           });
       }
 
       this.selected = [];
 
-      this.callAPISyncNotifications();
+      this.fetchNotifications();
 
       this.loadingTable = false;
     },
-    async callAPISyncNotifications() {
+    async fetchNotifications() {
       this.loadingTable = true;
 
+      // Call API fetch Notification
       const apolloCl = this.$apollo.provider.defaultClient;
       await apolloCl
         .query({
@@ -263,25 +265,25 @@ export default {
         .then((response) => {
           // Sync Notifications Success
           if (response.data.result.error === null) {
-            this.loadingTable = false;
+            // Save notification state
             this.saveNotificationsAction(response);
+
+            this.loadingTable = false;
           }
           // Sync Notifications Failed
           else {
-            this.$q.notify(this.$t('notifications.getNotificationsFailed'));
-
             this.loadingTable = false;
+            this.$q.notify(this.$t('notifications.getNotificationsFailed'));
           }
         })
         .catch((error) => {
-          this.$q.notify(error);
-
           this.loadingTable = false;
+          this.$q.notify(error);
         });
     },
   },
   created() {
-    this.callAPISyncNotifications();
+    this.fetchNotifications();
   },
 };
 </script>

@@ -1,11 +1,14 @@
 # base image
-FROM node:8.11.3
+FROM node:12.13.1
 
 # set working directory
-WORKDIR /CmsAdmin
+RUN mkdir -p /usr/src/CmsAdmin
+WORKDIR /usr/src/CmsAdmin
 
-COPY . /CmsAdmin
+COPY . .
+RUN yarn install
+RUN npm install -g @quasar/cli
 
-RUN yarn
-
-CMD [ "yarn", "start:stg" ]
+# Bundle app source
+EXPOSE 8080
+CMD quasar dev

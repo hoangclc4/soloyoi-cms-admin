@@ -90,6 +90,7 @@ export default {
   },
   methods: {
     ...mapActions('auth', ['saveCurrentUserAction']),
+    ...mapActions('common', ['clearDataAction']),
 
     submit() {
       this.$q.loading.show();
@@ -129,6 +130,9 @@ export default {
           this.$q.loading.hide();
         });
     },
+  },
+  created() {
+    this.clearDataAction();
   },
 };
 </script>

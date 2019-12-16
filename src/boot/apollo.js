@@ -2,13 +2,37 @@ import { ApolloClient } from 'apollo-client';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import VueApollo from 'vue-apollo';
 import fetch from 'node-fetch';
+import { ApolloLink } from 'apollo-link';
 import { createHttpLink } from 'apollo-link-http';
+import { onError } from 'apollo-link-error';
 import { setContext } from 'apollo-link-context';
 import { LocalStorage } from 'quasar';
-import state from '../store/auth/state';
+import state from './../store/auth/state';
 
 // Config URL to call API
 const uri = process.env.API;
+
+// Error Handling
+const errorLink = onError(({ graphQLErrors, networkError }) => {
+  if (graphQLErrors) {
+    // graphQLErrors.map(({ message, locations, path }) => {
+    //   console.log(
+    //     `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
+    //   );
+    // });
+    console.log(graphQLErrors);
+    if (
+      graphQLErrors[0].statusCode === 401 ||
+      graphQLErrors[0].error === 'Unauthorized'
+    ) {
+      window.location.href = '/auth/login';
+    }
+    return false;
+  }
+  if (networkError) {
+    // console.log(`[Network error]: ${networkError}`);
+  }
+});
 
 // Create HTTP Link
 const httpLink = createHttpLink({
@@ -17,7 +41,8 @@ const httpLink = createHttpLink({
   // headers: headers,
 });
 
-const headerLink = setContext((request, previousContext) => {
+// Validate Token
+const authMiddleware = setContext((request, previousContext) => {
   // Get user token
   let token = '';
   if (LocalStorage.getItem('USER_INFO')) {
@@ -34,9 +59,12 @@ const headerLink = setContext((request, previousContext) => {
   };
 });
 
+// Create Apollo Link
+const link = new ApolloLink.from([errorLink, authMiddleware, httpLink]);
+
 // Create the apollo client
 const apolloClient = new ApolloClient({
-  link: headerLink.concat(httpLink),
+  link,
   cache: new InMemoryCache(),
   connectToDevTools: true,
   defaultOptions: {
@@ -56,19 +84,6 @@ const apolloClient = new ApolloClient({
 
 export const apolloProvider = new VueApollo({
   defaultClient: apolloClient,
-  errorHandler({ graphQLErrors, networkError }) {
-    if (graphQLErrors) {
-      // graphQLErrors.map(({ message, locations, path }) => {
-      //   console.log(
-      //     `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
-      //   );
-      // });
-      return false;
-    }
-    if (networkError) {
-      // console.log(`[Network error]: ${networkError}`);
-    }
-  },
 });
 
 export default ({ app, Vue }) => {

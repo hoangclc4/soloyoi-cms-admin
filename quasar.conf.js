@@ -19,10 +19,6 @@ module.exports = function(ctx) {
     build: {
       scopeHoisting: true,
       vueRouterMode: 'history',
-      env: {
-        PROD: process.env.prod === 'production',
-        STAGE: process.env.prod === 'staging',
-      },
       env: ctx.dev
         ? {
             // so on dev we'll have
