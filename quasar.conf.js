@@ -19,23 +19,7 @@ module.exports = function(ctx) {
     build: {
       scopeHoisting: true,
       vueRouterMode: 'history',
-      env: ctx.dev
-        ? {
-            // so on dev we'll have
-            API: JSON.stringify(
-              'http://ec2-13-230-167-168.ap-northeast-1.compute.amazonaws.com/graphql'
-            ),
-          }
-        : {
-            // and on build (production & staging):
-            API: process.env.PROD
-              ? // and on build production:
-                JSON.stringify('http://localhost:3001/graphql')
-              : // and on build staging:
-                JSON.stringify(
-                  'http://ec2-52-197-102-185.ap-northeast-1.compute.amazonaws.com/graphql'
-                ),
-          },
+      env: {},
       // vueCompiler: true,
       // gzip: true,
       // analyze: true,
@@ -97,7 +81,7 @@ module.exports = function(ctx) {
       iconSet: 'fontawesome-v5',
       directives: ['Ripple', 'ClosePopup'],
       // Quasar plugins
-      plugins: ['Notify', 'Loading', 'LocalStorage'],
+      plugins: ['Notify', 'Loading', 'LocalStorage', 'SessionStorage'],
       // iconSet: ctx.theme.mat ? 'material-icons' : 'ionicons'
       // i18n: 'de' // Quasar language
     },

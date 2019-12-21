@@ -20,6 +20,21 @@ $ brew install nvm
 
 or download from: https://github.com/nvm-sh/nvm#install--update-script
 
+## Set up API host for each environment on file `.env`
+
+```bash
+# .env
+
+# for DEVELOPMENT
+# API="API_HOST_FOR_DEVELOPMENT"
+
+# for STAGING
+# API="API_HOST_FOR_STAGING"
+
+# for PRODUCTION
+# API="API_HOST_FOR_PRODUCTION"
+```
+
 ## Installation
 
 ```bash

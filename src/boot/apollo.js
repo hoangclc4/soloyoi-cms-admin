@@ -7,7 +7,7 @@ import { createHttpLink } from 'apollo-link-http';
 import { onError } from 'apollo-link-error';
 import { setContext } from 'apollo-link-context';
 import { LocalStorage } from 'quasar';
-import state from './../store/auth/state';
+import auth from './../store/auth';
 
 // Config URL to call API
 const uri = process.env.API;
@@ -15,18 +15,14 @@ const uri = process.env.API;
 // Error Handling
 const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors) {
-    // graphQLErrors.map(({ message, locations, path }) => {
-    //   console.log(
-    //     `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
-    //   );
-    // });
-    console.log(graphQLErrors);
-    if (
+    const Unauthorized =
       graphQLErrors[0].statusCode === 401 ||
-      graphQLErrors[0].error === 'Unauthorized'
-    ) {
-      window.location.href = '/auth/login';
+      graphQLErrors[0].error === 'Unauthorized';
+
+    if (Unauthorized) {
+      auth.actions.forceLogout();
     }
+
     return false;
   }
   if (networkError) {
@@ -47,8 +43,8 @@ const authMiddleware = setContext((request, previousContext) => {
   let token = '';
   if (LocalStorage.getItem('USER_INFO')) {
     token = LocalStorage.getItem('USER_INFO').token;
-  } else if (state.currentUser) {
-    token = state.currentUser.token;
+  } else if (auth.state.currentUser) {
+    token = auth.state.currentUser.token;
   }
   return {
     headers: {

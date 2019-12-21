@@ -1,3 +1,5 @@
+import common from './../common';
+
 /**
  * @description validate admin token
  * @author AnhTQ
@@ -21,4 +23,15 @@ export function validateTokenAction({ state }) {
  */
 export function saveCurrentUserAction({ commit }, data) {
   commit('saveCurrentUserMutation', data);
+}
+
+/**
+ * @description force clear all state and localStorage, then logout
+ * @author AnhTQ
+ * @date 2019-12-22
+ * @export
+ */
+export async function forceLogout() {
+  common.mutations.clearDataMutation(common.state);
+  window.history.go();
 }

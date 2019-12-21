@@ -12,6 +12,7 @@ selenium-debug.log
 coverage
 *.lcov
 .quasar
+.env
 
 
 # Editor directories and files
