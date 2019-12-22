@@ -1,4 +1,4 @@
-import gql from 'graphql-tag'
+import gql from 'graphql-tag';
 
 export const DELETE_NOTIFICATION_ADMIN = gql`
   mutation deleteNotificationAdmin($input: DeleteNotificationAdminCondition!) {
@@ -8,4 +8,4 @@ export const DELETE_NOTIFICATION_ADMIN = gql`
       errorCode
     }
   }
-`
+`;

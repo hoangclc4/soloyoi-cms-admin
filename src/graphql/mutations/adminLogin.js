@@ -1,4 +1,4 @@
-import gql from 'graphql-tag'
+import gql from 'graphql-tag';
 
 export const ADMIN_LOGIN = gql`
   mutation loginAdmin($input: LoginAdminCondition!) {
@@ -6,6 +6,7 @@ export const ADMIN_LOGIN = gql`
       response {
         token
         token_type
+        expires_in
       }
       error {
         requestResolved
@@ -14,4 +15,4 @@ export const ADMIN_LOGIN = gql`
       }
     }
   }
-`
+`;

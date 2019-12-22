@@ -1,4 +1,4 @@
-import gql from 'graphql-tag'
+import gql from 'graphql-tag';
 
 export const NOTIFICATION_ADMIN_LIST = gql`
   query notificationAdminList($pager: PagerCondition!) {
@@ -18,4 +18,4 @@ export const NOTIFICATION_ADMIN_LIST = gql`
       }
     }
   }
-`
+`;
