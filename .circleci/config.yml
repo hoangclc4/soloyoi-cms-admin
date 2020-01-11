@@ -68,11 +68,11 @@ jobs:
               docker tag foodconnectioncmsadmin_web-app:latest $AWS_ECR_URI/stg-cms-food-connection:admin
               docker push $AWS_ECR_URI/stg-cms-food-connection:admin
               sh ./deploy/stg/app-deploy.sh
-            elif [ $CIRCLE_BRANCH = 'test_prd' ]; then
+            elif [ $CIRCLE_BRANCH = 'master' ]; then
               docker-compose build
               docker tag foodconnectioncmsadmin_web-app:latest $AWS_ECR_URI/prd-cms-soloyoi:admin
               docker push $AWS_ECR_URI/prd-cms-soloyoi:admin
-              # sh ./deploy/prd/app-deploy.sh
+              sh ./deploy/prd/app-deploy.sh
             fi
 workflows:
   version: 2
@@ -83,5 +83,5 @@ workflows:
             branches:
               only:
                 - staging
-                - test_prd
-          # context: prd-admin-soloyoi
+                - master
+          context: prd-admin-soloyoi
