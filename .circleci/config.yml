@@ -37,7 +37,10 @@ jobs:
           name: Install awscli
           command: |
             sudo apt-get -y update
-            sudo apt-get -y install awscli
+            curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
+            unzip awscli-bundle.zip
+            sudo ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
+            ./awscli-bundle/install -h
             aws --version
 
       - run:
@@ -64,12 +67,12 @@ jobs:
               docker-compose build
               docker tag foodconnectioncmsadmin_web-app:latest $AWS_ECR_URI/stg-cms-food-connection:admin
               docker push $AWS_ECR_URI/stg-cms-food-connection:admin
-              sh ./deploy/app-deploy.sh
-            elif [ $CIRCLE_BRANCH = 'production' ]; then
+              sh ./deploy/stg/app-deploy.sh
+            elif [ $CIRCLE_BRANCH = 'master' ]; then
               docker-compose build
-              docker tag foodconnectioncmsadmin_web-app:latest $AWS_ECR_URI/stg-cms-food-connection:admin
-              docker push $AWS_ECR_URI/stg-cms-food-connection:admin
-              sh ./deploy/app-deploy.sh
+              docker tag foodconnectioncmsadmin_web-app:latest $AWS_ECR_URI/prd-cms-soloyoi:admin
+              docker push $AWS_ECR_URI/prd-cms-soloyoi:admin
+              sh ./deploy/prd/app-deploy.sh
             fi
 workflows:
   version: 2
@@ -80,3 +83,5 @@ workflows:
             branches:
               only:
                 - staging
+                - master
+          context: prd-admin-soloyoi
