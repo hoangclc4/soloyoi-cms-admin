@@ -51,7 +51,7 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex';
-import ComingSoonDialog from '../components/comingSoonDialog';
+import ComingSoonDialog from '../components/ComingSoonDialog';
 
 export default {
   name: 'user',

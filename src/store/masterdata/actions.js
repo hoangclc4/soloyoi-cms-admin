@@ -30,7 +30,7 @@ export async function apiFetchRestaurantMasterdataAction(
 
     // Fetch Master Data Success
     if (response.data.result.error.requestResolved) {
-      commit('saveRestaurantMasterDataMutation', { response });
+      commit('saveRestaurantMasterdataMutation', { response });
       return { requestResolved: true };
     }
     // Fetch Master Data Failed
@@ -133,7 +133,7 @@ export async function apiFetchUserMasterdataAction(
 
     // Fetch Master Data Success
     if (response.data.result.error.requestResolved) {
-      commit('saveUserMasterDataMutation', { response });
+      commit('saveUserMasterdataMutation', { response });
       return { requestResolved: true };
     }
     // Fetch Master Data Failed
