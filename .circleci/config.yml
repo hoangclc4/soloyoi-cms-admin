@@ -1,0 +1,87 @@
+# Javascript Node CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-javascript/ for more details
+#
+version: 2
+jobs:
+  web-app:
+    docker:
+      # specify the version you desire here
+      - image: circleci/node:10.16.3
+
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+      # - image: circleci/mongo:3.4.4
+
+    working_directory: ~/FoodConnectionCmsAdmin
+
+    steps:
+      - checkout
+      - setup_remote_docker
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+
+      - run: yarn
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+
+      - run:
+          name: Install awscli
+          command: |
+            sudo apt-get -y update
+            curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
+            unzip awscli-bundle.zip
+            sudo ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
+            ./awscli-bundle/install -h
+            aws --version
+
+      - run:
+          name: Create AWS credentials manually
+          command: |
+            aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+            aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+            aws configure set region $AWS_ECS_REGION
+      - run:
+          name: Install Docker client
+          command: |
+            set -x
+            VER="17.03.0-ce"
+            curl -L -o /tmp/docker-$VER.tgz https://download.docker.com/linux/static/stable/x86_64/docker-$VER.tgz
+            tar -xz -C /tmp -f /tmp/docker-$VER.tgz
+            sudo mv /tmp/docker/* /usr/bin
+            docker --version
+      - run:
+          name: Deploy to ECS
+          command: |
+            chmod 777 ./deploy/ecs-deploy
+            $(aws ecr get-login --region $AWS_ECS_REGION)
+            if [ $CIRCLE_BRANCH = 'staging' ]; then
+              docker-compose build
+              docker tag foodconnectioncmsadmin_web-app:latest $AWS_ECR_URI/stg-cms-food-connection:admin
+              docker push $AWS_ECR_URI/stg-cms-food-connection:admin
+              sh ./deploy/stg/app-deploy.sh
+            elif [ $CIRCLE_BRANCH = 'master' ]; then
+              docker-compose build
+              docker tag foodconnectioncmsadmin_web-app:latest $AWS_ECR_URI/prd-cms-soloyoi:admin
+              docker push $AWS_ECR_URI/prd-cms-soloyoi:admin
+              sh ./deploy/prd/app-deploy.sh
+            fi
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - web-app:
+          filters:
+            branches:
+              only:
+                - staging
+                - master
+          context: prd-admin-soloyoi
