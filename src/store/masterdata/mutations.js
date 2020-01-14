@@ -8,7 +8,7 @@ import { LocalStorage } from 'quasar';
  * @param {*} state
  * @param {*} { response }
  */
-export function saveRestaurantMasterDataMutation(state, { response }) {
+export function saveRestaurantMasterdataMutation(state, { response }) {
   state.restaurantMasterdata = state.restaurantMasterdata
     ? state.restaurantMasterdata
     : {};
@@ -130,7 +130,7 @@ export function saveRestaurantMasterDataMutation(state, { response }) {
  * @param {*} state
  * @param {*} { response }
  */
-export function saveUserMasterDataMutation(state, { response }) {
+export function saveUserMasterdataMutation(state, { response }) {
   state.userMasterdata = state.userMasterdata ? state.userMasterdata : {};
 
   state.userMasterdata.SinglePersonArea = [];

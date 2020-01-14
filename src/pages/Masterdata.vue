@@ -531,7 +531,6 @@ export default {
       }
     },
   },
-  created() {},
 };
 </script>
 
