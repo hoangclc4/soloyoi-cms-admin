@@ -250,9 +250,8 @@ export function saveAddressLevelOneMutation(state, { response }) {
   });
 
   state.restaurantMasterdata.StaffBirthplace = [...birthplace];
-  state.userMasterdata.UserBirthplace = [...birthplace];
-
   LocalStorage.set('ADMIN_RESTAURANT_MASTERDATA', state.restaurantMasterdata);
+  state.userMasterdata.UserBirthplace = [...birthplace];
   LocalStorage.set('ADMIN_USER_MASTERDATA', state.userMasterdata);
 }
 

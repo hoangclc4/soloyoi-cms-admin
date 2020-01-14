@@ -7,7 +7,7 @@
  * @returns
  */
 export function getRestaurantListGetter(state) {
-  return state.restaurantList;
+  return state.restaurantList ? state.restaurantList : [];
 }
 
 /**
@@ -31,5 +31,5 @@ export function getRestaurantInfoGetter(state) {
  * @returns
  */
 export function getCreatedRestaurantGetter(state) {
-  return state.createdRestaurant;
+  return state.createdRestaurant ? state.createdRestaurant : {};
 }

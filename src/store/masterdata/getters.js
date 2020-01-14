@@ -7,7 +7,7 @@
  * @returns
  */
 export function getRestaurantMasterdataGetter(state) {
-  return state.restaurantMasterdata;
+  return state.restaurantMasterdata ? state.restaurantMasterdata : {};
 }
 
 /**
@@ -19,7 +19,7 @@ export function getRestaurantMasterdataGetter(state) {
  * @returns
  */
 export function getUserMasterdataGetter(state) {
-  return state.userMasterdata;
+  return state.userMasterdata ? state.userMasterdata : {};
 }
 
 /**

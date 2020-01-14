@@ -7,5 +7,5 @@
  * @returns
  */
 export function getUserGetter(state) {
-  return state.userList;
+  return state.userList ? state.userList : [];
 }

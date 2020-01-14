@@ -7,5 +7,5 @@
  * @returns
  */
 export function getNotificationGetter(state) {
-  return state.notification !== null ? state.notification : [];
+  return state.notification ? state.notification : [];
 }
