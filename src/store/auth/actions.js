@@ -1,32 +1,79 @@
-import common from './../common';
+import { ADMIN_LOGIN } from '../../graphql/mutations/adminLogin';
+import { ADMIN_LOGOUT } from '../../graphql/mutations/adminLogout';
+import common from '../common';
 
 /**
  * @description validate admin token
  * @author AnhTQ
- * @date 2019-12-10
+ * @date 2019-12-27
  * @export
- * @param {*} { state }
  * @returns
  */
-export function validateTokenAction({ state }) {
-  const now = Date.now();
-  return now - state.currentUser.login_time < state.currentUser.expires_in;
+export function validateTokenAction() {
+  // TODO: improve validate token expires time
+  return true;
 }
 
 /**
- * @description call mutation to save user information
+ * @description call API Login Admin
  * @author AnhTQ
- * @date 2019-12-10
+ * @date 2019-12-24
  * @export
  * @param {*} { commit }
- * @param {*} data
+ * @param {*} { apolloClient, input }
+ * @returns
  */
-export function saveCurrentUserAction({ commit }, data) {
-  commit('saveCurrentUserMutation', data);
+export async function apiLoginAction({ commit }, { apolloClient, input }) {
+  try {
+    const response = await apolloClient.mutate({
+      mutation: ADMIN_LOGIN,
+      variables: { input },
+    });
+
+    // Login Success
+    if (response.data.result.error.requestResolved) {
+      commit('saveCurrentUserMutation', { response });
+      return { requestResolved: true };
+    }
+    // Login Failed
+    else {
+      return { requestResolved: false, systemError: null };
+    }
+  } catch (systemError) {
+    return { requestResolved: false, systemError };
+  }
 }
 
 /**
- * @description force clear all state and localStorage, then logout
+ * @description call API Login Admin
+ * @author AnhTQ
+ * @date 2019-12-24
+ * @export
+ * @param {*} { commit }
+ * @param {*} { apolloClient, input }
+ * @returns
+ */
+export async function apiLogoutAction(context, { apolloClient }) {
+  try {
+    const response = await apolloClient.mutate({
+      mutation: ADMIN_LOGOUT,
+    });
+
+    // Logout Success
+    if (response.data.result.requestResolved) {
+      return { requestResolved: true };
+    }
+    // Logout Failed
+    else {
+      return { requestResolved: false, systemError: null };
+    }
+  } catch (systemError) {
+    return { requestResolved: false, systemError };
+  }
+}
+
+/**
+ * @description force clear state and localStorage, then logout
  * @author AnhTQ
  * @date 2019-12-22
  * @export

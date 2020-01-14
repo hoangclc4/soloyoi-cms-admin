@@ -3,13 +3,13 @@ import { LocalStorage } from 'quasar';
 /**
  * @description initial all state
  * @author AnhTQ
- * @date 2019-12-10
- * @param {*} allState
+ * @date 2020-01-01
+ * @param {*} state
  */
-function initialState(allState) {
-  allState.forEach((state) => {
-    Object.keys(state).forEach((key) => {
-      state[key] = null;
+function initialState(state) {
+  state.allState.forEach((s) => {
+    Object.keys(s).forEach((key) => {
+      s[key] = null;
     });
   });
 }
@@ -17,11 +17,12 @@ function initialState(allState) {
 /**
  * @description clear all state and localStorage
  * @author AnhTQ
- * @date 2019-12-16
+ * @date 2019-12-22
  * @export
  * @param {*} state
  */
 export function clearDataMutation(state) {
-  initialState(state.allState);
+  initialState(state);
+
   LocalStorage.clear();
 }

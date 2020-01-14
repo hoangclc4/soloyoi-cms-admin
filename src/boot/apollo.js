@@ -3,11 +3,10 @@ import { InMemoryCache } from 'apollo-cache-inmemory';
 import VueApollo from 'vue-apollo';
 import fetch from 'node-fetch';
 import { ApolloLink } from 'apollo-link';
-import { createHttpLink } from 'apollo-link-http';
 import { onError } from 'apollo-link-error';
 import { setContext } from 'apollo-link-context';
-import { LocalStorage } from 'quasar';
-import auth from './../store/auth';
+import { createUploadLink } from 'apollo-upload-client';
+import auth from '../store/auth';
 
 // Config URL to call API
 const uri = process.env.API;
@@ -26,12 +25,12 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
     return false;
   }
   if (networkError) {
-    // console.log(`[Network error]: ${networkError}`);
+    // Handle network errors here!
   }
 });
 
-// Create HTTP Link
-const httpLink = createHttpLink({
+// Create Upload Link instead Http Link
+const uploadLink = createUploadLink({
   uri: uri,
   fetch: fetch,
   // headers: headers,
@@ -40,12 +39,7 @@ const httpLink = createHttpLink({
 // Validate Token
 const authMiddleware = setContext((request, previousContext) => {
   // Get user token
-  let token = '';
-  if (LocalStorage.getItem('USER_INFO')) {
-    token = LocalStorage.getItem('USER_INFO').token;
-  } else if (auth.state.currentUser) {
-    token = auth.state.currentUser.token;
-  }
+  const token = auth.state.currentUser ? auth.state.currentUser.token : '';
   return {
     headers: {
       // Make sure you include any existing headers!
@@ -56,7 +50,7 @@ const authMiddleware = setContext((request, previousContext) => {
 });
 
 // Create Apollo Link
-const link = new ApolloLink.from([errorLink, authMiddleware, httpLink]);
+const link = new ApolloLink.from([errorLink, authMiddleware, uploadLink]);
 
 // Create the apollo client
 const apolloClient = new ApolloClient({

@@ -25,41 +25,41 @@
             $t('navigation.home')
           }}</q-item-section>
         </q-item>
-        <q-item clickable active-class="text-orange" v-ripple to="/restaurants">
+        <q-item clickable active-class="text-orange" v-ripple to="/restaurant">
           <q-item-section avatar class="icon__menu">
             <q-icon name="ion-wine" />
           </q-item-section>
           <q-item-section class="text-body1">{{
-            $t('navigation.restaurants')
+            $t('navigation.restaurant')
           }}</q-item-section>
         </q-item>
-        <q-item clickable active-class="text-orange" v-ripple to="/users">
+        <q-item clickable active-class="text-orange" v-ripple to="/user">
           <q-item-section avatar class="icon__menu">
             <q-icon name="ion-contact" />
           </q-item-section>
           <q-item-section class="text-body1">{{
-            $t('navigation.users')
+            $t('navigation.user')
           }}</q-item-section>
         </q-item>
         <q-item
           clickable
           active-class="text-orange"
           v-ripple
-          to="/notifications"
+          to="/notification"
         >
           <q-item-section avatar class="icon__menu">
             <q-icon name="ion-notifications" />
           </q-item-section>
           <q-item-section class="text-body1">{{
-            $t('navigation.notifications')
+            $t('navigation.notification')
           }}</q-item-section>
         </q-item>
-        <q-item clickable active-class="text-orange" v-ripple to="/master-data">
+        <q-item clickable active-class="text-orange" v-ripple to="/masterdata">
           <q-item-section avatar class="icon__menu">
-            <q-icon name="ion-document" />
+            <q-icon name="ion-list" />
           </q-item-section>
           <q-item-section class="text-body1">{{
-            $t('navigation.masterData')
+            $t('navigation.masterdata')
           }}</q-item-section>
         </q-item>
 
@@ -113,6 +113,7 @@
     </q-drawer>
 
     <q-page-container>
+      <q-linear-progress v-if="loading" indeterminate />
       <router-view />
     </q-page-container>
 
@@ -127,49 +128,260 @@
 </template>
 
 <script>
-import { ADMIN_LOGOUT } from './../graphql/mutations/adminLogout';
 import { mapActions } from 'vuex';
 export default {
   name: 'top-layout',
   data() {
     return {
+      loading: false,
       left: this.$q.platform.is.desktop,
-      right: this.$q.platform.is.desktop,
       confirm: false,
     };
   },
   computed: {},
   methods: {
-    ...mapActions('common', ['clearDataAction']),
+    ...mapActions('auth', ['apiLogoutAction']),
+    ...mapActions('masterdata', [
+      'apiFetchUserMasterdataAction',
+      'apiFetchRestaurantMasterdataAction',
+      'apiFetchAllProvinceAction',
+    ]),
+    ...mapActions('restaurant', ['apiFetchRestaurantAction']),
+    ...mapActions('user', ['apiFetchUserAction']),
+    ...mapActions('notification', ['apiFetchAdminNotificationAction']),
+
+    ...mapActions('information', ['apiFetchRestaurantInformationAction']),
+    ...mapActions('review', ['apiFetchRestaurantReviewAction']),
+    ...mapActions('menu', [
+      'apiFetchRestaurantMenuPhotoAction',
+      'apiFetchRestaurantMenuItemAction',
+    ]),
+    ...mapActions('staff', ['apiFetchRestaurantStaffAction']),
 
     async logout() {
+      this.loading = true;
+
       // Call API Logout
-      const apolloCl = this.$apollo.provider.defaultClient;
-      await apolloCl
-        .mutate({
-          mutation: ADMIN_LOGOUT,
-        })
-        .then((response) => {
-          // Logout Success
-          if (response.data.result.requestResolved === true) {
-            this.$q.loading.hide();
+      const apolloClient = this.$apollo.provider.defaultClient;
+      const result = await this.apiLogoutAction({ apolloClient });
 
-            // Clear all state action
-            this.clearDataAction();
+      if (result.requestResolved) {
+        // Logout success
+        this.loading = false;
 
-            this.$router.push({ name: 'login' });
-          }
-          // Logout Failed
-          else {
-            this.$q.loading.hide();
-            this.$q.notify(this.$t('auth.somethingWrong'));
-          }
-        })
-        .catch((error) => {
-          this.$q.loading.hide();
-          this.$q.notify(error);
-        });
+        // Move to Login Page to clear all state
+        this.$router.push({ name: 'login' });
+      } else {
+        result.systemError
+          ? // Logout failed, got something wrong with system
+            this.$q.notify({
+              message: `${result.systemError}`,
+              color: 'deep-orange-4',
+            })
+          : // Logout failed, got something wrong with user
+            this.$q.notify({
+              message: this.$t('api.logoutFailed'),
+              color: 'deep-orange-4',
+            });
+
+        this.loading = false;
+      }
     },
+
+    async fetchRestaurantList() {
+      // Call API fetch restaurant list
+      const apolloClient = this.$apollo.provider.defaultClient;
+      const result = await this.apiFetchRestaurantAction({
+        apolloClient,
+      });
+
+      if (result.requestResolved) {
+        // Fetch success
+      } else {
+        result.systemError
+          ? // Fetch failed, got something wrong with system
+            this.$q.notify({
+              message: `${result.systemError}`,
+              color: 'deep-orange-4',
+            })
+          : // Fetch failed, got something wrong with user
+            this.$q.notify({
+              message: this.$t('api.fetchRestaurantListFailed'),
+              color: 'deep-orange-4',
+            });
+      }
+    },
+    async fetchUserList() {
+      // Call API fetch user list
+      const apolloClient = this.$apollo.provider.defaultClient;
+      const result = await this.apiFetchUserAction({
+        apolloClient,
+      });
+
+      if (result.requestResolved) {
+        // Fetch success
+      } else {
+        result.systemError
+          ? // Fetch failed, got something wrong with system
+            this.$q.notify({
+              message: `${result.systemError}`,
+              color: 'deep-orange-4',
+            })
+          : // Fetch failed, got something wrong with user
+            this.$q.notify({
+              message: this.$t('api.fetchUserListFailed'),
+              color: 'deep-orange-4',
+            });
+      }
+    },
+
+    async fetchMasterdata() {
+      this.fetchRestaurantMasterdata();
+      await this.fetchUserMasterdata();
+      await this.fetchAddressLevelOne();
+    },
+    async fetchRestaurantMasterdata() {
+      // Call API fetch Restaurant Master Data
+      const apolloClient = this.$apollo.provider.defaultClient;
+      const input = {
+        isAll: false,
+        order: [
+          'OpenTimeSearch',
+          'AloneMenu',
+          'Sake',
+          'LonelyScene',
+          'RestaurantPayment',
+          'Smoking',
+          'Languages',
+          'Features',
+          'SalesInformations',
+          'TypeOfMenu',
+          'TheAtmosphereOfTheCounter',
+          'Location',
+          'StaffStyle',
+          'StaffCanTalk',
+        ],
+      };
+      const result = await this.apiFetchRestaurantMasterdataAction({
+        apolloClient,
+        input,
+      });
+
+      if (result.requestResolved) {
+        // Fetch success
+      } else {
+        result.systemError
+          ? // Fetch failed, got something wrong with system
+            this.$q.notify({
+              message: `${result.systemError}`,
+              color: 'deep-orange-4',
+            })
+          : // Fetch failed, got something wrong with user
+            this.$q.notify({
+              message: this.$t('api.fetchRestaurantMasterdataFailed'),
+              color: 'deep-orange-4',
+            });
+      }
+    },
+    async fetchUserMasterdata() {
+      // Call API fetch User Master Data
+      const apolloClient = this.$apollo.provider.defaultClient;
+      const input = {
+        isAll: false,
+        order: [
+          'SinglePersonArea',
+          'Occupation',
+          'Sake',
+          'Smoking',
+          'StoryStance',
+          'FavoriteConversationGenre',
+          'Personal',
+          'WhenDrinkingAlone',
+          'GenderOfPartner',
+          'YourFeeling',
+          'PaymentFeeling',
+          'TimeFeeling',
+        ],
+      };
+      const result = await this.apiFetchUserMasterdataAction({
+        apolloClient,
+        input,
+      });
+
+      if (result.requestResolved) {
+        // Fetch success
+      } else {
+        result.systemError
+          ? // Fetch failed, got something wrong with system
+            this.$q.notify({
+              message: `${result.systemError}`,
+              color: 'deep-orange-4',
+            })
+          : // Fetch failed, got something wrong with user
+            this.$q.notify({
+              message: this.$t('api.fetchUserMasterdataFailed'),
+              color: 'deep-orange-4',
+            });
+      }
+    },
+    async fetchAddressLevelOne() {
+      // Call API fetch all Japan's Province - Level 1
+      const apolloClient = this.$apollo.provider.defaultClient;
+      const result = await this.apiFetchAllProvinceAction({
+        apolloClient,
+      });
+
+      if (result.requestResolved) {
+        // Fetch success
+      } else {
+        result.systemError
+          ? // Fetch failed, got something wrong with system
+            this.$q.notify({
+              message: `${result.systemError}`,
+              color: 'deep-orange-4',
+            })
+          : // Fetch failed, got something wrong with user
+            this.$q.notify({
+              message: this.$t('api.fetchProvinceFailed'),
+              color: 'deep-orange-4',
+            });
+      }
+    },
+
+    async fetchAdminNotification() {
+      // Call API fetch Admin Notification
+      const apolloClient = this.$apollo.provider.defaultClient;
+      const result = await this.apiFetchAdminNotificationAction({
+        apolloClient,
+      });
+
+      if (result.requestResolved) {
+        // Fetch success
+      } else {
+        result.systemError
+          ? // Fetch failed, got something wrong with system
+            this.$q.notify({
+              message: `${result.systemError}`,
+              color: 'deep-orange-4',
+            })
+          : // Fetch failed, got something wrong with user
+            this.$q.notify({
+              message: this.$t('api.fetchAdminNotificationFailed'),
+              color: 'deep-orange-4',
+            });
+      }
+    },
+  },
+  created() {
+    this.loading = true;
+    Promise.all([
+      this.fetchRestaurantList(),
+      this.fetchUserList(),
+      this.fetchAdminNotification(),
+      this.fetchMasterdata(),
+    ]).then(() => {
+      this.loading = false;
+    });
   },
 };
 </script>
@@ -178,8 +390,4 @@ export default {
 .icon__menu
   min-width: 0
   padding-right: 0.6em
-.menu__right
-  background-color: $grey-2
-  @media screen and (max-width: 1086px)
-    background-color: transparent
 </style>

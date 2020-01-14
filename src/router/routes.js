@@ -2,26 +2,26 @@ const routes = [
   {
     path: '/',
     redirect: '/home',
-    name: 'top-layout',
+    name: 'top',
     meta: { requiresAuth: true },
     component: () => import('layouts/TopLayout'),
     children: [
       { path: 'home', name: 'home', component: () => import('pages/Home') },
       {
-        path: 'restaurants',
-        name: 'restaurants',
-        component: () => import('pages/Restaurants'),
+        path: 'restaurant',
+        name: 'restaurant',
+        component: () => import('pages/Restaurant'),
       },
-      { path: 'users', name: 'users', component: () => import('pages/Users') },
+      { path: 'user', name: 'user', component: () => import('pages/User') },
       {
-        path: 'notifications',
-        name: 'notifications',
-        component: () => import('pages/Notifications'),
+        path: 'notification',
+        name: 'notification',
+        component: () => import('pages/Notification'),
       },
       {
-        path: 'master-data',
-        name: 'master-data',
-        component: () => import('pages/MasterData'),
+        path: 'masterdata',
+        name: 'masterdata',
+        component: () => import('pages/Masterdata'),
       },
       {
         path: 'setting',
@@ -30,6 +30,66 @@ const routes = [
       },
     ],
   },
+  {
+    path: '/edit-restaurant/:id',
+    name: 'edit-restaurant',
+    redirect: '/edit-restaurant/:id/payment',
+    meta: { requiresAuth: true },
+    component: () => import('layouts/EditRestaurantLayout'),
+    children: [
+      {
+        path: 'payment',
+        name: 'edit-restaurant-payment',
+        component: () => import('pages/editRestaurant/EditRestaurantPayment'),
+      },
+      {
+        path: 'information',
+        name: 'edit-restaurant-information',
+        component: () =>
+          import('pages/editRestaurant/EditRestaurantInformation'),
+      },
+      {
+        path: 'menu',
+        name: 'edit-restaurant-menu',
+        component: () => import('pages/editRestaurant/EditRestaurantMenu'),
+      },
+      {
+        path: 'staff',
+        name: 'edit-restaurant-staff',
+        component: () => import('pages/editRestaurant/EditRestaurantStaff'),
+      },
+      {
+        path: 'review',
+        name: 'edit-restaurant-review',
+        component: () => import('pages/editRestaurant/EditRestaurantReview'),
+      },
+    ],
+  },
+  {
+    path: '/edit-user/:id',
+    name: 'edit-user',
+    redirect: '/edit-user/:id/payment',
+    meta: { requiresAuth: true },
+    component: () => import('layouts/EditUserLayout'),
+    children: [
+      {
+        path: 'payment',
+        name: 'edit-user-payment',
+        component: () => import('pages/editUser/EditUserPayment'),
+      },
+      {
+        path: 'profile',
+        name: 'edit-user-profile',
+        component: () => import('pages/editUser/EditUserProfile'),
+      },
+      {
+        path: 'feeling-today',
+        name: 'edit-user-feeling-today',
+        component: () => import('pages/editUser/EditUserFeelingToday'),
+      },
+    ],
+  },
+
   {
     path: '/auth',
     name: 'auth-layout',
@@ -41,16 +101,6 @@ const routes = [
         name: 'login',
         component: () => import('pages/Login'),
       },
-      // {
-      //   path: 'forgot-password',
-      //   name: 'forgot-password',
-      //   component: () => import('pages/ForgotPassword'),
-      // },
-      // {
-      //   path: 'reset-password',
-      //   name: 'reset-password',
-      //   component: () => import('pages/ResetPassword'),
-      // },
     ],
   },
 ];

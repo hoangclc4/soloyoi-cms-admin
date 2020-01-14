@@ -3,7 +3,7 @@
     <q-card style="width: 25em;" class="no-shadow text-grey-1 transparent">
       <q-card-section class="row justify-center q-mb-lg">
         <q-img
-          src="https://www.foodconnection.jp/wp-content/themes/foodconnection/shared/img/shared/logo.png"
+          src="statics/logo.png"
           alt="FOODCONNECTION LOGO"
           transition="slide-down"
           spinner-color="transparent"
@@ -31,12 +31,12 @@
           color="primary"
           bg-color="grey-1"
           v-model="form.password"
-          label="Password"
+          :label="$t('auth.password')"
           @blur="$v.form.password.$touch"
           @keyup.enter="submit"
           :error="$v.form.password.$error"
           type="password"
-          float-label="Password"
+          :float-label="$t('auth.password')"
         />
       </q-card-section>
       <q-card-section class="row justify-center">
@@ -47,27 +47,13 @@
           @click="submit"
         />
       </q-card-section>
-      <!-- <q-card-section class="row justify-around">
-        <q-checkbox
-          v-model="form.rememberMe"
-          :label="$t('auth.rememberMe')"
-          keep-color
-          color="primary"
-        />
-        <q-item to="forgot-password" class="text-decoration-underline">
-          <q-item-section class="text-body2">
-            {{ $t('auth.forgotPassword') }}
-          </q-item-section>
-        </q-item>
-      </q-card-section> -->
     </q-card>
   </q-page>
 </template>
 
 <script>
-import { ADMIN_LOGIN } from './../graphql/mutations/adminLogin';
 import { required } from 'vuelidate/lib/validators';
-import { mapGetters, mapActions } from 'vuex';
+import { mapActions } from 'vuex';
 export default {
   data() {
     return {
@@ -75,13 +61,10 @@ export default {
       form: {
         username: '',
         password: '',
-        // rememberMe: true,
       },
     };
   },
-  computed: {
-    ...mapGetters('auth', ['getCurrentUserGetter']),
-  },
+  computed: {},
   validations: {
     form: {
       username: { required },
@@ -89,7 +72,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions('auth', ['saveCurrentUserAction']),
+    ...mapActions('auth', ['apiLoginAction']),
     ...mapActions('common', ['clearDataAction']),
 
     submit() {
@@ -98,43 +81,49 @@ export default {
 
       if (this.$v.form.$error) {
         this.$q.loading.hide();
-        this.$q.notify(this.$t('auth.reviewFieldAgain'));
+        this.$q.notify({
+          message: this.$t('reviewFieldAgain'),
+          color: 'teal-8',
+        });
       } else {
-        this.doLogin(this.form.username, this.form.password);
+        this.login(this.form.username, this.form.password);
       }
     },
-    async doLogin(username, password) {
-      const apolloCl = this.$apollo.provider.defaultClient;
-      await apolloCl
-        .mutate({
-          mutation: ADMIN_LOGIN,
-          variables: {
-            input: { password: password, username: username },
-          },
-        })
-        .then((response) => {
-          // Login Success
-          if (response.data.result.error.requestResolved === true) {
-            this.$q.loading.hide();
-            this.saveCurrentUserAction(response);
-            this.$router.push({ path: '/' });
-          }
-          // Login Failed
-          else {
-            this.$q.notify(this.$t('auth.wrongLogin'));
-            this.$q.loading.hide();
-          }
-        })
-        .catch((error) => {
-          this.$q.notify(error);
-          this.$q.loading.hide();
-        });
+    async login(username, password) {
+      // Call API Login
+      const apolloClient = this.$apollo.provider.defaultClient;
+      const input = { username, password };
+      const result = await this.apiLoginAction({
+        apolloClient,
+        input,
+      });
+
+      if (result.requestResolved) {
+        // Login success
+        this.$q.loading.hide();
+        this.$router.push({ path: '/' });
+      } else {
+        result.systemError
+          ? // Login failed, got something wrong with system
+            this.$q.notify({
+              message: `${result.systemError}`,
+              color: 'deep-orange-4',
+            })
+          : // Login failed, got something wrong with user
+            this.$q.notify({
+              message: this.$t('api.loginFailed'),
+              color: 'deep-orange-4',
+            });
+
+        this.$q.loading.hide();
+      }
     },
   },
   created() {
+    // Clear all state action
     this.clearDataAction();
   },
 };
 </script>
 
-<style></style>
+<style lang="stylus"></style>
