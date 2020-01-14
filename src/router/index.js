@@ -12,7 +12,6 @@ Vue.use(VueMeta, {
  * directly export the Router instantiation
  */
 export default function({ store }) {
-  // console.log('routes: ', routes)
   const router = new VueRouter({
     scrollBehavior: () => ({ y: 0 }),
     routes,

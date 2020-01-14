@@ -3,7 +3,11 @@ import Vuex from 'vuex';
 
 import auth from './auth';
 import common from './common';
-import notifications from './notifications';
+import restaurant from './restaurant';
+import user from './user';
+import notification from './notification';
+import masterdata from './masterdata';
+import setting from './setting';
 Vue.use(Vuex);
 
 /*
@@ -16,7 +20,11 @@ export default function(/* { ssrContext } */) {
     modules: {
       auth,
       common,
-      notifications,
+      restaurant,
+      user,
+      notification,
+      masterdata,
+      setting,
     },
   });
 

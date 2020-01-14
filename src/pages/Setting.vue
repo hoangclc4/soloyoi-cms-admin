@@ -1,90 +1,165 @@
 <template>
   <q-page padding>
     <!-- content -->
-    {{ $t('comingSoon') }}
+    <q-linear-progress v-if="loading" indeterminate />
+    <q-card>
+      <q-expansion-item
+        expand-separator
+        switch-toggle-side
+        default-opened
+        icon="ion-lock"
+        :label="$t('setting.changePasswordTitle')"
+      >
+        <q-item>
+          <q-item-section>
+            <q-input
+              v-model="form.oldPassword"
+              @keyup.enter="submit"
+              :error="$v.form.oldPassword.$error"
+              @blur="$v.form.oldPassword.$touch"
+              :type="isOldPassword ? 'password' : 'text'"
+              dense
+              outlined
+              :label="$t('setting.oldPassword')"
+            >
+              <template v-slot:append>
+                <q-icon
+                  :name="isOldPassword ? 'visibility_off' : 'visibility'"
+                  class="cursor-pointer"
+                  @click="isOldPassword = !isOldPassword"
+                />
+              </template>
+            </q-input>
+            <q-input
+              v-model="form.newPassword"
+              @keyup.enter="submit"
+              :error="$v.form.newPassword.$error"
+              @blur="$v.form.newPassword.$touch"
+              :type="isNewPassword ? 'password' : 'text'"
+              dense
+              outlined
+              :label="$t('setting.newPassword')"
+            >
+              <template v-slot:append>
+                <q-icon
+                  :name="isNewPassword ? 'visibility_off' : 'visibility'"
+                  class="cursor-pointer"
+                  @click="isNewPassword = !isNewPassword"
+                />
+              </template>
+            </q-input>
+            <q-input
+              v-model="form.confirmPassword"
+              @keyup.enter="submit"
+              :error="$v.form.confirmPassword.$error"
+              @blur="$v.form.confirmPassword.$touch"
+              :type="isConfirmPassword ? 'password' : 'text'"
+              dense
+              outlined
+              :label="$t('setting.confirmPassword')"
+            >
+              <template v-slot:append>
+                <q-icon
+                  :name="isConfirmPassword ? 'visibility_off' : 'visibility'"
+                  class="cursor-pointer"
+                  @click="isConfirmPassword = !isConfirmPassword"
+                />
+              </template>
+            </q-input>
+            <q-btn
+              icon="ion-save"
+              :label="$t('setting.saveChangedPasswordBtn')"
+              color="primary"
+              class="full-width"
+              @click="submit"
+            />
+          </q-item-section>
+        </q-item>
+      </q-expansion-item>
+    </q-card>
   </q-page>
 </template>
 
 <script>
+import { required, sameAs, minLength } from 'vuelidate/lib/validators';
+import { mapActions } from 'vuex';
 export default {
-  name: 'notifications',
+  name: 'setting',
   data() {
     return {
-      openDialog: false,
-      notification: {
-        message: '',
-        link: '',
-      },
       loading: false,
-      filter: '',
-      rowCount: 10,
-      columns: [
-        {
-          name: 'id',
-          required: true,
-          label: this.$t('notifications.idTableHeader'),
-          align: 'center',
-          field: (row) => row.id,
-          format: (val) => `${val}`,
-          sortable: true,
-        },
-        {
-          name: 'message',
-          align: 'center',
-          label: this.$t('notifications.messageTableHeader'),
-          field: 'message',
-          sortable: true,
-        },
-        {
-          name: 'link',
-          align: 'center',
-          label: this.$t('notifications.linkTableHeader'),
-          field: 'link',
-          sortable: true,
-        },
-        {
-          name: 'date',
-          required: true,
-          align: 'center',
-          label: this.$t('notifications.dateTableHeader'),
-          field: 'date',
-          format: (val) => `${val.toLocaleDateString('ja')}`,
-          sortable: true,
-          sort: (a, b) => b - a,
-        },
-      ],
-      data: this.getNotification(),
+      isOldPassword: true,
+      isNewPassword: true,
+      isConfirmPassword: true,
+      form: {
+        oldPassword: '',
+        newPassword: '',
+        confirmPassword: '',
+      },
     };
   },
+  validations: {
+    form: {
+      oldPassword: { required },
+      newPassword: { required, minLength: minLength(8) },
+      confirmPassword: { required, sameAsNewPassword: sameAs('newPassword') },
+    },
+  },
+  computed: {},
   methods: {
-    getNotification() {
-      let listNotification = [];
-      for (let i = 0; i < 100; i++) {
-        const message =
-          "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.";
-        listNotification.push({
-          id: Math.round(Math.random(10) * 10000000),
-          message,
-          link: message,
-          date: new Date(
-            new Date(2012, 0, 1).getTime() +
-              Math.random() *
-                (new Date().getTime() - new Date(2012, 0, 1).getTime())
-          ),
-        });
-      }
+    ...mapActions('setting', ['apiUpdatePasswordAdminAction']),
 
-      return listNotification;
+    submit() {
+      this.loading = true;
+      this.$v.form.$touch();
+
+      if (this.$v.form.$error) {
+        this.loading = false;
+        this.$q.notify({
+          message: this.$t('reviewFieldAgain'),
+          color: 'teal-8',
+        });
+      } else {
+        this.saveChangedPassword(this.form.oldPassword, this.form.newPassword);
+      }
+    },
+    async saveChangedPassword(oldPassword, newPassword) {
+      // Call API update Password Restaurant
+      const apolloClient = this.$apollo.provider.defaultClient;
+      const input = { oldPassword, newPassword };
+      const result = await this.apiUpdatePasswordAdminAction({
+        apolloClient,
+        input,
+      });
+
+      if (result.requestResolved) {
+        // Update success
+        this.$q.notify({
+          message: this.$t('api.updateAdminPasswordSuccess'),
+          color: 'green-5',
+        });
+        this.loading = false;
+
+        // TODO: temporarily requires login again, to improve later
+        this.$router.push({ name: 'login' });
+      } else {
+        result.systemError
+          ? // Update failed, got something wrong with system
+            this.$q.notify({
+              message: `${result.systemError}`,
+              color: 'deep-orange-4',
+            })
+          : // Update failed, got something wrong with user
+            this.$q.notify({
+              message: this.$t('api.updateAdminPasswordFailed'),
+              color: 'deep-orange-4',
+            });
+
+        this.loading = false;
+      }
     },
   },
 };
 </script>
 
-<style lang="stylus">
-.notification-table
-  .q-table__top,
-  .q-table__bottom,
-  thead tr:first-child th
-    /* bg color is important for th; just specify one */
-    background-color: $orange-1
-</style>
+<style lang="stylus"></style>

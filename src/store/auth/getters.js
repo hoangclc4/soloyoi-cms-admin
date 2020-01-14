@@ -1,5 +1,5 @@
 /**
- * @description get user information from state
+ * @description get admin information from state
  * @author AnhTQ
  * @date 2019-12-10
  * @export
