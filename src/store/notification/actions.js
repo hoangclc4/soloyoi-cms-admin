@@ -5,21 +5,21 @@ import { DELETE_NOTIFICATION_ADMIN } from '../../graphql/mutations/deleteNotific
 /**
  * @description call API Fetch Admin Notification
  * @author AnhTQ
- * @date 2020-01-09
+ * @date 2020-01-15
  * @export
  * @param {*} { commit }
- * @param {*} { apolloClient }
+ * @param {*} { apolloClient, pager }
  * @returns
  */
 export async function apiFetchAdminNotificationAction(
   { commit },
-  { apolloClient }
+  { apolloClient, pager }
 ) {
   try {
     const response = await apolloClient.query({
       query: NOTIFICATION_ADMIN_LIST,
       variables: {
-        pager: { limit: 1000000, pageNum: 1 },
+        pager,
       },
     });
 

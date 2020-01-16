@@ -299,8 +299,11 @@ export default {
     async fetchAdminNotification() {
       // Call API fetch Admin Notification
       const apolloClient = this.$apollo.provider.defaultClient;
+      // TODO: need to apply pagination for performance when fetch data
+      const pager = { limit: 1000000, pageNum: 1 };
       const result = await this.apiFetchAdminNotificationAction({
         apolloClient,
+        pager,
       });
 
       if (result.requestResolved) {

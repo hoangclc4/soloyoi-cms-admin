@@ -1,7 +1,7 @@
 import { LocalStorage } from 'quasar';
 
 /**
- * @description save user data as a state
+ * @description save user list data as a state
  * @author AnhTQ
  * @date 2019-12-10
  * @export

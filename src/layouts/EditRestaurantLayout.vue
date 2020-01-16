@@ -227,19 +227,16 @@ export default {
   methods: {
     ...mapActions('auth', ['apiLogoutAction']),
     ...mapActions('masterdata', [
-      'apiFetchUserMasterdataAction',
       'apiFetchRestaurantMasterdataAction',
       'apiFetchAllProvinceAction',
     ]),
     ...mapActions('restaurant', [
       'apiFetchRestaurantAction',
       'apiFetchRestaurantInformationAction',
-
-      // TODO: apply these action to call API
-      'apiFetchRestaurantReviewAction',
       'apiFetchRestaurantMenuPhotoAction',
       'apiFetchRestaurantMenuItemAction',
       'apiFetchRestaurantStaffAction',
+      'apiFetchRestaurantReviewAction',
     ]),
 
     async logout() {
@@ -271,9 +268,7 @@ export default {
         this.loading = false;
       }
     },
-
     async fetchMasterdata() {
-      this.fetchRestaurantMasterdata();
       await this.fetchRestaurantMasterdata();
       await this.fetchAddressLevelOne();
     },
@@ -320,47 +315,6 @@ export default {
             });
       }
     },
-    async fetchUserMasterdata() {
-      // Call API fetch User Master Data
-      const apolloClient = this.$apollo.provider.defaultClient;
-      const input = {
-        isAll: false,
-        order: [
-          'SinglePersonArea',
-          'Occupation',
-          'Sake',
-          'Smoking',
-          'StoryStance',
-          'FavoriteConversationGenre',
-          'Personal',
-          'WhenDrinkingAlone',
-          'GenderOfPartner',
-          'YourFeeling',
-          'PaymentFeeling',
-          'TimeFeeling',
-        ],
-      };
-      const result = await this.apiFetchUserMasterdataAction({
-        apolloClient,
-        input,
-      });
-
-      if (result.requestResolved) {
-        // Fetch success
-      } else {
-        result.systemError
-          ? // Fetch failed, got something wrong with system
-            this.$q.notify({
-              message: `${result.systemError}`,
-              color: 'deep-orange-4',
-            })
-          : // Fetch failed, got something wrong with user
-            this.$q.notify({
-              message: this.$t('api.fetchUserMasterdataFailed'),
-              color: 'deep-orange-4',
-            });
-      }
-    },
     async fetchAddressLevelOne() {
       // Call API fetch all Japan's Province - Level 1
       const apolloClient = this.$apollo.provider.defaultClient;
@@ -384,6 +338,7 @@ export default {
             });
       }
     },
+
     async fetchRestaurantInformation() {
       // Call API fetch Restaurant Information
       const apolloClient = this.$apollo.provider.defaultClient;
@@ -404,34 +359,9 @@ export default {
             })
           : // Fetch failed, got something wrong with user
             this.$q.notify({
-              message: this.$t('api.fetchRestaurantInformationFailed'),
-              color: 'deep-orange-4',
-            });
-      }
-    },
-
-    // TODO: apply these action to call API
-    async fetchRestaurantReview() {
-      // Call API fetch Restaurant Review
-      const apolloClient = this.$apollo.provider.defaultClient;
-      const pager = { limit: 1000000, pageNum: 1 };
-      const result = await this.apiFetchRestaurantReviewAction({
-        apolloClient,
-        pager,
-      });
-
-      if (result.requestResolved) {
-        // Fetch success
-      } else {
-        result.systemError
-          ? // Fetch failed, got something wrong with system
-            this.$q.notify({
-              message: `${result.systemError}`,
-              color: 'deep-orange-4',
-            })
-          : // Fetch failed, got something wrong with restaurant
-            this.$q.notify({
-              message: this.$t('api.fetchRestaurantReviewFailed'),
+              message: this.$t(
+                'api.editRestaurant.fetchRestaurantInformationFailed'
+              ),
               color: 'deep-orange-4',
             });
       }
@@ -439,7 +369,7 @@ export default {
     async fetchRestaurantMenuPhoto() {
       // Call API fetch Restaurant Menu Photo
       const apolloClient = this.$apollo.provider.defaultClient;
-      const input = { menuTypes: 'FOOD' }; // FOOD or DRINK
+      const input = { restaurantId: this.$route.params.id, menuTypes: 'FOOD' }; // FOOD or DRINK
       const result = await this.apiFetchRestaurantMenuPhotoAction({
         apolloClient,
         input,
@@ -456,7 +386,9 @@ export default {
             })
           : // Fetch failed, got something wrong with restaurant
             this.$q.notify({
-              message: this.$t('api.fetchRestaurantMenuPhotoFailed'),
+              message: this.$t(
+                'api.editRestaurant.fetchRestaurantMenuPhotoFailed'
+              ),
               color: 'deep-orange-4',
             });
       }
@@ -464,7 +396,7 @@ export default {
     async fetchRestaurantMenuFood() {
       // Call API fetch Restaurant Menu Food
       const apolloClient = this.$apollo.provider.defaultClient;
-      const input = { menuTypes: 'FOOD' };
+      const input = { restaurantId: this.$route.params.id, menuTypes: 'FOOD' };
       const result = await this.apiFetchRestaurantMenuItemAction({
         apolloClient,
         input,
@@ -481,7 +413,9 @@ export default {
             })
           : // Fetch failed, got something wrong with restaurant
             this.$q.notify({
-              message: this.$t('api.fetchRestaurantMenuFoodFailed'),
+              message: this.$t(
+                'api.editRestaurant.fetchRestaurantMenuFoodFailed'
+              ),
               color: 'deep-orange-4',
             });
       }
@@ -489,7 +423,7 @@ export default {
     async fetchRestaurantMenuDrink() {
       // Call API fetch Restaurant Menu Drink
       const apolloClient = this.$apollo.provider.defaultClient;
-      const input = { menuTypes: 'DRINK' };
+      const input = { restaurantId: this.$route.params.id, menuTypes: 'DRINK' };
       const result = await this.apiFetchRestaurantMenuItemAction({
         apolloClient,
         input,
@@ -506,7 +440,9 @@ export default {
             })
           : // Fetch failed, got something wrong with restaurant
             this.$q.notify({
-              message: this.$t('api.fetchRestaurantMenuDrinkFailed'),
+              message: this.$t(
+                'api.editRestaurant.fetchRestaurantMenuDrinkFailed'
+              ),
               color: 'deep-orange-4',
             });
       }
@@ -514,8 +450,10 @@ export default {
     async fetchRestaurantStaff() {
       // Call API fetch Restaurant Staff
       const apolloClient = this.$apollo.provider.defaultClient;
+      const input = { restaurantId: this.$route.params.id };
       const result = await this.apiFetchRestaurantStaffAction({
         apolloClient,
+        input,
       });
 
       if (result.requestResolved) {
@@ -529,7 +467,37 @@ export default {
             })
           : // Fetch failed, got something wrong with restaurant
             this.$q.notify({
-              message: this.$t('api.fetchRestaurantStaffFailed'),
+              message: this.$t('api.editRestaurant.fetchRestaurantStaffFailed'),
+              color: 'deep-orange-4',
+            });
+      }
+    },
+    async fetchRestaurantReview() {
+      // Call API fetch Restaurant Review
+      const apolloClient = this.$apollo.provider.defaultClient;
+      const input = { restaurantId: this.$route.params.id };
+      // TODO: need to apply pagination for performance when fetch data
+      const pager = { limit: 1000000, pageNum: 1 };
+      const result = await this.apiFetchRestaurantReviewAction({
+        apolloClient,
+        input,
+        pager,
+      });
+
+      if (result.requestResolved) {
+        // Fetch success
+      } else {
+        result.systemError
+          ? // Fetch failed, got something wrong with system
+            this.$q.notify({
+              message: `${result.systemError}`,
+              color: 'deep-orange-4',
+            })
+          : // Fetch failed, got something wrong with restaurant
+            this.$q.notify({
+              message: this.$t(
+                'api.editRestaurant.fetchRestaurantReviewFailed'
+              ),
               color: 'deep-orange-4',
             });
       }
@@ -540,11 +508,11 @@ export default {
     Promise.all([
       this.fetchMasterdata(),
       this.fetchRestaurantInformation(),
-      // this.fetchRestaurantReview(),
-      // this.fetchRestaurantMenuPhoto(),
-      // this.fetchRestaurantMenuFood(),
-      // this.fetchRestaurantMenuDrink(),
-      // this.fetchRestaurantStaff(),
+      this.fetchRestaurantMenuPhoto(),
+      this.fetchRestaurantMenuFood(),
+      this.fetchRestaurantMenuDrink(),
+      this.fetchRestaurantStaff(),
+      this.fetchRestaurantReview(),
     ]).then(() => {
       this.loading = false;
     });
