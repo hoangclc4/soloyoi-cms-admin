@@ -22,7 +22,6 @@
           color="primary"
           v-model="filter"
           :placeholder="$t('search')"
-          class="q-mx-lg"
         >
           <template v-slot:append>
             <q-icon name="search" />
@@ -38,7 +37,7 @@
                 dense
                 flat
                 color="secondary"
-                icon="ion-create"
+                icon="ion-eye"
                 @click="onEditUser(props.row.userId)"
               />
             </q-item-section>
@@ -107,22 +106,18 @@ export default {
     ...mapActions('user', ['apiFetchUserAction']),
 
     onEditUser(id) {
-      this.comingSoon = true;
-      return id;
-
-      // TODO: apply flow edit user
-      // this.$router.push({
-      //   name: 'edit-user',
-      //   params: { id },
-      // });
+      this.$router.push({
+        name: 'edit-user',
+        params: { id },
+      });
     },
 
     async fetchUserList() {
       // Call API fetch user list
       const apolloClient = this.$apollo.provider.defaultClient;
-      const result = await this.apiFetchUserAction({
-        apolloClient,
-      });
+      // TODO: need to apply pagination for performance when fetch data
+      const pager = { limit: 1000000, pageNum: 1 };
+      const result = await this.apiFetchUserAction({ apolloClient, pager });
 
       if (result.requestResolved) {
         // Fetch success

@@ -42,8 +42,8 @@ export default {
     deleteRestaurantSuccess: 'ご指定の店舗を削除できました！',
 
     /* Admin User */
-    fetchUserListFailed: 'ユーザリストを取得できませんでした！',
-    fetchUserListSuccess: 'ユーザリストを取得できました！',
+    fetchUserListFailed: 'ユーザーリストを取得できませんでした！',
+    fetchUserListSuccess: 'ユーザーリストを取得できました！',
 
     /* Admin Master Data */
     /* for Restaurant */
@@ -61,17 +61,17 @@ export default {
       '店舗向けの入力項目の選択肢を削除できました！',
     /* for User */
     fetchUserMasterdataFailed:
-      'ユーザ向けの入力項目の選択肢を取得できませんでした！',
+      'ユーザー向けの入力項目の選択肢を取得できませんでした！',
     fetchUserMasterdataSuccess:
-      'ユーザ向けの入力項目の選択肢を取得できました！',
+      'ユーザー向けの入力項目の選択肢を取得できました！',
     createUserMasterdataFailed:
-      'ユーザ向けの入力項目の選択肢を登録できませんでした！',
+      'ユーザー向けの入力項目の選択肢を登録できませんでした！',
     createUserMasterdataSuccess:
-      'ユーザ向けの入力項目の選択肢を登録できました！',
+      'ユーザー向けの入力項目の選択肢を登録できました！',
     deleteUserMasterdataFailed:
-      'ユーザ向けの入力項目の選択肢を削除できませんでした！',
+      'ユーザー向けの入力項目の選択肢を削除できませんでした！',
     deleteUserMasterdataSuccess:
-      'ユーザ向けの入力項目の選択肢を削除できました！',
+      'ユーザー向けの入力項目の選択肢を削除できました！',
     /* Japan's Province */
     fetchProvinceFailed: '都道府県情報を取得できませんでした',
     fetchProvinceSuccess: '都道府県情報を取得できました',
@@ -159,12 +159,20 @@ export default {
       /* Restaurant Review */
       fetchRestaurantReviewFailed: '口コミ情報を取得できませんでした！',
       fetchRestaurantReviewSuccess: '口コミ情報を取得できました！',
+      deleteRestaurantReviewFailed: 'ご指定の口コミを削除できませんでした！',
+      deleteRestaurantReviewSuccess: 'ご指定の口コミを削除できました！',
     },
 
     /* Edit User */
     editUser: {
       /* User Payment */
+      fetchUserPaymentLogFailed: 'ユーザーの課金履歴を取得できませんでした！',
+      fetchUserPaymentLogSuccess: 'ユーザーの課金履歴を取得できました！',
+
       /* User Profile */
+      fetchUserInformationFailed: 'ユーザー情報を取得できませんでした！',
+      fetchUserInformationSuccess: 'ユーザー情報を取得できました！',
+
       /* User Feeling Today */
     },
   },
@@ -222,6 +230,7 @@ export default {
   restaurant: {
     pageTitle: '店舗リスト',
 
+    showLatestCreatedRestaurant: '最新登録した情報を表示する',
     createNewRestaurant: '店舗を新規登録する',
     newUsername: 'ユーザー名',
     newPassword: 'パスワード',
@@ -244,7 +253,7 @@ export default {
   /* User Page */
   user: {
     pageTitle: 'ユーザーリスト',
-    actionHeader: '編集',
+    actionHeader: '詳細',
     nickNameHeader: 'ニックネーム',
     facebookFullNameHeader: 'Facebookのフルネーム',
     createdAtHeader: '作成時間',
@@ -326,144 +335,195 @@ export default {
   editRestaurant: {
     /* Payment Page */
     payment: {
-      greeting: 'This restaurant is',
-      changeRole: "Can not change restaurant's role yet.",
+      greeting: 'この店舗は',
+      changeRole:
+        '現状、店舗を無料会員・有料会員の切り替えができていません。2月中に実装する予定です。',
     },
 
     /* Information Page */
     information: {
       /* FREE restaurant information */
-      freeRestaurantInformation: 'FREE Restaurant Information',
-      restaurantName: 'Restaurant Name',
-      email: 'Email',
-      phoneNumber: 'Phone Number',
-      addressLevelOne: 'Address Level One',
-      addressLevelTwo: 'Address Level Two',
-      addressLevelThree: 'Address Level Three',
-      specificAddress: 'Specific Address',
-      accessibility: 'Accessibility (transport)',
-      shortDescription: 'Short Description',
-      openingHours: 'Opening Hours',
-      openingHoursForSearch: 'Opening Hours (for Search)',
-      regularHolidays: 'Regular Holidays',
+      freeRestaurantInformation: '無料会員店舗情報',
+      restaurantName: '店名',
+      email: 'Eメール',
+      phoneNumber: '電話番号',
+      addressLevelOne: '都道府県',
+      addressLevelTwo: '市区町村',
+      addressLevelThree: '町名',
+      specificAddress: '番地・建物名',
+      accessibility: 'アクセス（交通手段）',
+      shortDescription: '簡易紹介文',
+      openingHours: '営業時間',
+      openingHoursForSearch: '営業時間（検索用）',
+      regularHolidays: '定休日',
       url: 'URL',
-      genderRatioMan: 'Gender Ratio (Male)',
-      genderRatioLady: 'Gender Ratio (Female)',
-      ratioMan: 'Male',
-      ratioLady: 'Female',
-      vs: 'vs',
-      male: 'Male',
-      female: 'Female',
-      customerAgeMin: 'Customer Age Min',
-      customerAgeMax: 'Customer Age Max',
-      yearsOld: 'years old',
-      from: 'From',
-      to: 'To',
-      aloneMenu: 'Alone Menu',
-      typeOfSake: 'Type of Sake',
-      moreThansKind: 'more thans kind',
-      budgetPerPersonLow: 'Budget per Person Low',
-      budgetPerPersonHigh: 'Budget per Person High',
-      japaneseYen: 'JPY',
-      sake: 'Sake',
-      lonelyScene: 'Lonely Scene',
+      genderRatioMan: '男女比（男性）',
+      genderRatioLady: '男女比（女性）',
+      ratioMan: '男性',
+      ratioLady: '女性',
+      vs: '対',
+      male: '男性',
+      female: '女性',
+      customerAgeMin: 'お客様年代・から',
+      customerAgeMax: 'お客様年代・まで',
+      yearsOld: '歳',
+      from: 'から',
+      to: 'まで',
+      aloneMenu: '一人呑みメニュー',
+      typeOfSake: 'お酒の種類',
+      moreThansKind: '種類以上',
+      budgetPerPersonLow: '一人呑み予算・から',
+      budgetPerPersonHigh: '一人呑み予算・まで',
+      japaneseYen: '円',
+      sake: 'お酒',
+      lonelyScene: '一人呑みシーン',
 
       /* PREMIUM restaurant information */
-      onlyForPremiumUser: 'Only PREMIUM RESTAURANT can use this feature!',
-      premiumRestaurantInformation: 'PREMIUM Restaurant Information',
-      yomigana: 'Yomigana',
-      payment: 'Payment',
+      premiumRestaurantInformation: 'プレミアム会員店舗情報',
+      yomigana: 'よみがな',
+      payment: '支払い方法',
       snsFacebook: 'SNS Facebook',
       snsTwitter: 'SNS Twitter',
       snsInstagram: 'SNS Instagram',
-      numberOfSeatCounter: 'Number of Seat (Counter)',
-      numberOfSeatTable: 'Number of Seat (Table)',
-      seat: 'seat',
-      counter: 'Counter',
-      table: 'Table',
-      smoking: 'Smoking',
-      languages: 'Languages',
-      feature: 'Feature',
-      salesInformation: 'Sales Information',
-      typeOfMenu: 'Type of Menu',
-      theAtmosphereOfTheCounters: 'The Atmosphere of The Counters',
-      remarks: 'Remarks',
-      location: 'Location',
-      memberRegistrationDate: 'Member Registration Date',
-      openDate: 'Open Date',
-      maskDatetime: '####/##',
-      catchphrase: 'Catchphrase',
+      numberOfSeatCounter: '席数（カウンター）',
+      numberOfSeatTable: '席数（テーブル）',
+      seat: '席',
+      counter: 'カウンター',
+      table: 'テーブル',
+      smoking: '禁煙・喫煙',
+      languages: '言葉',
+      feature: '特徴',
+      salesInformation: '営業情報',
+      typeOfMenu: '料理',
+      theAtmosphereOfTheCounters: 'カウンターの雰囲気',
+      remarks: '備考',
+      location: 'ロケーション',
+      memberRegistrationDate: '会員登録日',
+      openDate: 'オープン年月',
+      maskDatetime: '####年##月',
+      catchphrase: 'キャッチフレーズ',
 
-      uploadPhoto: 'Upload Photo',
-      confirmDeletePhoto: 'Are you sure you want to delete this photo?',
-      saveBtn: 'Save Restaurant Information',
+      uploadPhoto: '画像アップロード',
+      confirmDeletePhoto: 'この画像を削除しますか？',
+      saveBtn: '店舗情報を保存する',
     },
 
     /* Menu Page */
     menu: {
-      photos: 'Menu photo',
-      listItem: 'List item',
-      photoDescription: 'Photo description',
-      uploadPhoto: 'Upload Photo',
-      confirmDeletePhoto: 'Are you sure you want to delete this photo?',
+      photos: 'メニュー画像',
+      listItem: 'メニューリスト',
+      photoDescription: '画像の説明',
+      uploadPhoto: '画像アップロード',
+      confirmDeletePhoto: 'この画像を削除しますか？',
 
-      food: 'Food',
-      drink: 'Drink',
+      food: 'フード',
+      drink: 'ドリンク',
 
-      actionHeader: 'Actions',
-      nameHeader: 'Item Name',
-      priceHeader: 'Price',
-      createdAtHeader: 'Created At',
+      actionHeader: 'アクション',
+      nameHeader: 'アイテム名',
+      priceHeader: '価格',
+      createdAtHeader: '作成時間',
 
-      createNewCategory: 'Create new category',
-      editCategory: 'Edit category',
-      categoryName: 'Category Name',
-      confirmDeleteCategory: 'Are you sure you want to delete this category?',
+      createNewCategory: 'カテゴリー追加',
+      editCategory: 'カテゴリー名編集',
+      categoryName: 'カテゴリー名',
+      confirmDeleteCategory: 'このカテゴリーを削除しますか？',
 
-      addItem: 'Add Item',
-      createNewMenuItem: 'Create new menu item',
-      editMenuItem: 'Edit menu item',
-      menuItemName: 'Menu Item Name',
-      menuItemPrice: 'Menu Item Price',
-      confirmDeleteMenuItem: 'Are you sure you want to delete this menu item?',
+      addItem: 'アイテム追加',
+      createNewMenuItem: 'アイテム追加',
+      editMenuItem: 'アイテム編集',
+      menuItemName: 'アイテム名',
+      menuItemPrice: '価格',
+      confirmDeleteMenuItem: 'このアイテムを削除しますか？',
     },
 
     /* Staff Page */
     staff: {
-      createNewStaff: 'Create New Staff',
-      editStaff: 'Edit Staff',
-      confirmDeleteStaff: 'Are you sure you want to delete this staff?',
+      createNewStaff: 'スタッフ追加',
+      editStaff: 'ステッフ編集',
+      confirmDeleteStaff: 'このスタッフ情報を削除しますか？',
 
-      photo: 'Staff Photo',
-      name: 'Name',
-      birthday: 'Birthday',
-      birthplace: 'Birthplace',
-      maskDate: '####/##/##',
-      title: 'Title',
-      style: 'Style',
-      profile: 'Profile',
-      canTalk: 'Can Talk',
+      photo: 'スタッフ写真',
+      name: '名前',
+      birthday: '生年月日',
+      birthplace: '出身地',
+      maskDate: '####年##月##日',
+      title: '肩書',
+      style: '接客スタイル',
+      profile: 'プロフィール',
+      canTalk: '語れます',
     },
 
     /* Review Page */
     review: {
-      pageTitle: 'Review',
-      nicknameHeader: 'Nickname',
-      rateHeader: 'Rate',
-      commentHeader: 'Comment',
-      updatedAtHeader: 'Updated At',
+      pageTitle: '口コミ',
+      actionHeader: '削除',
+      nicknameHeader: 'ニックネーム',
+      rateHeader: 'レーティング',
+      commentHeader: 'コメント',
+      updatedAtHeader: '更新時間',
+      confirmDeleteRestaurant: 'このレビューを削除しますか？',
     },
   },
 
   /* Edit User */
   editUser: {
-    /* Profile Page */
-    information: {},
-
     /* Payment Page */
-    payment: {},
+    payment: {
+      greeting: 'このユーザーは',
+      changeRole:
+        '現状、ユーザーを無料会員・有料会員の切り替えができていません。2月中に実装する予定です。',
+      paymentLogTitle: 'ユーザーの課金履歴',
+      descriptionHeader: '課金内容',
+      createdAtHeader: '作成時間',
+      updatedAtHeader: '更新時間',
+    },
+
+    /* Profile Page */
+    profile: {
+      pageTitle: 'プロフィール',
+
+      secret: '秘密',
+      userId: 'ユーザーID',
+      nickName: 'ニックネーム',
+      facebookFullName: '氏名',
+      facebookAvatar: 'アバター',
+      facebookEmail: 'Eメール',
+      facebookBirthday: '生年月日',
+      photos: '写真',
+      selfIntroduction: '自己紹介',
+      singlePersonArea: '一人呑みエリア',
+      occupation: '職業',
+      sake: 'お酒',
+      smoking: 'タバコ',
+      storyStance: '話のスタンス',
+      favoriteConversationGenre: '好きな会話ジャンル',
+      personal: 'パーソナル',
+      whenDrinkingAlone: '1人呑み時',
+      residence: '居住地',
+      placeOfBirth: '出身地',
+      createdAt: '作成時間',
+      updatedAt: '更新時間',
+      maskDate: '####年##月##日',
+      maskDatetime: '####年##月##日 ##時##分##秒',
+    },
 
     /* Feeling Today Page */
-    feelingToday: {},
+    feelingToday: {
+      pageTitle: '今夜の気分',
+
+      drinkingArea: '呑みたいエリア',
+      todayComment: '今日のコメント',
+      ageOfPartner: '呑みたい年齢',
+      ageOfPartnerMin: '呑みたい年齢・から',
+      ageOfPartnerMax: '呑みたい年齢・まで',
+      age: '歳',
+      genderOfPartner: '呑みたい相手',
+      yourFeeling: '希望するノリ',
+      paymentFeeling: 'お支払い',
+      timeFeeling: '何時からあいてる',
+      updatedAt: '更新時間',
+      maskDatetime: '####年##月##日 ##時##分##秒',
+    },
   },
 };

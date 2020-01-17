@@ -5,23 +5,32 @@ import { DELETE_RESTAURANT } from '../../../graphql/mutations/deleteRestaurant';
 /**
  * @description call API Fetch Restaurant List
  * @author AnhTQ
- * @date 2020-01-12
+ * @date 2020-01-15
  * @export
  * @param {*} { commit }
- * @param {*} { apolloClient }
+ * @param {*} { apolloClient, pager }
  * @returns
  */
-export async function apiFetchRestaurantAction({ commit }, { apolloClient }) {
+export async function apiFetchRestaurantAction(
+  { commit },
+  { apolloClient, pager }
+) {
   try {
     const response = await apolloClient.query({
       query: ADMIN_RESTAURANT_LIST,
-      variables: { pager: { limit: 1000000, pageNum: 1 } },
+      variables: { pager },
     });
 
     // Fetch Success
     if (response.data.result.error.requestResolved) {
-      commit('saveRestaurantMutation', { response });
-      return { requestResolved: true };
+      const needGetMoreData =
+        response.data.result.response.adminRestaurantList.length > 0;
+      commit('saveRestaurantMutation', {
+        response,
+        pageNum: pager.pageNum,
+        needGetMoreData,
+      });
+      return { requestResolved: true, needGetMoreData };
     }
     // Fetch Failed
     else {
@@ -68,14 +77,14 @@ export async function apiCreateRestaurantAction(
 /**
  * @description call API Delete Restaurant
  * @author AnhTQ
- * @date 2020-01-09
+ * @date 2020-01-16
  * @export
- * @param {*} context
+ * @param {*} { commit }
  * @param {*} { apolloClient, input }
  * @returns
  */
 export async function apiDeleteRestaurantAction(
-  context,
+  { commit },
   { apolloClient, input }
 ) {
   try {
@@ -86,6 +95,9 @@ export async function apiDeleteRestaurantAction(
 
     // Delete Success
     if (response.data.result.requestResolved) {
+      commit('saveDeletedRestaurantMutation', {
+        restaurantId: input.restaurantId,
+      });
       return { requestResolved: true };
     }
     // Delete Failed

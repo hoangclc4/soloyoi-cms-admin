@@ -2,64 +2,64 @@
   <q-page padding>
     <!-- content -->
     <q-linear-progress v-if="loading" indeterminate />
+    <q-dialog v-model="openDialogToUpload" persistent>
+      <q-card class="full-width">
+        <q-card-section>
+          <div class="text-h6">
+            {{ $t('editRestaurant.information.uploadPhoto') }}
+          </div>
+        </q-card-section>
+
+        <q-card-section>
+          <VueCropper
+            ref="cropper"
+            :aspect-ratio="3 / 2"
+            :src="selectedImage.src"
+            preview=".preview"
+            class="full-width"
+            style="max-height: 25em"
+          />
+        </q-card-section>
+
+        <q-card-actions align="right" class="text-primary">
+          <q-btn
+            flat
+            :label="$t('cancel')"
+            @click="clearSelectedImage($refs, selectedImage)"
+            v-close-popup
+          />
+          <q-btn
+            color="primary"
+            icon-right="ion-cloud-upload"
+            :label="$t('upload')"
+            @click="uploadRestarantPhoto($refs, selectedImage)"
+            v-close-popup
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="confirmToDeletePhoto">
+      <q-card>
+        <q-card-section class="row items-center">
+          <q-avatar icon="ion-trash" color="negative" text-color="white" />
+          <span class="q-ml-sm">
+            {{ $t('editRestaurant.information.confirmDeletePhoto') }}
+          </span>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat :label="$t('cancel')" color="primary" v-close-popup />
+          <q-btn
+            flat
+            :label="$t('delete')"
+            @click="deleteRestaurantPhoto(deletePhotoIndex)"
+            color="negative"
+            v-close-popup
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
     <q-card>
-      <q-dialog v-model="openDialogToUpload" persistent>
-        <q-card class="full-width">
-          <q-card-section>
-            <div class="text-h6">
-              {{ $t('editRestaurant.information.uploadPhoto') }}
-            </div>
-          </q-card-section>
-
-          <q-card-section>
-            <VueCropper
-              ref="cropper"
-              :aspect-ratio="3 / 2"
-              :src="selectedImage.src"
-              preview=".preview"
-              class="full-width"
-              style="max-height: 25em"
-            />
-          </q-card-section>
-
-          <q-card-actions align="right" class="text-primary">
-            <q-btn
-              flat
-              :label="$t('cancel')"
-              @click="clearSelectedImage($refs, selectedImage)"
-              v-close-popup
-            />
-            <q-btn
-              color="primary"
-              icon-right="ion-cloud-upload"
-              :label="$t('upload')"
-              @click="uploadRestarantPhoto($refs, selectedImage)"
-              v-close-popup
-            />
-          </q-card-actions>
-        </q-card>
-      </q-dialog>
-      <q-dialog v-model="confirmToDeletePhoto">
-        <q-card>
-          <q-card-section class="row items-center">
-            <q-avatar icon="ion-trash" color="negative" text-color="white" />
-            <span class="q-ml-sm">
-              {{ $t('editRestaurant.information.confirmDeletePhoto') }}
-            </span>
-          </q-card-section>
-
-          <q-card-actions align="right">
-            <q-btn flat :label="$t('cancel')" color="primary" v-close-popup />
-            <q-btn
-              flat
-              :label="$t('delete')"
-              @click="deleteRestaurantPhoto(deletePhotoIndex)"
-              color="negative"
-              v-close-popup
-            />
-          </q-card-actions>
-        </q-card>
-      </q-dialog>
       <q-item class="justify-center">
         <q-item-section round style="max-width: 30%">
           <q-img
@@ -508,7 +508,7 @@
         icon="ion-pricetags"
         :label="$t('editRestaurant.information.premiumRestaurantInformation')"
       >
-        <q-card v-if="getRestaurantInfoGetter.isVip">
+        <q-card>
           <q-item>
             <q-item-section
               v-for="photo in photos"
@@ -861,6 +861,7 @@
                 dense
                 v-model="getRestaurantInfoGetter.vipRestaurant.openDate"
                 @blur="(e) => checkOpenDate(e.target.value)"
+                @focus="disableSaveButton = true"
                 :error="errors.openDate"
                 :mask="$t('editRestaurant.information.maskDatetime')"
                 fill-mask
@@ -880,11 +881,6 @@
             </q-item-section>
           </q-item>
         </q-card>
-        <q-card v-else>
-          <q-card-section>
-            {{ $t('onlyForPremiumRestaurant') }}
-          </q-card-section>
-        </q-card>
       </q-expansion-item>
 
       <q-separator />
@@ -892,6 +888,7 @@
       <q-item class="full-width">
         <q-item-section class="full-width">
           <q-btn
+            :disable="disableSaveButton"
             icon="ion-save"
             :label="$t('editRestaurant.information.saveBtn')"
             color="primary"
@@ -913,10 +910,11 @@ export default {
   components: {
     VueCropper,
   },
-  name: 'information',
+  name: 'edit-restaurant-information',
   data() {
     return {
       loading: false,
+      disableSaveButton: false,
       openDialogToUpload: false,
       confirmToDeletePhoto: false,
       deletePhotoIndex: -1,
@@ -948,26 +946,27 @@ export default {
     ]),
   },
   methods: {
-    ...mapActions('information', [
+    ...mapActions('common', ['isInvalidDatetimeAction']),
+    ...mapActions('masterdata', ['apiFetchChildProvinceAction']),
+    ...mapActions('restaurant', [
       'apiUpdateRestaurantAction',
       'apiUpdateRestaurantPhotoAction',
       'apiDeleteRestaurantPhotoAction',
-    ]),
-    ...mapActions('common', [
-      'isInvalidDatetimeAction',
-      'apiFetchChildProvinceAction',
     ]),
 
     checkOpenDate(date) {
       // not required field
       if (isNaN(parseInt(date))) {
         this.errors.openDate = false;
+        this.disableSaveButton = false;
         return;
       }
 
       this.isInvalidDatetimeAction(date).then(
         (isInvalid) => (this.errors.openDate = isInvalid)
       );
+
+      this.disableSaveButton = false;
     },
 
     async fetchChildProvinceLevel(addressLevel, needReload, parentId, update) {
@@ -1049,7 +1048,9 @@ export default {
       if (result.requestResolved) {
         // Update success
         this.$q.notify({
-          message: this.$t('api.updateRestaurantInformationSuccess'),
+          message: this.$t(
+            'api.editRestaurant.updateRestaurantInformationSuccess'
+          ),
           color: 'green-5',
         });
         this.loading = false;
@@ -1062,7 +1063,9 @@ export default {
             })
           : // Update failed, got something wrong with user
             this.$q.notify({
-              message: this.$t('api.updateRestaurantInformationFailed'),
+              message: this.$t(
+                'api.editRestaurant.updateRestaurantInformationFailed'
+              ),
               color: 'deep-orange-4',
             });
 
@@ -1131,8 +1134,9 @@ export default {
 
         const photo = formData.entries().next().value[1];
         const input = isAddNew
-          ? { photoTypes }
+          ? { restaurantId: this.$route.params.id, photoTypes }
           : {
+              restaurantId: this.$route.params.id,
               oldPhotoId: restaurantPhoto[photoIndex].photoId,
               photoTypes,
             };
@@ -1147,7 +1151,7 @@ export default {
         if (result.requestResolved) {
           // Upload success
           this.$q.notify({
-            message: this.$t('api.uploadRestaurantPhotoSuccess'),
+            message: this.$t('api.editRestaurant.uploadRestaurantPhotoSuccess'),
             color: 'green-5',
           });
           this.clearSelectedImage($refs, selectedImage);
@@ -1161,7 +1165,9 @@ export default {
               })
             : // Upload failed, got something wrong with user
               this.$q.notify({
-                message: this.$t('api.uploadRestaurantPhotoFailed'),
+                message: this.$t(
+                  'api.editRestaurant.uploadRestaurantPhotoFailed'
+                ),
                 color: 'deep-orange-4',
               });
 
@@ -1181,6 +1187,7 @@ export default {
       // Call API Delete Restaurant Photo
       const apolloClient = this.$apollo.provider.defaultClient;
       const input = {
+        restaurantId: this.$route.params.id,
         photoId: this.getRestaurantInfoGetter.photos[photoIndex].photoId,
       };
       const result = await this.apiDeleteRestaurantPhotoAction({
@@ -1192,7 +1199,7 @@ export default {
       if (result.requestResolved) {
         // Delete success
         this.$q.notify({
-          message: this.$t('api.deleteRestaurantPhotoSuccess'),
+          message: this.$t('api.editRestaurant.deleteRestaurantPhotoSuccess'),
           color: 'green-5',
         });
         this.loading = false;
@@ -1205,7 +1212,9 @@ export default {
             })
           : // Delete failed, got something wrong with user
             this.$q.notify({
-              message: this.$t('api.deleteRestaurantPhotoFailed'),
+              message: this.$t(
+                'api.editRestaurant.deleteRestaurantPhotoFailed'
+              ),
               color: 'deep-orange-4',
             });
 
