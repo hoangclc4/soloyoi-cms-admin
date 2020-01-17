@@ -22,7 +22,6 @@ export default {
   reviewFieldAgain: 'Please review fields again',
   pleaseSelectAnImageFile: 'Please select an image file!',
   notSupportedFileReaderAPI: 'Not supported File Reader API',
-  onlyForPremiumRestaurant: 'Only PREMIUM RESTAURANT can use this feature!',
 
   /* Call API */
   api: {
@@ -364,7 +363,6 @@ export default {
       lonelyScene: 'Lonely Scene',
 
       /* PREMIUM restaurant information */
-      onlyForPremiumUser: 'Only PREMIUM RESTAURANT can use this feature!',
       premiumRestaurantInformation: 'PREMIUM Restaurant Information',
       yomigana: 'Yomigana',
       payment: 'Payment',
@@ -496,7 +494,7 @@ export default {
 
     /* Feeling Today Page */
     feelingToday: {
-      title: 'Feeling Today',
+      pageTitle: 'Feeling Today',
       drinkingArea: 'Drinking Area',
       todayComment: 'Today Comment',
       ageOfPartner: 'Age of Partner',

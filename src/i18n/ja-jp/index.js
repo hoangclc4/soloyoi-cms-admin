@@ -23,7 +23,6 @@ export default {
   pleaseSelectAnImageFile: '画像ファイルを選択してください！',
   notSupportedFileReaderAPI:
     'このブラウザーはFile Readerをサポートしていません',
-  onlyForPremiumRestaurant: 'プレミアム会員にアップグレードしてください！',
 
   /* Call API */
   api: {
