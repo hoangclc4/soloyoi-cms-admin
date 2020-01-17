@@ -15,6 +15,12 @@
           </q-item-section>
         </q-item>
         <q-toolbar-title />
+        <q-btn
+          flat
+          @click="$i18n.locale = $i18n.locale === 'ja-jp' ? 'en-us' : 'ja-jp'"
+        >
+          <img :src="`statics/set-locale-${$i18n.locale}.png`" width="42em" />
+        </q-btn>
         <q-btn dense flat round icon="menu" @click="right = !right" />
       </q-toolbar>
     </q-header>
