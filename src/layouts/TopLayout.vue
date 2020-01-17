@@ -191,32 +191,41 @@ export default {
     async fetchRestaurantList() {
       // Call API fetch restaurant list
       const apolloClient = this.$apollo.provider.defaultClient;
-      const result = await this.apiFetchRestaurantAction({
-        apolloClient,
-      });
+      // TODO: need to apply pagination for performance when fetch data
+      let needGetMoreData = true;
+      let pageNum = 1;
+      while (needGetMoreData) {
+        const pager = { limit: 500, pageNum: pageNum++ };
+        const result = await this.apiFetchRestaurantAction({
+          apolloClient,
+          pager,
+        });
 
-      if (result.requestResolved) {
-        // Fetch success
-      } else {
-        result.systemError
-          ? // Fetch failed, got something wrong with system
-            this.$q.notify({
-              message: `${result.systemError}`,
-              color: 'deep-orange-4',
-            })
-          : // Fetch failed, got something wrong with user
-            this.$q.notify({
-              message: this.$t('api.fetchRestaurantListFailed'),
-              color: 'deep-orange-4',
-            });
+        if (result.requestResolved) {
+          // Fetch success
+          needGetMoreData = result.needGetMoreData;
+        } else {
+          result.systemError
+            ? // Fetch failed, got something wrong with system
+              this.$q.notify({
+                message: `${result.systemError}`,
+                color: 'deep-orange-4',
+              })
+            : // Fetch failed, got something wrong with user
+              this.$q.notify({
+                message: this.$t('api.fetchRestaurantListFailed'),
+                color: 'deep-orange-4',
+              });
+          break;
+        }
       }
     },
     async fetchUserList() {
       // Call API fetch user list
       const apolloClient = this.$apollo.provider.defaultClient;
-      const result = await this.apiFetchUserAction({
-        apolloClient,
-      });
+      // TODO: need to apply pagination for performance when fetch data
+      const pager = { limit: 1000000, pageNum: 1 };
+      const result = await this.apiFetchUserAction({ apolloClient, pager });
 
       if (result.requestResolved) {
         // Fetch success
@@ -351,8 +360,11 @@ export default {
     async fetchAdminNotification() {
       // Call API fetch Admin Notification
       const apolloClient = this.$apollo.provider.defaultClient;
+      // TODO: need to apply pagination for performance when fetch data
+      const pager = { limit: 1000000, pageNum: 1 };
       const result = await this.apiFetchAdminNotificationAction({
         apolloClient,
+        pager,
       });
 
       if (result.requestResolved) {

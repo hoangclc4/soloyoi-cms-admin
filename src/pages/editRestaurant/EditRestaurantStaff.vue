@@ -2,21 +2,897 @@
   <q-page padding>
     <!-- content -->
     <q-linear-progress v-if="loading" indeterminate />
-    Coming soon...
+    <input
+      @change="(e) => onFileChange(e)"
+      type="file"
+      ref="changeStaffPhoto"
+      name="image"
+      accept="image/*"
+      style="display: none;"
+    />
+
+    <q-dialog v-model="openDialogToUploadStaffPhoto" persistent>
+      <q-card class="full-width">
+        <q-card-section>
+          <div class="text-h6">{{ $t('editRestaurant.staff.photo') }}</div>
+        </q-card-section>
+
+        <q-card-section>
+          <VueCropper
+            ref="cropper"
+            :aspect-ratio="3 / 2"
+            :src="selectedImage.src"
+            preview=".preview"
+            class="full-width"
+            style="max-height: 25em"
+          />
+        </q-card-section>
+
+        <q-card-actions align="right" class="text-primary">
+          <q-btn
+            flat
+            :label="$t('cancel')"
+            @click="clearSelectedImage()"
+            v-close-popup
+          />
+          <q-btn
+            color="primary"
+            icon-right="ion-checkmark"
+            :label="$t('confirm')"
+            @click="confirmStaffPhoto($refs, selectedImage.isAddNew)"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="confirmToDeleteStaff">
+      <q-card>
+        <q-card-section class="row items-center">
+          <q-avatar icon="ion-trash" color="negative" text-color="white" />
+          <span class="q-ml-sm">
+            {{ $t('editRestaurant.staff.confirmDeleteStaff') }}
+          </span>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat :label="$t('cancel')" color="primary" v-close-popup />
+          <q-btn
+            flat
+            :label="$t('delete')"
+            @click="deleteStaff()"
+            color="negative"
+            v-close-popup
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-dialog
+      v-for="staff in dialogStaff"
+      :key="staff.title"
+      v-model="staff.openDialog"
+    >
+      <q-card class="full-width">
+        <q-card-section class="row justify-between">
+          <div class="justify-center text-h6">
+            {{ staff.title }}
+          </div>
+        </q-card-section>
+
+        <q-card-section class="row justify-center">
+          <q-img
+            spinner-color="orange-2"
+            :src="staff.isAddNew ? newStaff.photoSrc : updatedStaff.photoSrc"
+            :ratio="3 / 2"
+            class="rounded-borders shadow-1"
+            style="max-width: 19em"
+          />
+          <q-btn
+            dense
+            :color="
+              staff.isAddNew
+                ? errors.newStaff.photoFile
+                  ? 'negative'
+                  : 'primary'
+                : 'primary'
+            "
+            icon="ion-create"
+            @click="onSelectStaffPhoto(staff.isAddNew)"
+          />
+        </q-card-section>
+
+        <q-card-section class="q-py-none">
+          <q-input
+            v-if="staff.isAddNew"
+            v-model="newStaff.name"
+            :error="errors.newStaff.name"
+            @blur="() => (errors.newStaff.name = newStaff.name === '')"
+            outlined
+            dense
+            autofocus
+            :label="$t('editRestaurant.staff.name')"
+            class="q-py-sm"
+          />
+          <q-input
+            v-else
+            v-model="updatedStaff.name"
+            :error="errors.updatedStaff.name"
+            outlined
+            dense
+            autofocus
+            :label="$t('editRestaurant.staff.name')"
+            class="q-py-sm"
+          />
+        </q-card-section>
+        <q-card-section class="q-py-none">
+          <q-input
+            v-if="staff.isAddNew"
+            outlined
+            dense
+            v-model="newStaff.birthday"
+            :error="errors.newStaff.birthday"
+            :mask="$t('editRestaurant.staff.maskDate')"
+            fill-mask
+            @blur="(e) => checkOpenDate(e.target.value, staff.isAddNew)"
+            :label="$t('editRestaurant.staff.birthday')"
+            class="q-py-sm"
+          />
+          <q-input
+            v-else
+            outlined
+            dense
+            v-model="updatedStaff.birthday"
+            :error="errors.updatedStaff.birthday"
+            :mask="$t('editRestaurant.staff.maskDate')"
+            fill-mask
+            @blur="(e) => checkOpenDate(e.target.value, staff.isAddNew)"
+            :label="$t('editRestaurant.staff.birthday')"
+            class="q-py-sm"
+          />
+        </q-card-section>
+        <q-card-section class="q-py-none">
+          <q-select
+            v-if="staff.isAddNew"
+            outlined
+            v-model="newStaff.birthplace"
+            :options="getRestaurantMasterdataGetter.StaffBirthplace"
+            option-label="value"
+            options-dense
+            dense
+            :label="$t('editRestaurant.staff.birthplace')"
+            class="q-py-sm"
+          >
+            <template v-slot:selected-item="scope">
+              <q-chip
+                removable
+                dense
+                @remove="scope.removeAtIndex(scope.index)"
+                :tabindex="scope.tabindex"
+              >
+                {{ scope.opt.value }}
+              </q-chip>
+            </template>
+          </q-select>
+          <q-select
+            v-else
+            outlined
+            v-model="updatedStaff.birthplace"
+            :options="getRestaurantMasterdataGetter.StaffBirthplace"
+            option-label="value"
+            options-dense
+            dense
+            :label="$t('editRestaurant.staff.birthplace')"
+            class="q-py-sm"
+          >
+            <template v-slot:selected-item="scope">
+              <q-chip
+                removable
+                dense
+                @remove="scope.removeAtIndex(scope.index)"
+                :tabindex="scope.tabindex"
+              >
+                {{ scope.opt.value }}
+              </q-chip>
+            </template>
+          </q-select>
+        </q-card-section>
+        <q-card-section class="q-py-none">
+          <q-input
+            v-if="staff.isAddNew"
+            v-model="newStaff.title"
+            :error="errors.newStaff.title"
+            outlined
+            dense
+            :label="$t('editRestaurant.staff.title')"
+            class="q-py-sm"
+          />
+          <q-input
+            v-else
+            v-model="updatedStaff.title"
+            :error="errors.updatedStaff.title"
+            outlined
+            dense
+            :label="$t('editRestaurant.staff.title')"
+            class="q-py-sm"
+          />
+        </q-card-section>
+        <q-card-section class="q-py-none">
+          <q-select
+            v-if="staff.isAddNew"
+            outlined
+            multiple
+            v-model="newStaff.style"
+            :options="getRestaurantMasterdataGetter.StaffStyle"
+            option-label="value"
+            options-dense
+            dense
+            :label="$t('editRestaurant.staff.style')"
+            class="q-py-sm"
+          >
+            <template v-slot:selected-item="scope">
+              <q-chip
+                removable
+                dense
+                @remove="scope.removeAtIndex(scope.index)"
+                :tabindex="scope.tabindex"
+              >
+                {{ scope.opt.value }}
+              </q-chip>
+            </template>
+          </q-select>
+          <q-select
+            v-else
+            outlined
+            multiple
+            v-model="updatedStaff.style"
+            :options="getRestaurantMasterdataGetter.StaffStyle"
+            option-label="value"
+            options-dense
+            dense
+            :label="$t('editRestaurant.staff.style')"
+            class="q-py-sm"
+          >
+            <template v-slot:selected-item="scope">
+              <q-chip
+                removable
+                dense
+                @remove="scope.removeAtIndex(scope.index)"
+                :tabindex="scope.tabindex"
+              >
+                {{ scope.opt.value }}
+              </q-chip>
+            </template>
+          </q-select>
+        </q-card-section>
+        <q-card-section class="q-py-none">
+          <q-input
+            v-if="staff.isAddNew"
+            v-model="newStaff.profile"
+            :error="errors.newStaff.profile"
+            outlined
+            dense
+            autogrow
+            :label="$t('editRestaurant.staff.profile')"
+            class="q-py-sm"
+          />
+          <q-input
+            v-else
+            v-model="updatedStaff.profile"
+            :error="errors.updatedStaff.profile"
+            outlined
+            dense
+            autogrow
+            :label="$t('editRestaurant.staff.profile')"
+            class="q-py-sm"
+          />
+        </q-card-section>
+        <q-card-section class="q-py-none">
+          <q-select
+            v-if="staff.isAddNew"
+            outlined
+            multiple
+            v-model="newStaff.canTalk"
+            :options="getRestaurantMasterdataGetter.StaffCanTalk"
+            option-label="value"
+            options-dense
+            dense
+            :label="$t('editRestaurant.staff.canTalk')"
+            class="q-py-sm"
+          >
+            <template v-slot:selected-item="scope">
+              <q-chip
+                removable
+                dense
+                @remove="scope.removeAtIndex(scope.index)"
+                :tabindex="scope.tabindex"
+              >
+                {{ scope.opt.value }}
+              </q-chip>
+            </template>
+          </q-select>
+          <q-select
+            v-else
+            outlined
+            multiple
+            v-model="updatedStaff.canTalk"
+            :options="getRestaurantMasterdataGetter.StaffCanTalk"
+            option-label="value"
+            options-dense
+            dense
+            :label="$t('editRestaurant.staff.canTalk')"
+            class="q-py-sm"
+          >
+            <template v-slot:selected-item="scope">
+              <q-chip
+                removable
+                dense
+                @remove="scope.removeAtIndex(scope.index)"
+                :tabindex="scope.tabindex"
+              >
+                {{ scope.opt.value }}
+              </q-chip>
+            </template>
+          </q-select>
+        </q-card-section>
+        <q-card-section align="right" class="text-primary">
+          <q-btn
+            flat
+            :label="$t('cancel')"
+            @click="clearInputStaff(staff.isAddNew)"
+            v-close-popup
+          />
+          <q-btn
+            color="primary"
+            icon-right="ion-send"
+            :label="staff.submitLabel"
+            @click="staff.submitAction"
+          />
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+    <q-card>
+      <q-card-section>
+        <div class="row justify-between">
+          <q-item
+            v-for="staff in staffList"
+            :key="staff.index"
+            style="max-width: 20%"
+            class="width-100 q-pa-xs"
+          >
+            <q-item-section
+              v-if="
+                staff.index !== 0 &&
+                  getStaffGetter[staff.index - 1] === undefined
+              "
+            />
+            <q-item-section
+              v-else-if="getStaffGetter[staff.index] === undefined"
+            >
+              <q-btn
+                icon="ion-add"
+                color="primary"
+                :label="$t('editRestaurant.staff.createNewStaff')"
+                @click="onCreateNewStaff()"
+              />
+            </q-item-section>
+            <q-item-section v-else class="self-start">
+              <q-item-label class="row justify-center">
+                <q-btn
+                  round
+                  dense
+                  color="negative"
+                  icon="ion-trash"
+                  class="q-mx-sm"
+                  @click="onDeleteStaff(getStaffGetter[staff.index])"
+                />
+                <q-btn
+                  round
+                  dense
+                  color="secondary"
+                  icon="ion-create"
+                  class="q-mx-sm"
+                  @click="onEditStaff(getStaffGetter[staff.index])"
+                />
+              </q-item-label>
+              <q-img
+                spinner-color="orange-2"
+                :src="getStaffGetter[staff.index].photoSrc"
+                :ratio="3 / 2"
+                class="rounded-borders shadow-1 q-mt-md"
+              >
+                <div class="absolute-bottom-right text-subtitle2">
+                  {{ staff.index + 1 }}
+                </div>
+              </q-img>
+              <q-input
+                dense
+                outlined
+                readonly
+                v-model="getStaffGetter[staff.index].name"
+                :label="$t('editRestaurant.staff.name')"
+                class="full-width q-mt-md"
+              />
+              <q-input
+                dense
+                outlined
+                readonly
+                v-model="getStaffGetter[staff.index].birthday"
+                :label="$t('editRestaurant.staff.birthday')"
+                :mask="$t('editRestaurant.staff.maskDate')"
+                class="full-width q-mt-md"
+              />
+              <q-select
+                dense
+                outlined
+                readonly
+                hide-dropdown-icon
+                v-model="getStaffGetter[staff.index].birthplace"
+                :label="$t('editRestaurant.staff.birthplace')"
+                class="full-width q-mt-md"
+              >
+                <template v-slot:selected-item="scope">
+                  {{ scope.opt.value }}
+                </template>
+              </q-select>
+              <q-input
+                dense
+                outlined
+                readonly
+                v-model="getStaffGetter[staff.index].title"
+                :label="$t('editRestaurant.staff.title')"
+                class="full-width q-mt-md"
+              />
+              <q-select
+                dense
+                outlined
+                readonly
+                multiple
+                hide-dropdown-icon
+                v-model="getStaffGetter[staff.index].style"
+                :label="$t('editRestaurant.staff.style')"
+                class="full-width q-mt-md"
+              >
+                <template v-slot:selected-item="scope">
+                  <q-chip dense :tabindex="scope.tabindex">
+                    {{ scope.opt.value }}
+                  </q-chip>
+                </template>
+              </q-select>
+              <q-input
+                dense
+                outlined
+                readonly
+                v-model="getStaffGetter[staff.index].profile"
+                type="textarea"
+                rows="2"
+                :label="$t('editRestaurant.staff.profile')"
+                class="full-width q-mt-md"
+              />
+              <q-select
+                dense
+                outlined
+                readonly
+                multiple
+                hide-dropdown-icon
+                v-model="getStaffGetter[staff.index].canTalk"
+                :label="$t('editRestaurant.staff.canTalk')"
+                class="full-width q-mt-md"
+              >
+                <template v-slot:selected-item="scope">
+                  <q-chip dense :tabindex="scope.tabindex">
+                    {{ scope.opt.value }}
+                  </q-chip>
+                </template>
+              </q-select>
+            </q-item-section>
+          </q-item>
+        </div>
+      </q-card-section>
+    </q-card>
   </q-page>
 </template>
 
 <script>
+import { mapActions, mapGetters } from 'vuex';
+import VueCropper from 'vue-cropperjs';
+import 'cropperjs/dist/cropper.css';
+
 export default {
+  components: {
+    VueCropper,
+  },
   name: 'edit-restaurant-staff',
   data() {
     return {
       loading: false,
-      errors: {},
+      errors: {
+        newStaff: {
+          photoFile: false,
+          name: false,
+          birthday: false,
+          birthplace: false,
+          title: false,
+          style: false,
+          profile: false,
+          canTalk: false,
+        },
+        updatedStaff: {
+          name: false,
+          birthday: false,
+          birthplace: false,
+          title: false,
+          style: false,
+          profile: false,
+          canTalk: false,
+        },
+      },
+      staffList: [
+        { index: 0 },
+        { index: 1 },
+        { index: 2 },
+        { index: 3 },
+        { index: 4 },
+      ],
+      dialogStaff: [
+        {
+          isAddNew: true,
+          title: this.$t('editRestaurant.staff.createNewStaff'),
+          openDialog: false,
+          submitLabel: this.$t('create'),
+          submitAction: () => this.createNewStaff(),
+        },
+        {
+          isAddNew: false,
+          title: this.$t('editRestaurant.staff.editStaff'),
+          openDialog: false,
+          submitLabel: this.$t('update'),
+          submitAction: () => this.updateStaff(),
+        },
+      ],
+      openDialogToUploadStaffPhoto: false,
+      selectedImage: { src: '', isAddNew: true },
+      confirmToDeleteStaff: false,
+      deletePhotoIndex: -1,
+      newStaff: {
+        photoSrc: '',
+        photoFile: '',
+        name: '',
+        birthday: `${new Date().getFullYear() - 18}/01/01`,
+        birthplace: null,
+        title: '',
+        style: null,
+        profile: '',
+        canTalk: null,
+      },
+      updatedStaff: {
+        photoSrc: '',
+        photoFile: '',
+        name: '',
+        birthday: '',
+        birthplace: null,
+        title: '',
+        style: null,
+        profile: '',
+        canTalk: null,
+      },
+      deletionStaff: {
+        id: '',
+      },
     };
   },
-  computed: {},
-  methods: {},
+  computed: {
+    ...mapGetters('restaurant', ['getRestaurantInfoGetter', 'getStaffGetter']),
+    ...mapGetters('masterdata', ['getRestaurantMasterdataGetter']),
+  },
+  methods: {
+    ...mapActions('restaurant', [
+      'apiFetchRestaurantStaffAction',
+      'apiCreateRestaurantStaffAction',
+      'apiUpdateRestaurantStaffAction',
+      'apiDeleteRestaurantStaffAction',
+    ]),
+    ...mapActions('common', ['isInvalidDatetimeAction']),
+
+    checkOpenDate(date, isAddNew) {
+      // not required field
+      if (isNaN(parseInt(date))) {
+        if (isAddNew) {
+          this.errors.newStaff.birthday = false;
+        } else {
+          this.errors.updatedStaff.birthday = false;
+        }
+
+        return;
+      }
+
+      this.isInvalidDatetimeAction(date).then((isInvalid) => {
+        if (isAddNew) {
+          this.errors.newStaff.birthday = isInvalid;
+        } else {
+          this.errors.updatedStaff.birthday = isInvalid;
+        }
+      });
+    },
+
+    /* Staff Photo */
+    onSelectStaffPhoto(isAddNew) {
+      this.selectedImage.isAddNew = isAddNew;
+      this.$refs.changeStaffPhoto.click();
+    },
+    onFileChange(e) {
+      const file = e.target.files[0] || e.dataTransfer.files[0];
+      const isNotAnImageFile = file.type.indexOf('image/') === -1;
+      const isSupportFileReaderAPI = typeof FileReader === 'function';
+
+      if (isNotAnImageFile) {
+        this.$q.notify({
+          message: this.$t('pleaseSelectAnImageFile'),
+          color: 'teal-8',
+        });
+        return;
+      }
+
+      if (isSupportFileReaderAPI) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          this.selectedImage.src = event.target.result;
+          this.openDialogToUploadStaffPhoto = true;
+        };
+        reader.readAsDataURL(file);
+      } else {
+        this.$q.notify({
+          message: this.$t('notSupportedFileReaderAPI'),
+          color: 'deep-orange-4',
+        });
+      }
+    },
+    clearSelectedImage() {
+      this.$refs.changeStaffPhoto.value = '';
+    },
+    confirmStaffPhoto($refs, isAddNew) {
+      $refs.cropper.getCroppedCanvas().toBlob((blob) => {
+        const formData = new FormData();
+        formData.append('restaurant-staff-photo', blob, 'staff-photo.png');
+
+        if (isAddNew) {
+          this.newStaff.photoFile = formData.entries().next().value[1];
+        } else {
+          this.updatedStaff.photoFile = formData.entries().next().value[1];
+        }
+      });
+
+      if (isAddNew) {
+        this.newStaff.photoSrc = $refs.cropper.getCroppedCanvas().toDataURL();
+      } else {
+        this.updatedStaff.photoSrc = $refs.cropper
+          .getCroppedCanvas()
+          .toDataURL();
+      }
+
+      this.errors.newStaff.photoFile = false;
+      this.clearSelectedImage();
+      this.openDialogToUploadStaffPhoto = false;
+    },
+
+    /* CRUD Staff */
+    clearInputStaff(isAddNew) {
+      if (isAddNew) {
+        this.newStaff = {
+          photoSrc: '',
+          photoFile: '',
+          name: '',
+          birthday: `${new Date().getFullYear() - 18}/01/01`,
+          birthplace: null,
+          title: '',
+          style: null,
+          profile: '',
+          canTalk: null,
+        };
+      }
+    },
+    onCreateNewStaff() {
+      this.errors.newStaff = {
+        photoFile: false,
+        name: false,
+        birthday: false,
+        birthplace: false,
+        title: false,
+        style: false,
+        profile: false,
+        canTalk: false,
+      };
+      this.dialogStaff[0].openDialog = true;
+    },
+    onEditStaff(staff) {
+      this.updatedStaff = { ...staff };
+      this.dialogStaff[1].openDialog = true;
+    },
+    onDeleteStaff(staff) {
+      this.deletionStaff = staff;
+      this.confirmToDeleteStaff = true;
+    },
+    async createNewStaff() {
+      this.dialogStaff[0].openDialog = false;
+      this.loading = true;
+
+      this.errors.newStaff.photoFile = this.newStaff.photoFile === '';
+      this.errors.newStaff.name = this.newStaff.name === '';
+
+      const gotError =
+        Object.values(this.errors.newStaff).filter((isInvalid) => isInvalid)
+          .length !== 0;
+
+      if (gotError) {
+        this.dialogStaff[0].openDialog = true;
+        this.$q.notify({
+          message: this.$t('reviewFieldAgain'),
+          color: 'teal-8',
+        });
+        this.loading = false;
+      } else {
+        // Call API create new Restaurant Staff
+        const apolloClient = this.$apollo.provider.defaultClient;
+        const input = { restaurantId: this.$route.params.id, ...this.newStaff };
+        const result = await this.apiCreateRestaurantStaffAction({
+          apolloClient,
+          input,
+        });
+
+        if (result.requestResolved) {
+          // Create success
+          this.fetchRestaurantStaff().then(() => {
+            this.clearInputStaff(true);
+            this.$q.notify({
+              message: this.$t(
+                'api.editRestaurant.createRestaurantStaffSuccess'
+              ),
+              color: 'green-5',
+            });
+            this.loading = false;
+          });
+        } else {
+          result.systemError
+            ? // Create failed, got something wrong with system
+              this.$q.notify({
+                message: `${result.systemError}`,
+                color: 'deep-orange-4',
+              })
+            : // Create failed, got something wrong with user
+              this.$q.notify({
+                message: this.$t(
+                  'api.editRestaurant.createRestaurantStaffFailed'
+                ),
+                color: 'deep-orange-4',
+              });
+
+          this.loading = false;
+        }
+      }
+    },
+    async updateStaff() {
+      this.dialogStaff[1].openDialog = false;
+      this.loading = true;
+
+      const gotError =
+        Object.values(this.errors.updatedStaff).filter((isInvalid) => isInvalid)
+          .length !== 0;
+
+      if (gotError) {
+        this.dialogStaff[1].openDialog = true;
+        this.$q.notify({
+          message: this.$t('reviewFieldAgain'),
+          color: 'teal-8',
+        });
+        this.loading = false;
+      } else {
+        // Call API update Restaurant Staff
+        const apolloClient = this.$apollo.provider.defaultClient;
+        const input = {
+          restaurantId: this.$route.params.id,
+          ...this.updatedStaff,
+        };
+        const result = await this.apiUpdateRestaurantStaffAction({
+          apolloClient,
+          input,
+        });
+
+        if (result.requestResolved) {
+          // Update success
+          this.fetchRestaurantStaff().then(() => {
+            this.$q.notify({
+              message: this.$t(
+                'api.editRestaurant.updateRestaurantStaffSuccess'
+              ),
+              color: 'green-5',
+            });
+            this.loading = false;
+          });
+        } else {
+          result.systemError
+            ? // Update failed, got something wrong with system
+              this.$q.notify({
+                message: `${result.systemError}`,
+                color: 'deep-orange-4',
+              })
+            : // Update failed, got something wrong with user
+              this.$q.notify({
+                message: this.$t(
+                  'api.editRestaurant.updateRestaurantStaffFailed'
+                ),
+                color: 'deep-orange-4',
+              });
+
+          this.loading = false;
+        }
+      }
+    },
+    async deleteStaff() {
+      this.confirmToDeleteStaff = false;
+      this.loading = true;
+
+      // Call API Delete Restaurant Staff
+      const apolloClient = this.$apollo.provider.defaultClient;
+      const input = {
+        restaurantId: this.$route.params.id,
+        staffId: this.deletionStaff.id,
+      };
+      const result = await this.apiDeleteRestaurantStaffAction({
+        apolloClient,
+        input,
+      });
+
+      if (result.requestResolved) {
+        // Delete success
+        this.fetchRestaurantStaff().then(() => {
+          this.$q.notify({
+            message: this.$t('api.editRestaurant.deleteRestaurantStaffSuccess'),
+            color: 'green-5',
+          });
+          this.loading = false;
+        });
+      } else {
+        result.systemError
+          ? // Delete failed, got something wrong with system
+            this.$q.notify({
+              message: `${result.systemError}`,
+              color: 'deep-orange-4',
+            })
+          : // Delete failed, got something wrong with user
+            this.$q.notify({
+              message: this.$t(
+                'api.editRestaurant.deleteRestaurantStaffFailed'
+              ),
+              color: 'deep-orange-4',
+            });
+
+        this.loading = false;
+      }
+    },
+
+    async fetchRestaurantStaff() {
+      // Call API fetch Restaurant Staff
+      const apolloClient = this.$apollo.provider.defaultClient;
+      const input = { restaurantId: this.$route.params.id };
+      const result = await this.apiFetchRestaurantStaffAction({
+        apolloClient,
+        input,
+      });
+
+      if (result.requestResolved) {
+        // Fetch success
+      } else {
+        result.systemError
+          ? // Fetch failed, got something wrong with system
+            this.$q.notify({
+              message: `${result.systemError}`,
+              color: 'deep-orange-4',
+            })
+          : // Fetch failed, got something wrong with user
+            this.$q.notify({
+              message: this.$t('api.editRestaurant.fetchRestaurantStaffFailed'),
+              color: 'deep-orange-4',
+            });
+      }
+    },
+  },
   created() {},
 };
 </script>

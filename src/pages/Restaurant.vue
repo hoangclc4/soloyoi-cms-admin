@@ -19,7 +19,9 @@
             autogrow
             v-model="newRestaurant.name"
             @blur="
-              () => (errors.newRestaurant.name = newRestaurant.name === '')
+              () => {
+                errors.newRestaurant.name = newRestaurant.name === '';
+              }
             "
             :error="errors.newRestaurant.name"
           />
@@ -28,8 +30,9 @@
             :label="$t('restaurant.newAddress')"
             v-model="newRestaurant.address"
             @blur="
-              () =>
-                (errors.newRestaurant.address = newRestaurant.address === '')
+              () => {
+                errors.newRestaurant.address = newRestaurant.address === '';
+              }
             "
             :error="errors.newRestaurant.address"
           />
@@ -38,7 +41,9 @@
             :label="$t('restaurant.newEmail')"
             v-model="newRestaurant.email"
             @blur="
-              () => (errors.newRestaurant.email = newRestaurant.email === '')
+              () => {
+                errors.newRestaurant.email = newRestaurant.email === '';
+              }
             "
             :error="errors.newRestaurant.email"
           />
@@ -82,7 +87,7 @@
             outlined
             readonly
             :type="isNewRestaurantPassword ? 'password' : 'text'"
-            :label="$t('restaurant.newAddress')"
+            :label="$t('restaurant.newPassword')"
             v-model="getCreatedRestaurantGetter.password"
           >
             <template v-slot:append>
@@ -127,7 +132,10 @@
             type="submit"
             color="primary"
             icon-right="ion-arrow-forward"
-            @click="comingSoon = true"
+            :to="{
+              name: 'edit-restaurant-information',
+              params: { id: getCreatedRestaurantGetter.restaurantId },
+            }"
           />
         </q-card-actions>
       </q-card>
@@ -169,6 +177,12 @@
       class="full-width item-table"
     >
       <template v-slot:top-right>
+        <q-btn
+          v-if="getCreatedRestaurantGetter.username"
+          color="secondary"
+          :label="$t('restaurant.showLatestCreatedRestaurant')"
+          @click="welcomeNewRestaurant = true"
+        />
         <q-input
           outlined
           dense
@@ -310,6 +324,7 @@ export default {
     },
     onCreateRestaurant() {
       this.errors.newRestaurant = { name: false, address: false, email: false };
+      this.onClearInput();
       this.openCreateRestaurant = true;
     },
     onSuccessToCreateRestaurant() {
@@ -320,14 +335,10 @@ export default {
       this.confirmDeleteRestaurant = true;
     },
     onEditRestaurant(id) {
-      this.comingSoon = true;
-      return id;
-
-      // TODO: apply flow edit restaurant
-      // this.$router.push({
-      //   name: 'edit-restaurant',
-      //   params: { id },
-      // });
+      this.$router.push({
+        name: 'edit-restaurant',
+        params: { id },
+      });
     },
     async createNewRestaurant() {
       this.openCreateRestaurant = false;
@@ -352,14 +363,12 @@ export default {
 
         if (result.requestResolved) {
           // Create success
-          this.fetchRestaurantList().then(() => {
-            this.$q.notify({
-              message: this.$t('api.createRestaurantSuccess'),
-              color: 'green-5',
-            });
-            this.loading = false;
-            this.onSuccessToCreateRestaurant();
+          this.$q.notify({
+            message: this.$t('api.createRestaurantSuccess'),
+            color: 'green-5',
           });
+          this.loading = false;
+          this.onSuccessToCreateRestaurant();
         } else {
           result.systemError
             ? // Create failed, got something wrong with system
@@ -390,13 +399,11 @@ export default {
 
       if (result.requestResolved) {
         // Delete success
-        this.fetchRestaurantList().then(() => {
-          this.$q.notify({
-            message: this.$t('api.deleteRestaurantSuccess'),
-            color: 'green-5',
-          });
-          this.loading = false;
+        this.$q.notify({
+          message: this.$t('api.deleteRestaurantSuccess'),
+          color: 'green-5',
         });
+        this.loading = false;
       } else {
         result.systemError
           ? // Delete failed, got something wrong with system
@@ -411,30 +418,6 @@ export default {
             });
 
         this.loading = false;
-      }
-    },
-
-    async fetchRestaurantList() {
-      // Call API fetch restaurant list
-      const apolloClient = this.$apollo.provider.defaultClient;
-      const result = await this.apiFetchRestaurantAction({
-        apolloClient,
-      });
-
-      if (result.requestResolved) {
-        // Fetch success
-      } else {
-        result.systemError
-          ? // Fetch failed, got something wrong with system
-            this.$q.notify({
-              message: `${result.systemError}`,
-              color: 'deep-orange-4',
-            })
-          : // Fetch failed, got something wrong with user
-            this.$q.notify({
-              message: this.$t('api.fetchRestaurantListFailed'),
-              color: 'deep-orange-4',
-            });
       }
     },
   },

@@ -7,7 +7,11 @@
           <q-item-section
             class="text-uppercase text-weight-bold text-grey-1 text-h5"
           >
-            {{ $t('navigation.editUser.title') }}
+            {{
+              $t('navigation.editUser.title') +
+                '・' +
+                getUserInfoGetter.nickName
+            }}
           </q-item-section>
         </q-item>
         <q-toolbar-title />
@@ -178,7 +182,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 export default {
   name: 'edit-user-layout',
   data() {
@@ -189,12 +193,18 @@ export default {
       confirm: false,
     };
   },
-  computed: {},
+  computed: {
+    ...mapGetters('user', ['getUserInfoGetter']),
+  },
   methods: {
     ...mapActions('auth', ['apiLogoutAction']),
     ...mapActions('masterdata', [
       'apiFetchUserMasterdataAction',
       'apiFetchAllProvinceAction',
+    ]),
+    ...mapActions('user', [
+      'apiFetchUserInformationAction',
+      'apiFetchUserPaymentLogAction',
     ]),
 
     async logout() {
@@ -227,6 +237,66 @@ export default {
       }
     },
 
+    async fetchUserInformation() {
+      // Call API fetch User Master Data
+      const apolloClient = this.$apollo.provider.defaultClient;
+      const input = { userId: this.$route.params.id };
+      const result = await this.apiFetchUserInformationAction({
+        apolloClient,
+        input,
+      });
+
+      if (result.requestResolved) {
+        // Fetch success
+      } else {
+        result.systemError
+          ? // Fetch failed, got something wrong with system
+            this.$q.notify({
+              message: `${result.systemError}`,
+              color: 'deep-orange-4',
+            })
+          : // Fetch failed, got something wrong with user
+            this.$q.notify({
+              message: this.$t('api.editUser.fetchUserMasterdataFailed'),
+              color: 'deep-orange-4',
+            });
+      }
+    },
+    async fetchUserPaymentLog() {
+      // Call API fetch User Master Data
+      const apolloClient = this.$apollo.provider.defaultClient;
+      const input = {
+        userId: this.$route.params.id,
+        startDate: '2019-06-04',
+        endDate: new Date()
+          .toLocaleDateString('ja', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+          })
+          .replace(/\//gi, '-'),
+      };
+      const result = await this.apiFetchUserPaymentLogAction({
+        apolloClient,
+        input,
+      });
+
+      if (result.requestResolved) {
+        // Fetch success
+      } else {
+        result.systemError
+          ? // Fetch failed, got something wrong with system
+            this.$q.notify({
+              message: `${result.systemError}`,
+              color: 'deep-orange-4',
+            })
+          : // Fetch failed, got something wrong with user
+            this.$q.notify({
+              message: this.$t('api.editUser.fetchUserPaymentLogFailed'),
+              color: 'deep-orange-4',
+            });
+      }
+    },
     async fetchMasterdata() {
       await this.fetchUserMasterdata();
       await this.fetchAddressLevelOne();
@@ -298,7 +368,11 @@ export default {
   },
   created() {
     this.loading = true;
-    Promise.all([this.fetchMasterdata()]).then(() => {
+    Promise.all([
+      this.fetchUserInformation(),
+      this.fetchUserPaymentLog(),
+      this.fetchMasterdata(),
+    ]).then(() => {
       this.loading = false;
     });
   },

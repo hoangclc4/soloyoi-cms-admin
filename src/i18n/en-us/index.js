@@ -147,12 +147,20 @@ export default {
       /* Restaurant Review */
       fetchRestaurantReviewFailed: 'Failed to fetch review!',
       fetchRestaurantReviewSuccess: 'Success to fetch review!',
+      deleteRestaurantReviewFailed: 'Failed to delete review!',
+      deleteRestaurantReviewSuccess: 'Success to delete review!',
     },
 
     /* Edit User */
     editUser: {
       /* User Payment */
+      fetchUserPaymentLogFailed: 'Failed to fetch user payment log',
+      fetchUserPaymentLogSuccess: 'Success to fetch user payment log',
+
       /* User Profile */
+      fetchUserInformationFailed: 'Failed to fetch user information',
+      fetchUserInformationSuccess: 'Success to fetch user information',
+
       /* User Feeling Today */
     },
   },
@@ -205,6 +213,7 @@ export default {
   restaurant: {
     pageTitle: 'Restaurant List',
 
+    showLatestCreatedRestaurant: 'Show the latest created',
     createNewRestaurant: 'Create New Restaurant',
     newUsername: 'Username',
     newPassword: 'Password',
@@ -312,7 +321,8 @@ export default {
     /* Payment Page */
     payment: {
       greeting: 'This restaurant is',
-      changeRole: "Can not change restaurant's role yet.",
+      changeRole:
+        "Can not change restaurant's role yet. This feature will be applied in February",
     },
 
     /* Information Page */
@@ -433,22 +443,72 @@ export default {
     /* Review Page */
     review: {
       pageTitle: 'Review',
+      actionHeader: 'Action',
       nicknameHeader: 'Nickname',
       rateHeader: 'Rate',
       commentHeader: 'Comment',
       updatedAtHeader: 'Updated At',
+      confirmDeleteRestaurant: 'Are you sure you want to delete this review?',
     },
   },
 
   /* Edit User */
   editUser: {
-    /* Profile Page */
-    information: {},
-
     /* Payment Page */
-    payment: {},
+    payment: {
+      greeting: 'This user is',
+      changeRole:
+        "Can not change user's role yet. This feature will be applied in February",
+      paymentLogTitle: 'User Payment Log',
+      descriptionHeader: 'Description',
+      createdAtHeader: 'Created At',
+      updatedAtHeader: 'Updated At',
+    },
+
+    /* Profile Page */
+    profile: {
+      pageTitle: 'Profile',
+
+      secret: 'secret',
+      userId: 'User Id',
+      nickName: 'Nickname',
+      facebookFullName: 'Facebook Full Name',
+      facebookAvatar: 'Facebook Avatar',
+      facebookEmail: 'Facebook Email',
+      facebookBirthday: 'Facebook Birthday',
+      photos: 'Photos',
+      selfIntroduction: 'Self Introduction',
+      singlePersonArea: 'Single Person Area',
+      occupation: 'Occupation',
+      sake: 'Sake',
+      smoking: 'Smoking',
+      storyStance: 'Story Stance',
+      favoriteConversationGenre: 'Favorite Conversation Genre',
+      personal: 'Personal',
+      whenDrinkingAlone: 'When Drinking Alone',
+      residence: 'Residence',
+      placeOfBirth: 'Place of Birth',
+      createdAt: 'Created At',
+      updatedAt: 'Updated At',
+      maskDate: '####/##/##',
+      maskDatetime: '####/##/## ##:##:##',
+    },
 
     /* Feeling Today Page */
-    feelingToday: {},
+    feelingToday: {
+      title: 'Feeling Today',
+      drinkingArea: 'Drinking Area',
+      todayComment: 'Today Comment',
+      ageOfPartner: 'Age of Partner',
+      ageOfPartnerMin: 'Age of Partner Min',
+      ageOfPartnerMax: 'Age of Partner Max',
+      age: 'Years old',
+      genderOfPartner: 'Gender of Partner',
+      yourFeeling: 'Your Feeling',
+      paymentFeeling: 'Payment Feeling',
+      timeFeeling: 'Time Feeling',
+      updatedAt: 'Updated At',
+      maskDatetime: '####/##/## ##:##:##',
+    },
   },
 };
