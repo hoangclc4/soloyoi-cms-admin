@@ -3,12 +3,7 @@
     <q-header class="bg-header">
       <q-toolbar>
         <q-toolbar-title />
-        <q-btn
-          flat
-          @click="$i18n.locale = $i18n.locale === 'ja-jp' ? 'en-us' : 'ja-jp'"
-        >
-          <img :src="`statics/set-locale-${$i18n.locale}.png`" width="42em" />
-        </q-btn>
+        <change-locale-button />
       </q-toolbar>
     </q-header>
     <q-page-container>
@@ -18,7 +13,13 @@
 </template>
 
 <script>
+import ChangeLocalButton from '../components/ChangeLocaleButton';
+
 export default {
+  name: 'auth-layout',
+  components: {
+    'change-locale-button': ChangeLocalButton,
+  },
   data() {
     return {};
   },

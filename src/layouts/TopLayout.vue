@@ -11,12 +11,7 @@
           </q-item-section>
         </q-item>
         <q-toolbar-title />
-        <q-btn
-          flat
-          @click="$i18n.locale = $i18n.locale === 'ja-jp' ? 'en-us' : 'ja-jp'"
-        >
-          <img :src="`statics/set-locale-${$i18n.locale}.png`" width="42em" />
-        </q-btn>
+        <change-locale-button />
       </q-toolbar>
     </q-header>
 
@@ -135,8 +130,13 @@
 
 <script>
 import { mapActions } from 'vuex';
+import ChangeLocalButton from '../components/ChangeLocaleButton';
+
 export default {
   name: 'top-layout',
+  components: {
+    'change-locale-button': ChangeLocalButton,
+  },
   data() {
     return {
       loading: false,
@@ -391,6 +391,7 @@ export default {
     },
   },
   created() {
+    this.$q.loading.show({ message: this.$t('pleaseWaitABit') });
     this.loading = true;
     Promise.all([
       this.fetchRestaurantList(),
@@ -398,6 +399,7 @@ export default {
       this.fetchAdminNotification(),
       this.fetchMasterdata(),
     ]).then(() => {
+      this.$q.loading.hide();
       this.loading = false;
     });
   },

@@ -22,6 +22,7 @@ export default {
   reviewFieldAgain: 'Please review fields again',
   pleaseSelectAnImageFile: 'Please select an image file!',
   notSupportedFileReaderAPI: 'Not supported File Reader API',
+  pleaseWaitABit: '<p style="font-weight: 700">Please wait a bit...<p>',
 
   /* Call API */
   api: {
