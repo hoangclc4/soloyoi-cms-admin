@@ -1,5 +1,11 @@
 <template>
   <q-layout view="hHh LpR lFf">
+    <q-header class="bg-header">
+      <q-toolbar>
+        <q-toolbar-title />
+        <change-locale-button />
+      </q-toolbar>
+    </q-header>
     <q-page-container>
       <router-view />
     </q-page-container>
@@ -7,7 +13,13 @@
 </template>
 
 <script>
+import ChangeLocalButton from '../components/ChangeLocaleButton';
+
 export default {
+  name: 'auth-layout',
+  components: {
+    'change-locale-button': ChangeLocalButton,
+  },
   data() {
     return {};
   },

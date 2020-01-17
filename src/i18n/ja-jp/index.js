@@ -23,7 +23,7 @@ export default {
   pleaseSelectAnImageFile: '画像ファイルを選択してください！',
   notSupportedFileReaderAPI:
     'このブラウザーはFile Readerをサポートしていません',
-  onlyForPremiumRestaurant: 'プレミアム会員にアップグレードしてください！',
+  pleaseWaitABit: '<p style="font-weight: 700">少々お待ちくださいませ・・・<p>',
 
   /* Call API */
   api: {
