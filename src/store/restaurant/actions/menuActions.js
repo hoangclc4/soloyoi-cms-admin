@@ -8,6 +8,7 @@ import { ADMIN_DELETE_MENU_CATEGORY } from '../../../graphql/mutations/adminDele
 import { ADMIN_CREATE_MENU } from '../../../graphql/mutations/adminCreateMenuRestaurant';
 import { ADMIN_UPDATE_MENU } from '../../../graphql/mutations/adminUpdateMenuRestaurant';
 import { ADMIN_DELETE_MENU } from '../../../graphql/mutations/adminDeleteMenuRestaurant';
+import { ADMIN_UPDATE_CATEGORY_TAX } from '../../../graphql/mutations/adminUpdateCategoryTaxRestaurant';
 
 /**
  * @description call API Fetch Restaurant Menu Photo
@@ -281,8 +282,8 @@ export async function apiCreateRestaurantMenuItemAction(
  * @returns
  */
 export async function apiUpdateRestaurantMenuItemAction(
-  context,
-  { apolloClient, input }
+  { commit },
+  { apolloClient, input, menuTypes }
 ) {
   try {
     const response = await apolloClient.mutate({
@@ -292,6 +293,7 @@ export async function apiUpdateRestaurantMenuItemAction(
 
     // Update Menu Item Success
     if (response.data.result.requestResolved) {
+      commit('updateMenuItemMutation', { input, menuTypes });
       return { requestResolved: true };
     }
     // Update Menu Item Failed
@@ -319,6 +321,38 @@ export async function apiDeleteRestaurantMenuItemAction(
   try {
     const response = await apolloClient.mutate({
       mutation: ADMIN_DELETE_MENU,
+      variables: { input },
+    });
+
+    // Delete Menu Item Success
+    if (response.data.result.requestResolved) {
+      return { requestResolved: true };
+    }
+    // Delete Menu Item Failed
+    else {
+      return { requestResolved: false, systemError: null };
+    }
+  } catch (systemError) {
+    return { requestResolved: false, systemError };
+  }
+}
+
+/**
+ * @description call API Update Restaurant Category Tax
+ * @author NamTS
+ * @date 2020-02-15
+ * @export
+ * @param {*} context
+ * @param {*} { apolloClient, input }
+ * @returns
+ */
+export async function apiUpdateCategoryTaxAction(
+  context,
+  { apolloClient, input }
+) {
+  try {
+    const response = await apolloClient.mutate({
+      mutation: ADMIN_UPDATE_CATEGORY_TAX,
       variables: { input },
     });
 

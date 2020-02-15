@@ -129,6 +129,10 @@ export default {
         'メニューカテゴリーを削除できませんでした！',
       deleteRestaurantMenuCategorySuccess:
         'メニューカテゴリーを削除できました！',
+      apiUpdateCategoryTaxSuccess:
+        'ご指定のカテゴリーの税込み・税抜き設定を更新できました！',
+      apiUpdateCategoryTaxFailded:
+        'ご指定のカテゴリーの税込み・税抜き設定を更新できませんでした！',
 
       fetchRestaurantMenuFoodFailed: 'フードメニューを取得できませんでした！',
       fetchRestaurantMenuFoodSuccess: 'フードメニューを取得できました！',
@@ -423,6 +427,7 @@ export default {
       nameHeader: 'アイテム名',
       priceHeader: '価格',
       createdAtHeader: '作成時間',
+      haveNotMenuLabel: '該当するメニューが見つかりません',
 
       createNewCategory: 'カテゴリー追加',
       editCategory: 'カテゴリー名編集',
@@ -430,7 +435,24 @@ export default {
       confirmDeleteCategory: 'このカテゴリーを削除しますか？',
 
       addItem: 'アイテム追加',
+      taxed: '税込み',
+      noTax: '税抜き',
+      typeOfTaxedRound: '四捨五入',
+      typeOfTaxedRoundDescription: '四捨五入',
+      typeOfTaxedFloor: '切り捨て',
+      typeOfTaxedFloorDescription: '小数点をそのまま外す',
+      typeOfTaxedCeil: '切り上げ',
+      typeOfTaxedCeilDescription: '小数点を外して、一つ上の整数に繰り上げる',
+      typeOfTaxedManual: '直接入力',
+      typeOfTaxedManualDescription:
+        'こちらのボタンを押すと、メニューを作成・編集する際に、税込み価格を入力できるようになります。',
+      taxedTitle: '価格は全て税込み表示です',
+      noTaxedTitle: '価格は全て税抜き表示です',
       createNewMenuItem: 'アイテム追加',
+      createNewMenuItemApplyTax:
+        'ご指定のカテゴリーの価格は税込価格となっています。',
+      createNewMenuItemNoApplyTax:
+        'ご指定のカテゴリーの価格は税抜き価格となっています。',
       editMenuItem: 'アイテム編集',
       menuItemName: 'アイテム名',
       menuItemPrice: '価格',
