@@ -15,8 +15,8 @@ const uri = process.env.API;
 const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors) {
     const Unauthorized =
-      graphQLErrors[0].statusCode === 401 ||
-      graphQLErrors[0].error === 'Unauthorized';
+      graphQLErrors[0].message.statusCode === 401 ||
+      graphQLErrors[0].message.error === 'Unauthorized';
 
     if (Unauthorized) {
       auth.actions.forceLogout();

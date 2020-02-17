@@ -115,6 +115,7 @@
             v-else
             v-model="updatedStaff.name"
             :error="errors.updatedStaff.name"
+            @blur="() => (errors.updatedStaff.name = updatedStaff.name === '')"
             outlined
             dense
             autofocus
@@ -717,8 +718,9 @@ export default {
       this.errors.newStaff.name = this.newStaff.name === '';
 
       const gotError =
-        Object.values(this.errors.newStaff).filter((isInvalid) => isInvalid)
-          .length !== 0;
+        (await Object.values(this.errors.newStaff).filter(
+          (isInvalid) => isInvalid
+        ).length) !== 0;
 
       if (gotError) {
         this.dialogStaff[0].openDialog = true;
@@ -771,9 +773,13 @@ export default {
       this.dialogStaff[1].openDialog = false;
       this.loading = true;
 
+      this.errors.updatedStaff.photoFile = this.updatedStaff.photoFile === '';
+      this.errors.updatedStaff.name = this.updatedStaff.name === '';
+
       const gotError =
-        Object.values(this.errors.updatedStaff).filter((isInvalid) => isInvalid)
-          .length !== 0;
+        (await Object.values(this.errors.updatedStaff).filter(
+          (isInvalid) => isInvalid
+        ).length) !== 0;
 
       if (gotError) {
         this.dialogStaff[1].openDialog = true;
