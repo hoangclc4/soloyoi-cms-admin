@@ -259,9 +259,33 @@
                 :label="$t('editRestaurant.menu.menuItemPrice')"
                 prefix="￥"
                 type="number"
+                @input="onNewMenuChangeValue(menuItemForm.price)"
               />
             </q-card-section>
-
+            <q-card-section class="q-py-none">
+              <q-input
+                v-model="menuItemForm.afterTaxedPrice"
+                :error="errors.menuItem.price"
+                outlined
+                :disable="menuItemForm.typeOfTaxed !== 4"
+                :label="
+                  menuItemForm.taxFlag
+                    ? $t('editRestaurant.menu.taxed')
+                    : $t('editRestaurant.menu.noTax')
+                "
+                prefix="￥"
+                type="number"
+              />
+            </q-card-section>
+            <q-card-section class="q-py-none">
+              <span>
+                {{
+                  menuItemForm.taxFlag
+                    ? `${$t('editRestaurant.menu.createNewMenuItemApplyTax')}`
+                    : `${$t('editRestaurant.menu.createNewMenuItemNoApplyTax')}`
+                }}
+              </span>
+            </q-card-section>
             <q-card-actions align="right" class="text-primary">
               <q-btn flat :label="$t('cancel')" v-close-popup />
               <q-btn
@@ -327,6 +351,7 @@
                 @click="onCreateNewCategory('FOOD')"
               />
               <q-table
+                :no-data-label="$t('editRestaurant.menu.haveNotMenuLabel')"
                 v-for="food in getMenuFoodGetter"
                 :key="food.menuCategoryId"
                 :data="food.menuList"
@@ -339,54 +364,182 @@
                 binary-state-sort
                 class="full-width item-table q-mb-md"
               >
-                <template v-slot:top-left>
-                  <q-btn
-                    dense
-                    round
-                    color="negative"
-                    icon="ion-trash"
-                    @click="onDeleteCategory(food.menuCategoryId, 'FOOD')"
-                  />
-                  <q-btn
-                    dense
-                    round
-                    color="secondary"
-                    icon="ion-create"
-                    @click="
-                      onEditCategory(food.menuCategoryId, food.name, 'FOOD')
-                    "
-                    class="q-mx-sm"
-                  />
+                <template v-slot:top>
+                  <div class="row items-center no-wrap" style="width: 100%">
+                    <div class="col-4 items-start">
+                      <q-btn
+                        dense
+                        round
+                        color="negative"
+                        icon="ion-trash"
+                        @click="onDeleteCategory(food.menuCategoryId, 'FOOD')"
+                      />
+                      <q-btn
+                        dense
+                        round
+                        color="secondary"
+                        icon="ion-create"
+                        @click="
+                          onEditCategory(food.menuCategoryId, food.name, 'FOOD')
+                        "
+                        class="q-mx-sm"
+                      />
+                      <span class="q-table__title">
+                        {{ food.name }}
+                      </span>
+                    </div>
 
-                  <span class="q-table__title">
-                    {{ food.name }}
-                  </span>
-                </template>
-                <template v-slot:top-right>
-                  <q-input
-                    outlined
-                    dense
-                    debounce="300"
-                    color="primary"
-                    v-model="filter[food.menuCategoryId]"
-                    :placeholder="$t('search')"
-                    class="q-mx-lg"
-                  >
-                    <template v-slot:append>
-                      <q-icon name="search" />
-                    </template>
-                  </q-input>
-                  <q-btn
-                    color="primary"
-                    :label="$t('editRestaurant.menu.addItem')"
-                    @click="
-                      onCreateNewMenuItem(
-                        food.name,
-                        food.menuCategoryId,
-                        'FOOD'
-                      )
-                    "
-                  />
+                    <div
+                      class="column items-center"
+                      style="text-align: center;"
+                    >
+                      <span class="q-table__title" style="padding: 0 15px;">
+                        {{
+                          food.taxFlag
+                            ? `${$t('editRestaurant.menu.taxedTitle')} (10%)`
+                            : `${$t('editRestaurant.menu.noTaxedTitle')} (0%)`
+                        }}
+                      </span>
+                      <q-btn-toggle
+                        v-model="food.typeOfTaxed"
+                        color="white"
+                        text-color="primary"
+                        toggle-color="primary"
+                        :options="[
+                          {
+                            label: `${$t('editRestaurant.menu.noTax')}`,
+                            value: 0,
+                            slot: 'noTax',
+                          },
+                          {
+                            label: `${$t(
+                              'editRestaurant.menu.typeOfTaxedRound'
+                            )}`,
+                            value: 1,
+                            slot: 'round',
+                          },
+                          {
+                            label: `${$t(
+                              'editRestaurant.menu.typeOfTaxedFloor'
+                            )}`,
+                            value: 2,
+                            slot: 'floor',
+                          },
+                          {
+                            label: `${$t(
+                              'editRestaurant.menu.typeOfTaxedCeil'
+                            )}`,
+                            value: 3,
+                            slot: 'ceil',
+                          },
+                          {
+                            label: `${$t(
+                              'editRestaurant.menu.typeOfTaxedManual'
+                            )}`,
+                            value: 4,
+                            slot: 'manual',
+                          },
+                        ]"
+                        @input="updateCategoryTax(food)"
+                      >
+                        <template v-slot:round>
+                          <q-tooltip
+                            anchor="top middle"
+                            self="center middle"
+                            :content-style="{
+                              background: 'white',
+                              color: 'Black',
+                              'font-size': '18px',
+                            }"
+                            >{{
+                              `${$t(
+                                'editRestaurant.menu.typeOfTaxedRoundDescription'
+                              )}`
+                            }}</q-tooltip
+                          >
+                        </template>
+                        <template v-slot:floor>
+                          <q-tooltip
+                            anchor="top middle"
+                            self="center middle"
+                            :content-style="{
+                              background: 'white',
+                              color: 'Black',
+                              'font-size': '18px',
+                            }"
+                            >{{
+                              `${$t(
+                                'editRestaurant.menu.typeOfTaxedFloorDescription'
+                              )}`
+                            }}</q-tooltip
+                          >
+                        </template>
+                        <template v-slot:ceil>
+                          <q-tooltip
+                            anchor="top middle"
+                            self="center middle"
+                            :content-style="{
+                              background: 'white',
+                              color: 'Black',
+                              'font-size': '18px',
+                            }"
+                            >{{
+                              `${$t(
+                                'editRestaurant.menu.typeOfTaxedCeilDescription'
+                              )}`
+                            }}</q-tooltip
+                          >
+                        </template>
+                        <template v-slot:manual>
+                          <q-tooltip
+                            anchor="top middle"
+                            self="center middle"
+                            :content-style="{
+                              background: 'white',
+                              color: 'Black',
+                              'font-size': '18px',
+                            }"
+                            >{{
+                              `${$t(
+                                'editRestaurant.menu.typeOfTaxedManualDescription'
+                              )}`
+                            }}</q-tooltip
+                          >
+                        </template>
+                      </q-btn-toggle>
+                    </div>
+
+                    <div class="col-4 items-end">
+                      <div class="row inline no-wrap">
+                        <q-input
+                          outlined
+                          dense
+                          debounce="300"
+                          color="primary"
+                          v-model="filter[food.menuCategoryId]"
+                          :placeholder="$t('search')"
+                          class="q-mx-lg"
+                        >
+                          <template v-slot:append>
+                            <q-icon name="search" />
+                          </template>
+                        </q-input>
+                        <q-btn
+                          color="primary"
+                          :label="$t('editRestaurant.menu.addItem')"
+                          @click="
+                            onCreateNewMenuItem(
+                              food.name,
+                              food.menuCategoryId,
+                              'FOOD',
+                              food.taxFlag,
+                              food.typeOfTaxed
+                            )
+                          "
+                        />
+                      </div>
+                    </div>
+                  </div>
                 </template>
 
                 <template v-slot:body-cell-action="props">
@@ -405,7 +558,10 @@
                               food.menuCategoryId,
                               props.row.name,
                               props.row.price,
-                              'FOOD'
+                              'FOOD',
+                              props.row.afterTaxedPrice,
+                              food.taxFlag,
+                              food.typeOfTaxed
                             )
                           "
                         />
@@ -422,6 +578,36 @@
                     </q-item>
                   </q-td>
                 </template>
+
+                <template v-slot:body-cell-price="props">
+                  <q-td
+                    :props="props"
+                    :class="{
+                      'text-green-9': food.taxFlag,
+                    }"
+                  >
+                    <span
+                      style="font-size: 13px !important"
+                      :class="{ 'text-blue-12': props.row.isManual }"
+                    >
+                      {{
+                        food.taxFlag
+                          ? `￥ ${props.row.afterTaxedPrice
+                              .toString()
+                              .replace(/\B(?=(\d{3})+(?!\d))/g, ',')} (${
+                              props.row.isManual
+                                ? $t('editRestaurant.menu.typeOfTaxedManual')
+                                : $t('editRestaurant.menu.taxed')
+                            })`
+                          : `￥ ${props.row.price
+                              .toString()
+                              .replace(/\B(?=(\d{3})+(?!\d))/g, ',')} (${$t(
+                              'editRestaurant.menu.noTax'
+                            )})`
+                      }}
+                    </span>
+                  </q-td>
+                </template>
               </q-table>
             </q-tab-panel>
 
@@ -433,6 +619,7 @@
                 @click="onCreateNewCategory('DRINK')"
               />
               <q-table
+                :no-data-label="$t('editRestaurant.menu.haveNotMenuLabel')"
                 v-for="drink in getMenuDrinkGetter"
                 :key="drink.menuCategoryId"
                 :data="drink.menuList"
@@ -445,54 +632,186 @@
                 binary-state-sort
                 class="full-width item-table q-mb-md"
               >
-                <template v-slot:top-left>
-                  <q-btn
-                    dense
-                    round
-                    color="negative"
-                    icon="ion-trash"
-                    @click="onDeleteCategory(drink.menuCategoryId, 'DRINK')"
-                  />
-                  <q-btn
-                    dense
-                    round
-                    color="secondary"
-                    icon="ion-create"
-                    @click="
-                      onEditCategory(drink.menuCategoryId, drink.name, 'DRINK')
-                    "
-                    class="q-mx-sm"
-                  />
+                <template v-slot:top>
+                  <div class="row items-center no-wrap" style="width: 100%">
+                    <div class="col-4 items-start">
+                      <q-btn
+                        dense
+                        round
+                        color="negative"
+                        icon="ion-trash"
+                        @click="onDeleteCategory(drink.menuCategoryId, 'DRINK')"
+                      />
+                      <q-btn
+                        dense
+                        round
+                        color="secondary"
+                        icon="ion-create"
+                        @click="
+                          onEditCategory(
+                            drink.menuCategoryId,
+                            drink.name,
+                            'DRINK'
+                          )
+                        "
+                        class="q-mx-sm"
+                      />
+                      <span class="q-table__title">
+                        {{ drink.name }}
+                      </span>
+                    </div>
 
-                  <span class="q-table__title">
-                    {{ drink.name }}
-                  </span>
-                </template>
-                <template v-slot:top-right>
-                  <q-input
-                    outlined
-                    dense
-                    debounce="300"
-                    color="primary"
-                    v-model="filter[drink.menuCategoryId]"
-                    :placeholder="$t('search')"
-                    class="q-mx-lg"
-                  >
-                    <template v-slot:append>
-                      <q-icon name="search" />
-                    </template>
-                  </q-input>
-                  <q-btn
-                    color="primary"
-                    :label="$t('editRestaurant.menu.addItem')"
-                    @click="
-                      onCreateNewMenuItem(
-                        drink.name,
-                        drink.menuCategoryId,
-                        'DRINK'
-                      )
-                    "
-                  />
+                    <div
+                      class="column items-center"
+                      style="text-align: center;"
+                    >
+                      <span class="q-table__title" style="padding: 0 15px;">
+                        {{
+                          drink.taxFlag
+                            ? `${$t('editRestaurant.menu.taxedTitle')} (10%)`
+                            : `${$t('editRestaurant.menu.noTaxedTitle')} (0%)`
+                        }}
+                      </span>
+                      <q-btn-toggle
+                        v-model="drink.typeOfTaxed"
+                        color="white"
+                        text-color="primary"
+                        toggle-color="primary"
+                        :options="[
+                          {
+                            label: `${$t('editRestaurant.menu.noTax')}`,
+                            value: 0,
+                            slot: 'noTax',
+                          },
+                          {
+                            label: `${$t(
+                              'editRestaurant.menu.typeOfTaxedRound'
+                            )}`,
+                            value: 1,
+                            slot: 'round',
+                          },
+                          {
+                            label: `${$t(
+                              'editRestaurant.menu.typeOfTaxedFloor'
+                            )}`,
+                            value: 2,
+                            slot: 'floor',
+                          },
+                          {
+                            label: `${$t(
+                              'editRestaurant.menu.typeOfTaxedCeil'
+                            )}`,
+                            value: 3,
+                            slot: 'ceil',
+                          },
+                          {
+                            label: `${$t(
+                              'editRestaurant.menu.typeOfTaxedManual'
+                            )}`,
+                            value: 4,
+                            slot: 'manual',
+                          },
+                        ]"
+                        @input="updateCategoryTax(drink)"
+                      >
+                        <template v-slot:round>
+                          <q-tooltip
+                            anchor="top middle"
+                            self="center middle"
+                            :content-style="{
+                              background: 'white',
+                              color: 'Black',
+                              'font-size': '18px',
+                            }"
+                            >{{
+                              `${$t(
+                                'editRestaurant.menu.typeOfTaxedRoundDescription'
+                              )}`
+                            }}</q-tooltip
+                          >
+                        </template>
+                        <template v-slot:floor>
+                          <q-tooltip
+                            anchor="top middle"
+                            self="center middle"
+                            :content-style="{
+                              background: 'white',
+                              color: 'Black',
+                              'font-size': '18px',
+                            }"
+                            >{{
+                              `${$t(
+                                'editRestaurant.menu.typeOfTaxedFloorDescription'
+                              )}`
+                            }}</q-tooltip
+                          >
+                        </template>
+                        <template v-slot:ceil>
+                          <q-tooltip
+                            anchor="top middle"
+                            self="center middle"
+                            :content-style="{
+                              background: 'white',
+                              color: 'Black',
+                              'font-size': '18px',
+                            }"
+                            >{{
+                              `${$t(
+                                'editRestaurant.menu.typeOfTaxedCeilDescription'
+                              )}`
+                            }}</q-tooltip
+                          >
+                        </template>
+                        <template v-slot:manual>
+                          <q-tooltip
+                            anchor="top middle"
+                            self="center middle"
+                            :content-style="{
+                              background: 'white',
+                              color: 'Black',
+                              'font-size': '18px',
+                            }"
+                            >{{
+                              `${$t(
+                                'editRestaurant.menu.typeOfTaxedManualDescription'
+                              )}`
+                            }}</q-tooltip
+                          >
+                        </template>
+                      </q-btn-toggle>
+                    </div>
+
+                    <div class="col-4 items-end">
+                      <div class="row inline no-wrap">
+                        <q-input
+                          outlined
+                          dense
+                          debounce="300"
+                          color="primary"
+                          v-model="filter[drink.menuCategoryId]"
+                          :placeholder="$t('search')"
+                          class="q-mx-lg"
+                        >
+                          <template v-slot:append>
+                            <q-icon name="search" />
+                          </template>
+                        </q-input>
+                        <q-btn
+                          color="primary"
+                          :label="$t('editRestaurant.menu.addItem')"
+                          @click="
+                            onCreateNewMenuItem(
+                              drink.name,
+                              drink.menuCategoryId,
+                              'DRINK',
+                              drink.taxFlag,
+                              drink.typeOfTaxed
+                            )
+                          "
+                        />
+                      </div>
+                    </div>
+                  </div>
                 </template>
 
                 <template v-slot:body-cell-action="props">
@@ -511,7 +830,10 @@
                               drink.menuCategoryId,
                               props.row.name,
                               props.row.price,
-                              'DRINK'
+                              'DRINK',
+                              props.row.afterTaxedPrice,
+                              drink.taxFlag,
+                              drink.typeOfTaxed
                             )
                           "
                         />
@@ -526,6 +848,36 @@
                         />
                       </q-item-section>
                     </q-item>
+                  </q-td>
+                </template>
+
+                <template v-slot:body-cell-price="props">
+                  <q-td
+                    :props="props"
+                    :class="{
+                      'text-green-9': drink.taxFlag,
+                    }"
+                  >
+                    <span
+                      style="font-size: 13px !important"
+                      :class="{ 'text-blue-12': props.row.isManual }"
+                    >
+                      {{
+                        drink.taxFlag
+                          ? `￥ ${props.row.afterTaxedPrice
+                              .toString()
+                              .replace(/\B(?=(\d{3})+(?!\d))/g, ',')} (${
+                              props.row.isManual
+                                ? $t('editRestaurant.menu.typeOfTaxedManual')
+                                : $t('editRestaurant.menu.taxed')
+                            })`
+                          : `￥ ${props.row.price
+                              .toString()
+                              .replace(/\B(?=(\d{3})+(?!\d))/g, ',')} (${$t(
+                              'editRestaurant.menu.noTax'
+                            )})`
+                      }}
+                    </span>
                   </q-td>
                 </template>
               </q-table>
@@ -614,7 +966,10 @@ export default {
         menuCategoryId: '',
         name: '',
         price: 0,
+        afterTaxedPrice: 0,
         menuTypes: '',
+        taxFlag: false,
+        typeOfTaxed: 0,
       },
       deletionMenuItem: { id: '', menuTypes: '' },
       columns: [
@@ -637,9 +992,6 @@ export default {
           required: true,
           align: 'right',
           label: this.$t('editRestaurant.menu.priceHeader'),
-          field: 'price',
-          format: (val) =>
-            `￥ ${val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`,
           sortable: true,
         },
         {
@@ -674,7 +1026,125 @@ export default {
       'apiDeleteRestaurantMenuCategoryAction',
       'apiUpdateRestaurantMenuItemAction',
       'apiDeleteRestaurantMenuItemAction',
+      'apiUpdateCategoryTaxAction',
     ]),
+
+    onNewMenuChangeValue(value) {
+      switch (this.menuItemForm.typeOfTaxed) {
+        case 1: // 4 give 5 taken
+          this.menuItemForm.afterTaxedPrice = +Math.round(
+            (value * (100 + 10)) / 100
+          );
+          break;
+        case 2: // Remove the decimal point
+          this.menuItemForm.afterTaxedPrice = +Math.floor(
+            (value * (100 + 10)) / 100
+          );
+          break;
+        case 3:  // Remove decimal point and round up to the next higher integer
+          this.menuItemForm.afterTaxedPrice = +Math.ceil(
+            (value * (100 + 10)) / 100
+          );
+          break;
+        default: // No tax
+          this.menuItemForm.afterTaxedPrice = this.menuItemForm.price;
+          break;
+      }
+    },
+
+    async updateCategoryTax(category) {
+      let taxRate = 10;
+
+      switch (category.typeOfTaxed) {
+        case 1: // 4 give 5 taken
+          category.taxFlag = true;
+          category.menuList.map((menu) => {
+            menu.afterTaxedPrice = +Math.round(
+              (menu.price * (100 + taxRate)) / 100
+            );
+            menu.isManual = false;
+          });
+          break;
+        case 2: // Remove the decimal point
+          category.taxFlag = true;
+          category.menuList.map((menu) => {
+            menu.afterTaxedPrice = +Math.floor(
+              (menu.price * (100 + taxRate)) / 100
+            );
+            menu.isManual = false;
+          });
+          break;
+        case 3: // Remove decimal point and round up to the next higher integer
+          category.taxFlag = true;
+          category.menuList.map((menu) => {
+            menu.afterTaxedPrice = +Math.ceil(
+              (menu.price * (100 + taxRate)) / 100
+            );
+            menu.isManual = false;
+          });
+          break;
+        case 4: // Manual input
+          category.taxFlag = true;
+          taxRate = 0;
+          break;
+        default:
+          // No tax
+          taxRate = 0;
+          category.taxFlag = false;
+          category.menuList.map((menu) => {
+            menu.afterTaxedPrice = menu.price;
+            menu.isManual = false;
+          });
+          break;
+      }
+
+      this.loading = true;
+      const apolloClient = this.$apollo.provider.defaultClient;
+      const input = {
+        menuCategoryId: category.menuCategoryId,
+        taxRate,
+        taxFlag: category.taxFlag,
+        typeOfTaxed: +category.typeOfTaxed,
+        menuList: category.menuList.map((menu) => {
+          return {
+            menuId: menu.menuId,
+            name: menu.name,
+            price: menu.price,
+            afterTaxedPrice: menu.afterTaxedPrice,
+            isManual: menu.isManual,
+            createdAt: menu.createdAt,
+          };
+        }),
+      };
+
+      const result = await this.apiUpdateCategoryTaxAction({
+        apolloClient,
+        input,
+      });
+
+      if (result.requestResolved) {
+        // Update success
+        this.$q.notify({
+          message: this.$t('api.editRestaurant.apiUpdateCategoryTaxSuccess'),
+          color: 'green-5',
+        });
+      } else {
+        result.systemError
+          ? // Update failed, got something wrong with system
+            this.$q.notify({
+              message: `${result.systemError}`,
+              color: 'deep-orange-4',
+            })
+          : // Update failed, got something wrong with user
+            this.$q.notify({
+              message: this.$t(
+                'api.editRestaurant.apiUpdateCategoryTaxFailded'
+              ),
+              color: 'deep-orange-4',
+            });
+      }
+      this.loading = false;
+    },
 
     /* Menu Photo */
     onFileChange(e, photoIndex) {
@@ -1077,13 +1547,22 @@ export default {
     },
 
     /* Menu Item */
-    onCreateNewMenuItem(categoryName, menuCategoryId, menuTypes) {
+    onCreateNewMenuItem(
+      categoryName,
+      menuCategoryId,
+      menuTypes,
+      taxFlag,
+      typeOfTaxed
+    ) {
       this.menuItemForm = {
         categoryName,
         menuCategoryId,
         name: '',
         price: 0,
+        afterTaxedPrice: 0,
         menuTypes,
+        taxFlag,
+        typeOfTaxed,
       };
       this.errors.menuItem = { name: false, price: false };
       this.dialogMenuItem[0].openDialog = true;
@@ -1094,7 +1573,10 @@ export default {
       menuCategoryId,
       name,
       price,
-      menuTypes
+      menuTypes,
+      afterTaxedPrice,
+      taxFlag,
+      typeOfTaxed
     ) {
       this.menuItemForm = {
         categoryName,
@@ -1103,6 +1585,9 @@ export default {
         name,
         price,
         menuTypes,
+        afterTaxedPrice,
+        taxFlag,
+        typeOfTaxed,
       };
       this.errors.menuItem = { name: false, price: false };
       this.dialogMenuItem[1].openDialog = true;
@@ -1138,6 +1623,7 @@ export default {
           menuCategoryId: this.menuItemForm.menuCategoryId,
           name: this.menuItemForm.name,
           price: parseInt(this.menuItemForm.price),
+          afterTaxedPrice: +this.menuItemForm.afterTaxedPrice,
         };
         const result = await this.apiCreateRestaurantMenuItemAction({
           apolloClient,
@@ -1214,10 +1700,13 @@ export default {
           menuCategoryId: this.menuItemForm.menuCategoryId,
           name: this.menuItemForm.name,
           price: parseInt(this.menuItemForm.price),
+          afterTaxedPrice: +this.menuItemForm.afterTaxedPrice,
+          isManual: this.menuItemForm.typeOfTaxed === 4,
         };
         const result = await this.apiUpdateRestaurantMenuItemAction({
           apolloClient,
           input,
+          menuTypes: this.menuItemForm.menuTypes,
         });
 
         if (result.requestResolved) {
