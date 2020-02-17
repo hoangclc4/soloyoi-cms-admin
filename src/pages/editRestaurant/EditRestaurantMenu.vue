@@ -1041,12 +1041,13 @@ export default {
             (value * (100 + 10)) / 100
           );
           break;
-        case 3:  // Remove decimal point and round up to the next higher integer
+        case 3: // Remove decimal point and round up to the next higher integer
           this.menuItemForm.afterTaxedPrice = +Math.ceil(
             (value * (100 + 10)) / 100
           );
           break;
-        default: // No tax
+        default:
+          // No tax
           this.menuItemForm.afterTaxedPrice = this.menuItemForm.price;
           break;
       }
