@@ -277,9 +277,9 @@ export async function apiCreateRestaurantMenuItemAction(
  * @author AnhTQ, NamTS
  * @date 2020-02-17
  * @export
- * @param {*} context
- * @param {*} { apolloClient, input }
- * @returns
+ * @param {*} { commit }
+ * @param {*} { apolloClient, input, menuTypes }
+ * @returns 
  */
 export async function apiUpdateRestaurantMenuItemAction(
   { commit },

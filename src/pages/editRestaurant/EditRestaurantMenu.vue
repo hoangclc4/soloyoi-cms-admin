@@ -1031,22 +1031,22 @@ export default {
 
     onNewMenuChangeValue(value) {
       switch (this.menuItemForm.typeOfTaxed) {
-        case 1:
+        case 1: // 4 give 5 taken
           this.menuItemForm.afterTaxedPrice = +Math.round(
             (value * (100 + 10)) / 100
           );
           break;
-        case 2:
+        case 2: // Remove the decimal point
           this.menuItemForm.afterTaxedPrice = +Math.floor(
             (value * (100 + 10)) / 100
           );
           break;
-        case 3:
+        case 3:  // Remove decimal point and round up to the next higher integer
           this.menuItemForm.afterTaxedPrice = +Math.ceil(
             (value * (100 + 10)) / 100
           );
           break;
-        default:
+        default: // No tax
           this.menuItemForm.afterTaxedPrice = this.menuItemForm.price;
           break;
       }
@@ -1056,7 +1056,7 @@ export default {
       let taxRate = 10;
 
       switch (category.typeOfTaxed) {
-        case 1:
+        case 1: // 4 give 5 taken
           category.taxFlag = true;
           category.menuList.map((menu) => {
             menu.afterTaxedPrice = +Math.round(
@@ -1065,7 +1065,7 @@ export default {
             menu.isManual = false;
           });
           break;
-        case 2:
+        case 2: // Remove the decimal point
           category.taxFlag = true;
           category.menuList.map((menu) => {
             menu.afterTaxedPrice = +Math.floor(
@@ -1074,7 +1074,7 @@ export default {
             menu.isManual = false;
           });
           break;
-        case 3:
+        case 3: // Remove decimal point and round up to the next higher integer
           category.taxFlag = true;
           category.menuList.map((menu) => {
             menu.afterTaxedPrice = +Math.ceil(
@@ -1083,7 +1083,7 @@ export default {
             menu.isManual = false;
           });
           break;
-        case 4:
+        case 4: // Manual input
           category.taxFlag = true;
           taxRate = 0;
           break;
