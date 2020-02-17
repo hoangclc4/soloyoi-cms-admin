@@ -345,9 +345,9 @@ export default {
       this.loading = true;
 
       const gotError =
-        Object.values(this.errors.newRestaurant).filter(
+        (await Object.values(this.errors.newRestaurant).filter(
           (isInvalid) => isInvalid
-        ).length !== 0;
+        ).length) !== 0;
 
       if (gotError) {
         this.loading = false;
