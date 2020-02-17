@@ -267,7 +267,7 @@
                 v-model="menuItemForm.afterTaxedPrice"
                 :error="errors.menuItem.price"
                 outlined
-                :disable="!(menuItemForm.typeOfTaxed === 4)"
+                :disable="menuItemForm.typeOfTaxed !== 4"
                 :label="
                   menuItemForm.taxFlag
                     ? $t('editRestaurant.menu.taxed')
@@ -591,19 +591,19 @@
                       :class="{ 'text-blue-12': props.row.isManual }"
                     >
                       {{
-                        !food.taxFlag
-                          ? `￥ ${props.row.price
-                              .toString()
-                              .replace(/\B(?=(\d{3})+(?!\d))/g, ',')} (${$t(
-                              'editRestaurant.menu.noTax'
-                            )})`
-                          : `￥ ${props.row.afterTaxedPrice
+                        food.taxFlag
+                          ? `￥ ${props.row.afterTaxedPrice
                               .toString()
                               .replace(/\B(?=(\d{3})+(?!\d))/g, ',')} (${
                               props.row.isManual
                                 ? $t('editRestaurant.menu.typeOfTaxedManual')
                                 : $t('editRestaurant.menu.taxed')
                             })`
+                          : `￥ ${props.row.price
+                              .toString()
+                              .replace(/\B(?=(\d{3})+(?!\d))/g, ',')} (${$t(
+                              'editRestaurant.menu.noTax'
+                            )})`
                       }}
                     </span>
                   </q-td>
@@ -863,19 +863,19 @@
                       :class="{ 'text-blue-12': props.row.isManual }"
                     >
                       {{
-                        !drink.taxFlag
-                          ? `￥ ${props.row.price
-                              .toString()
-                              .replace(/\B(?=(\d{3})+(?!\d))/g, ',')} (${$t(
-                              'editRestaurant.menu.noTax'
-                            )})`
-                          : `￥ ${props.row.afterTaxedPrice
+                        drink.taxFlag
+                          ? `￥ ${props.row.afterTaxedPrice
                               .toString()
                               .replace(/\B(?=(\d{3})+(?!\d))/g, ',')} (${
                               props.row.isManual
                                 ? $t('editRestaurant.menu.typeOfTaxedManual')
                                 : $t('editRestaurant.menu.taxed')
                             })`
+                          : `￥ ${props.row.price
+                              .toString()
+                              .replace(/\B(?=(\d{3})+(?!\d))/g, ',')} (${$t(
+                              'editRestaurant.menu.noTax'
+                            )})`
                       }}
                     </span>
                   </q-td>
@@ -1056,7 +1056,7 @@ export default {
       let taxRate = 10;
 
       switch (category.typeOfTaxed) {
-        case 1: // 4 bỏ 5 tăng
+        case 1:
           category.taxFlag = true;
           category.menuList.map((menu) => {
             menu.afterTaxedPrice = +Math.round(
@@ -1065,7 +1065,7 @@ export default {
             menu.isManual = false;
           });
           break;
-        case 2: // Bỏ hết thập phân
+        case 2:
           category.taxFlag = true;
           category.menuList.map((menu) => {
             menu.afterTaxedPrice = +Math.floor(
@@ -1074,7 +1074,7 @@ export default {
             menu.isManual = false;
           });
           break;
-        case 3: // Tăng 1 bất chấp
+        case 3:
           category.taxFlag = true;
           category.menuList.map((menu) => {
             menu.afterTaxedPrice = +Math.ceil(
@@ -1083,7 +1083,7 @@ export default {
             menu.isManual = false;
           });
           break;
-        case 4: // Tự tính bằng tay
+        case 4:
           category.taxFlag = true;
           taxRate = 0;
           break;

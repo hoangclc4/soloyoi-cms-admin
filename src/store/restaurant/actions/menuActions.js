@@ -274,8 +274,8 @@ export async function apiCreateRestaurantMenuItemAction(
 
 /**
  * @description call API Update Restaurant Menu Item
- * @author AnhTQ
- * @date 2020-01-05
+ * @author AnhTQ, NamTS
+ * @date 2020-02-17
  * @export
  * @param {*} context
  * @param {*} { apolloClient, input }
