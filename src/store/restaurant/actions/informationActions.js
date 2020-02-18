@@ -235,12 +235,12 @@ export async function apiUpdateSeatAvailableTodayAction(
       mutation: ADMIN_UPDATE_SEAT_AVAILABLE,
       variables: { input },
     });
-    // Delete Photo Success
+    // Update Restaurant SeatAvailable Success
     if (response.data.result.requestResolved) {
       commit('updateSeatAvailableTodayMutation', { input });
       return { requestResolved: true };
     }
-    // Delete Photo Failed
+    // Update Restaurant SeatAvailable Failed
     else {
       return { requestResolved: false, systemError: null };
     }
