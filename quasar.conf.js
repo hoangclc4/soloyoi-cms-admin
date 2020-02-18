@@ -86,6 +86,7 @@ module.exports = function(ctx) {
         'QTh',
         'QToolbar',
         'QToolbarTitle',
+        'QToggle',
         'QTooltip',
         'QTr',
         'QUploader',

@@ -2,6 +2,7 @@ import { ADMIN_RESTAURANT_INFO } from '../../../graphql/queries/adminRestaurantI
 import { ADMIN_UPDATE_RESTAURANT } from '../../../graphql/mutations/adminUpdateRestaurant';
 import { ADMIN_UPDATE_RESTAURANT_PHOTO } from '../../../graphql/mutations/adminUpdateRestaurantPhoto';
 import { ADMIN_DELETE_RESTAURANT_PHOTO } from '../../../graphql/mutations/adminDeleteRestaurantPhoto';
+import { ADMIN_UPDATE_SEAT_AVAILABLE } from '../../../graphql/mutations/adminUpdateRestaurantSeatAvailable';
 
 /**
  * @description call API Fetch Restaurant Information for Admin
@@ -208,6 +209,38 @@ export async function apiDeleteRestaurantPhotoAction(
       return { requestResolved: true };
     }
     // Delete Photo Failed
+    else {
+      return { requestResolved: false, systemError: null };
+    }
+  } catch (systemError) {
+    return { requestResolved: false, systemError };
+  }
+}
+
+/**
+ * @description call API Update Restaurant SeatAvailable
+ * @author NamTS
+ * @date 2020-02-18
+ * @export
+ * @param {*} { commit }
+ * @param {*} { apolloClient, input }
+ * @returns
+ */
+export async function apiUpdateSeatAvailableTodayAction(
+  { commit },
+  { apolloClient, input }
+) {
+  try {
+    const response = await apolloClient.mutate({
+      mutation: ADMIN_UPDATE_SEAT_AVAILABLE,
+      variables: { input },
+    });
+    // Update Restaurant SeatAvailable Success
+    if (response.data.result.requestResolved) {
+      commit('updateSeatAvailableTodayMutation', { input });
+      return { requestResolved: true };
+    }
+    // Update Restaurant SeatAvailable Failed
     else {
       return { requestResolved: false, systemError: null };
     }
