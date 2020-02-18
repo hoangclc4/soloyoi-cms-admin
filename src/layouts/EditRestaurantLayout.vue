@@ -202,7 +202,7 @@
             <q-icon name="ion-settings" />
           </q-item-section>
           <q-item-section class="text-body1">
-            {{ $t('navigation.editRestaurant.setting') }}
+            {{ $t('navigation.editRestaurant.settingSeatAvailable') }}
           </q-item-section>
         </q-item>
       </q-list>

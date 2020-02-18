@@ -168,10 +168,10 @@ export default {
       deleteRestaurantStaffSuccess: 'スタッフ情報を削除できました！',
 
       /* Restaurant Review */
-      fetchRestaurantReviewFailed: '口コミ情報を取得できませんでした！',
-      fetchRestaurantReviewSuccess: '口コミ情報を取得できました！',
-      deleteRestaurantReviewFailed: 'ご指定の口コミを削除できませんでした！',
-      deleteRestaurantReviewSuccess: 'ご指定の口コミを削除できました！',
+      fetchRestaurantReviewFailed: 'レビュー情報を取得できませんでした！',
+      fetchRestaurantReviewSuccess: 'レビュー情報を取得できました！',
+      deleteRestaurantReviewFailed: 'ご指定のレビューを削除できませんでした！',
+      deleteRestaurantReviewSuccess: 'ご指定のレビューを削除できました！',
     },
 
     /* Edit User */
@@ -211,8 +211,8 @@ export default {
       information: '店舗情報',
       menu: 'メニュー',
       staff: 'スタッフ',
-      review: '口コミ',
-      setting: '設定',
+      review: 'レビュー',
+      settingSeatAvailable: '本日空席あり設定',
     },
     editUser: {
       title: 'ユーザー編集',
@@ -301,7 +301,7 @@ export default {
       LonelySceneLabel: '一人呑みシーン・店舗情報',
       RestaurantPaymentLabel: '支払い方法・店舗情報',
       SmokingLabel: '禁煙・喫煙・店舗情報',
-      LanguagesLabel: '言葉・店舗情報',
+      LanguagesLabel: '言語・店舗情報',
       FeaturesLabel: '特徴・店舗情報',
       SalesInformationsLabel: '営業情報・店舗情報',
       TypeOfMenuLabel: '料理・店舗情報',
@@ -355,7 +355,7 @@ export default {
     /* Information Page */
     information: {
       /* FREE restaurant information */
-      freeRestaurantInformation: '無料会員店舗情報',
+      freeRestaurantInformation: '基本情報',
       restaurantName: '店名',
       email: 'Eメール',
       phoneNumber: '電話番号',
@@ -364,7 +364,8 @@ export default {
       addressLevelThree: '町名',
       specificAddress: '番地・建物名',
       accessibility: 'アクセス（交通手段）',
-      shortDescription: '簡易紹介文',
+      shortDescription: '簡易紹介文（300文字以内）',
+      descriptionMaxLength: '300文字以内にご記入ください',
       openingHours: '営業時間',
       openingHoursForSearch: '営業時間（検索用）',
       regularHolidays: '定休日',
@@ -403,7 +404,7 @@ export default {
       counter: 'カウンター',
       table: 'テーブル',
       smoking: '禁煙・喫煙',
-      languages: '言葉',
+      languages: '言語',
       feature: '特徴',
       salesInformation: '営業情報',
       typeOfMenu: '料理',
@@ -413,7 +414,8 @@ export default {
       memberRegistrationDate: '会員登録日',
       openDate: 'オープン年月',
       maskDatetime: '####年##月',
-      catchphrase: 'キャッチフレーズ',
+      catchphrase: 'キャッチフレーズ（35文字以内）',
+      catchphraseMaxLength: '35文字以内にご記入ください',
 
       uploadPhoto: '画像アップロード',
       confirmDeletePhoto: 'この画像を削除しますか？',
@@ -486,7 +488,7 @@ export default {
 
     /* Review Page */
     review: {
-      pageTitle: '口コミ',
+      pageTitle: 'レビュー',
       actionHeader: '削除',
       nicknameHeader: 'ニックネーム',
       rateHeader: 'レーティング',
@@ -497,7 +499,6 @@ export default {
 
     setting: {
       title: '設定',
-      userInfo: 'アカウント情報',
       seatAvailableTodayTitle: '本日空席あり設定',
       seatAvailableTodayLabel: '本日空席あり',
       seatAvailable: '空席あり',

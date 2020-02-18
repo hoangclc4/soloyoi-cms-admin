@@ -51,17 +51,6 @@ export async function apiUpdateRestaurantAction(
   { apolloClient, input }
 ) {
   try {
-    const year = input.vipRestaurant.openDate
-      ? input.vipRestaurant.openDate.substring(0, 4)
-      : null;
-    const month = input.vipRestaurant.openDate
-      ? input.vipRestaurant.openDate.substring(5, 7)
-      : null;
-    // Scala Datetime Format: YYYY-MM-DDTHH:mm:ss:sssZ
-    const openDate = isNaN(parseInt(year))
-      ? null
-      : `${year}-${month}-01T01:00:00.000Z`;
-
     // If select one got no value, so set null value for sync with Mobile App
     const addressLevelOne = input.addressLevelOne
       ? [input.addressLevelOne]
@@ -86,8 +75,6 @@ export async function apiUpdateRestaurantAction(
         addressLevelTwo,
         addressLevelThree,
         specificAddress: input.specificAddress,
-        lat: input.lat,
-        lng: input.lng,
         phone: input.phone,
         email: input.email,
         access: input.access,
@@ -125,7 +112,7 @@ export async function apiUpdateRestaurantAction(
           remarks: input.vipRestaurant.remarks,
           locations: input.vipRestaurant.locations,
           memberRegistrationDate: input.vipRestaurant.memberRegistrationDate,
-          openDate,
+          openDate: input.vipRestaurant.openDate,
           catchPhrase: input.vipRestaurant.catchPhrase,
         },
       },
