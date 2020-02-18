@@ -1,6 +1,6 @@
 <template>
   <q-layout view="hHh LpR lFf">
-    <q-header class="bg-header">
+    <q-header class="bg-auth">
       <q-toolbar>
         <q-toolbar-title />
         <change-locale-button />

@@ -140,6 +140,7 @@
             <q-select
               outlined
               v-model="getRestaurantInfoGetter.addressLevelOne"
+              :error="errors.addressLevelOne"
               @input="
                 () => {
                   getRestaurantInfoGetter.addressLevelTwo = null;
@@ -152,6 +153,7 @@
               option-label="value"
               options-dense
               dense
+              class="q-pa-none"
             >
               <template v-slot:selected-item="scope">
                 <q-chip
@@ -171,6 +173,7 @@
             <q-select
               outlined
               v-model="getRestaurantInfoGetter.addressLevelTwo"
+              :error="errors.addressLevelTwo"
               :disable="getRestaurantInfoGetter.addressLevelOne === null"
               @input="
                 () => {
@@ -192,6 +195,7 @@
               option-label="value"
               options-dense
               dense
+              class="q-pa-none"
             >
               <template v-slot:selected-item="scope">
                 <q-chip
@@ -211,6 +215,7 @@
             <q-select
               outlined
               v-model="getRestaurantInfoGetter.addressLevelThree"
+              :error="errors.addressLevelThree"
               :disable="getRestaurantInfoGetter.addressLevelTwo === null"
               :label="$t('editRestaurant.information.addressLevelThree')"
               :options="options.addressLevelThree"
@@ -226,6 +231,7 @@
               option-label="value"
               options-dense
               dense
+              class="q-pa-none"
             >
               <template v-slot:selected-item="scope">
                 <q-chip
@@ -245,8 +251,10 @@
             <q-input
               outlined
               v-model="getRestaurantInfoGetter.specificAddress"
+              :error="errors.specificAddress"
               :label="$t('editRestaurant.information.specificAddress')"
               dense
+              class="q-pa-none"
             />
           </q-item-section>
         </q-item>
@@ -265,10 +273,20 @@
           <q-item-section>
             <q-input
               outlined
+              type="textarea"
+              rows="3"
+              :error="errors.description"
+              :rules="[
+                (val) =>
+                  validateForm(
+                    'description',
+                    getRestaurantInfoGetter.description
+                  ),
+              ]"
               v-model="getRestaurantInfoGetter.description"
               :label="$t('editRestaurant.information.shortDescription')"
-              autogrow
               dense
+              counter
             />
           </q-item-section>
         </q-item>
@@ -508,7 +526,7 @@
         icon="ion-pricetags"
         :label="$t('editRestaurant.information.premiumRestaurantInformation')"
       >
-        <q-card>
+        <q-card v-if="getRestaurantInfoGetter.isVip">
           <q-item>
             <q-item-section
               v-for="photo in photos"
@@ -567,6 +585,25 @@
                   accept="image/*"
                 />
               </q-card-section>
+            </q-item-section>
+          </q-item>
+          <q-item>
+            <q-item-section>
+              <q-input
+                outlined
+                :error="errors.catchphrase"
+                :rules="[
+                  (val) =>
+                    validateForm(
+                      'catchphrase',
+                      getRestaurantInfoGetter.vipRestaurant.catchPhrase
+                    ),
+                ]"
+                v-model="getRestaurantInfoGetter.vipRestaurant.catchPhrase"
+                :label="$t('editRestaurant.information.catchphrase')"
+                dense
+                counter
+              />
             </q-item-section>
           </q-item>
           <q-item>
@@ -859,27 +896,53 @@
               <q-input
                 outlined
                 dense
-                v-model="getRestaurantInfoGetter.vipRestaurant.openDate"
-                @blur="(e) => checkOpenDate(e.target.value)"
-                @focus="disableSaveButton = true"
-                :error="errors.openDate"
-                :mask="$t('editRestaurant.information.maskDatetime')"
-                fill-mask
+                readonly
+                @click="displayDialogOpenDate = true"
+                :value="
+                  getRestaurantInfoGetter.vipRestaurant.openDate
+                    ? new Date(
+                        getRestaurantInfoGetter.vipRestaurant.openDate
+                      ).toLocaleDateString('ja', {
+                        year: 'numeric',
+                        month: '2-digit',
+                      })
+                    : null
+                "
+                debounce="650"
                 :label="$t('editRestaurant.information.openDate')"
-                class="q-pa-none"
-              />
+                :mask="$t('editRestaurant.information.maskDatetime')"
+              >
+                <template v-slot:prepend>
+                  <q-icon name="event" @click="displayDialogOpenDate = true">
+                    <q-dialog v-model="displayDialogOpenDate">
+                      <v-datepicker
+                        :language="languages[language]"
+                        :minimumView="'month'"
+                        :maximumView="'year'"
+                        :initialView="'year'"
+                        :inline="true"
+                        v-model="getRestaurantInfoGetter.vipRestaurant.openDate"
+                        @selected="displayDialogOpenDate = false"
+                      />
+                    </q-dialog>
+                  </q-icon>
+                </template>
+                <template v-slot:append>
+                  <q-icon
+                    name="ion-close-circle"
+                    @click="
+                      getRestaurantInfoGetter.vipRestaurant.openDate = null
+                    "
+                  />
+                </template>
+              </q-input>
             </q-item-section>
           </q-item>
-          <q-item>
-            <q-item-section>
-              <q-input
-                outlined
-                v-model="getRestaurantInfoGetter.vipRestaurant.catchPhrase"
-                :label="$t('editRestaurant.information.catchphrase')"
-                dense
-              />
-            </q-item-section>
-          </q-item>
+        </q-card>
+        <q-card v-else>
+          <q-card-section>
+            {{ $t('onlyForPremiumRestaurant') }}
+          </q-card-section>
         </q-card>
       </q-expansion-item>
 
@@ -905,10 +968,13 @@
 import { mapActions, mapGetters } from 'vuex';
 import VueCropper from 'vue-cropperjs';
 import 'cropperjs/dist/cropper.css';
+import Datepicker from 'vuejs-datepicker/dist/vuejs-datepicker.esm.js';
+import * as lang from 'vuejs-datepicker/src/locale';
 
 export default {
   components: {
     VueCropper,
+    'v-datepicker': Datepicker,
   },
   name: 'edit-restaurant-information',
   data() {
@@ -918,7 +984,14 @@ export default {
       openDialogToUpload: false,
       confirmToDeletePhoto: false,
       deletePhotoIndex: -1,
-      errors: { openDate: false },
+      errors: {
+        description: false,
+        catchphrase: false,
+        addressLevelOne: false,
+        addressLevelTwo: false,
+        addressLevelThree: false,
+        specificAddress: false,
+      },
       options: { addressLevelTwo: null, addressLevelThree: null },
       reloadAddressLevelTwo: true,
       reloadAddressLevelThree: true,
@@ -934,6 +1007,9 @@ export default {
         { photoIndex: 3 },
         { photoIndex: 4 },
       ],
+      language: this.$i18n.locale === 'en-US' ? 'en' : 'ja',
+      languages: lang,
+      displayDialogOpenDate: false,
     };
   },
   computed: {
@@ -946,7 +1022,6 @@ export default {
     ]),
   },
   methods: {
-    ...mapActions('common', ['isInvalidDatetimeAction']),
     ...mapActions('masterdata', ['apiFetchChildProvinceAction']),
     ...mapActions('restaurant', [
       'apiUpdateRestaurantAction',
@@ -954,19 +1029,21 @@ export default {
       'apiDeleteRestaurantPhotoAction',
     ]),
 
-    checkOpenDate(date) {
-      // not required field
-      if (isNaN(parseInt(date))) {
-        this.errors.openDate = false;
-        this.disableSaveButton = false;
-        return;
+    validateForm(type, value) {
+      switch (type) {
+        case 'description':
+          this.errors.description = value.length > 300;
+
+          return this.errors.description
+            ? this.$t('editRestaurant.information.descriptionMaxLength')
+            : true;
+        case 'catchphrase':
+          this.errors.catchphrase = value.length > 35;
+
+          return this.errors.catchphrase
+            ? this.$t('editRestaurant.information.catchphraseMaxLength')
+            : true;
       }
-
-      this.isInvalidDatetimeAction(date).then(
-        (isInvalid) => (this.errors.openDate = isInvalid)
-      );
-
-      this.disableSaveButton = false;
     },
 
     async fetchChildProvinceLevel(addressLevel, needReload, parentId, update) {
@@ -1022,6 +1099,15 @@ export default {
 
     async submit() {
       this.loading = true;
+
+      this.errors.addressLevelOne =
+        this.getRestaurantInfoGetter.addressLevelOne === null;
+      this.errors.addressLevelTwo =
+        this.getRestaurantInfoGetter.addressLevelTwo === null;
+      this.errors.addressLevelThree =
+        this.getRestaurantInfoGetter.addressLevelThree === null;
+      this.errors.specificAddress =
+        this.getRestaurantInfoGetter.specificAddress === '';
 
       const gotError = await Object.values(this.errors).filter(
         (isInvalid) => isInvalid

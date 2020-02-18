@@ -2,12 +2,7 @@
   <q-page padding class="row justify-center content-center bg-auth">
     <q-card style="width: 25em;" class="no-shadow text-grey-1 transparent">
       <q-card-section class="row justify-center q-mb-lg">
-        <q-img
-          src="statics/logo.png"
-          alt="FOODCONNECTION LOGO"
-          transition="slide-down"
-          spinner-color="transparent"
-        />
+        <img src="statics/logo.png" alt="SOLOYOI LOGO" style="height: 8em" />
       </q-card-section>
       <q-card-section class="justify-center text-center text-uppercase text-h5">
         {{ $t('headerTitle') }}

@@ -2,7 +2,7 @@
   "name": "cms-admin",
   "version": "0.0.1",
   "description": "none",
-  "productName": "FoodConnection - CMS Admin",
+  "productName": "Soloyoi - 管理者サイト",
   "author": "Vitalify Asia",
   "private": true,
   "scripts": {
@@ -36,6 +36,7 @@
     "vue-cropperjs": "^4.0.1",
     "vue-i18n": "^7.3.3",
     "vue-meta": "^1.6.0",
+    "vuejs-datepicker": "^1.6.2",
     "vuelidate": "^0.7.4"
   },
   "devDependencies": {
