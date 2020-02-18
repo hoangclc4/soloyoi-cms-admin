@@ -63,6 +63,11 @@ const routes = [
         name: 'edit-restaurant-review',
         component: () => import('pages/editRestaurant/EditRestaurantReview'),
       },
+      {
+        path: 'setting',
+        name: 'edit-restaurant-setting',
+        component: () => import('pages/editRestaurant/EditRestaurantSetting'),
+      },
     ],
   },
   {

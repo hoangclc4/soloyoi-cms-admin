@@ -87,3 +87,16 @@ export function deleteRestaurantPhotoMutation(state, { photoIndex }) {
 
   LocalStorage.set('ADMIN_RESTAURANT_INFO', state.restaurantInfo);
 }
+
+/**
+ * @description update Restaurant SeatAvailable state
+ * @author NamTS
+ * @date 2020-02-18
+ * @export
+ * @param {*} state
+ * @param {*} { input }
+ */
+export function updateSeatAvailableTodayMutation(state, { input }) {
+  state.restaurantInfo.seatAvailable = input.seatAvailable;
+  LocalStorage.set('ADMIN_RESTAURANT_INFO', state.restaurantInfo);
+}

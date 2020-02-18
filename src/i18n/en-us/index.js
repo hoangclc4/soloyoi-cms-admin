@@ -23,6 +23,7 @@ export default {
   pleaseSelectAnImageFile: 'Please select an image file!',
   notSupportedFileReaderAPI: 'Not supported File Reader API',
   pleaseWaitABit: '<p style="font-weight: 700">Please wait a bit...<p>',
+  onlyForPremiumRestaurant: 'Only PREMIUM RESTAURANT can use this feature!',
 
   /* Call API */
   api: {
@@ -79,6 +80,12 @@ export default {
     /* Admin Setting */
     updateAdminPasswordFailed: 'Failed to update password',
     updateAdminPasswordSuccess: 'Success to update password',
+
+    /* Restaurant Setting */
+    updateRestaurantSeatAvailableTodayFailed:
+      'Failed to update seat available today',
+    updateRestaurantSeatAvailableTodaySuccess:
+      'Success to update seat available today',
 
     /* Edit Restaurant */
     editRestaurant: {
@@ -189,6 +196,7 @@ export default {
       menu: 'Menu',
       staff: 'Staff',
       review: 'Review',
+      setting: 'Setting',
     },
     editUser: {
       title: 'Edit User',
@@ -448,6 +456,15 @@ export default {
       commentHeader: 'Comment',
       updatedAtHeader: 'Updated At',
       confirmDeleteRestaurant: 'Are you sure you want to delete this review?',
+    },
+
+    setting: {
+      title: 'Setting',
+      userInfo: 'Restaurant Login Information',
+      seatAvailableTodayTitle: 'Seat Available Today Setting',
+      seatAvailableTodayLabel: 'Seat Available Today',
+      seatAvailable: 'Available',
+      seatFull: 'Fully',
     },
   },
 

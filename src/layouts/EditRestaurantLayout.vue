@@ -192,6 +192,19 @@
             {{ $t('navigation.editRestaurant.review') }}
           </q-item-section>
         </q-item>
+        <q-item
+          clickable
+          active-class="text-orange"
+          v-ripple
+          :to="{ name: 'edit-restaurant-setting' }"
+        >
+          <q-item-section avatar class="icon__menu">
+            <q-icon name="ion-settings" />
+          </q-item-section>
+          <q-item-section class="text-body1">
+            {{ $t('navigation.editRestaurant.setting') }}
+          </q-item-section>
+        </q-item>
       </q-list>
     </q-drawer>
 
