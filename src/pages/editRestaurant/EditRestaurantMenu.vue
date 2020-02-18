@@ -79,7 +79,7 @@
             </q-card-actions>
           </q-card>
         </q-dialog>
-        <q-card>
+        <q-card v-if="getRestaurantInfoGetter.isVip">
           <q-item>
             <q-item-section
               v-for="photo in photos"
@@ -148,6 +148,11 @@
               </q-item-label>
             </q-item-section>
           </q-item>
+        </q-card>
+        <q-card v-else>
+          <q-card-section>
+            {{ $t('onlyForPremiumRestaurant') }}
+          </q-card-section>
         </q-card>
       </q-expansion-item>
 
@@ -319,7 +324,7 @@
           </q-card>
         </q-dialog>
 
-        <q-card>
+        <q-card v-if="getRestaurantInfoGetter.isVip">
           <q-tabs
             v-model="tab"
             dense
@@ -883,6 +888,11 @@
               </q-table>
             </q-tab-panel>
           </q-tab-panels>
+        </q-card>
+        <q-card v-else>
+          <q-card-section>
+            {{ $t('onlyForPremiumRestaurant') }}
+          </q-card-section>
         </q-card>
       </q-expansion-item>
     </q-card>

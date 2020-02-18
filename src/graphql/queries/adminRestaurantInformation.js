@@ -16,8 +16,6 @@ export const ADMIN_RESTAURANT_INFO = gql`
         addressLevelTwo
         addressLevelThree
         specificAddress
-        lat
-        lng
         phone
         email
         access

@@ -50,18 +50,11 @@ export async function apiCreateRestaurantStaffAction(
   { apolloClient, input }
 ) {
   try {
-    const year = input.birthday.substring(0, 4);
-    const month = input.birthday.substring(5, 7);
-    // Scala Datetime Format: YYYY-MM-DDTHH:mm:ss:sssZ
-    const staffBirthday = isNaN(parseInt(year))
-      ? null
-      : `${year}-${month}-01T01:00:00.000Z`;
-
     const variables = {
       input: {
         restaurantId: input.restaurantId,
         staffName: input.name,
-        staffBirthday,
+        staffBirthday: input.birthday,
         // If select one got no value, so set null value for sync with Mobile App
         staffBirthplace: input.birthplace ? [input.birthplace] : null,
         staffTitle: input.title,
@@ -92,36 +85,26 @@ export async function apiCreateRestaurantStaffAction(
 /**
  * @description call API Update Restaurant Staff
  * @author AnhTQ
- * @date 2020-01-08
+ * @date 2020-02-18
  * @export
- * @param {*} context
+ * @param {*} { commit }
  * @param {*} { apolloClient, input }
  * @returns
  */
 export async function apiUpdateRestaurantStaffAction(
-  context,
+  { commit },
   { apolloClient, input }
 ) {
   try {
-    const year = input.birthday ? input.birthday.substring(0, 4) : null;
-    const month = input.birthday ? input.birthday.substring(5, 7) : null;
-    const day = input.birthday ? input.birthday.substring(8, 10) : null;
-    // Scala Datetime Format: YYYY-MM-DDTHH:mm:ss:sssZ
-    const staffBirthday = isNaN(parseInt(year))
-      ? null
-      : `${year}-${month}-${day}T01:00:00.000Z`;
-
-    // If select one got no value, so set null value for sync with Mobile App
-    const staffBirthplace = input.birthplace ? [input.birthplace] : null;
-
     const variables = {
       input: {
         restaurantId: input.restaurantId,
         staffId: input.id,
         oldPhotoId: input.oldPhotoId,
         staffName: input.name,
-        staffBirthday,
-        staffBirthplace,
+        staffBirthday: input.birthday,
+        // If select one got no value, so set null value for sync with Mobile App
+        staffBirthplace: input.birthplace ? [input.birthplace] : null,
         staffTitle: input.title,
         staffStyle: input.style,
         staffProfile: input.profile,
@@ -137,6 +120,7 @@ export async function apiUpdateRestaurantStaffAction(
 
     // Update Staff Success
     if (response.data.result.requestResolved) {
+      commit('saveUpdatedStaffMutation', { input });
       return { requestResolved: true };
     }
     // Update Staff Failed
@@ -151,14 +135,14 @@ export async function apiUpdateRestaurantStaffAction(
 /**
  * @description call API Delete Restaurant Staff
  * @author AnhTQ
- * @date 2020-01-08
+ * @date 2020-02-18
  * @export
- * @param {*} context
+ * @param {*} { commit }
  * @param {*} { apolloClient, input }
  * @returns
  */
 export async function apiDeleteRestaurantStaffAction(
-  context,
+  { commit },
   { apolloClient, input }
 ) {
   try {
@@ -169,6 +153,7 @@ export async function apiDeleteRestaurantStaffAction(
 
     // Delete Staff Success
     if (response.data.result.requestResolved) {
+      commit('saveDeletedStaffMutation', { input });
       return { requestResolved: true };
     }
     // Delete Staff Failed

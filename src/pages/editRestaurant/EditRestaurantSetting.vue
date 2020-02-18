@@ -7,25 +7,6 @@
         expand-separator
         switch-toggle-side
         default-opened
-        icon="ion-contact"
-        :label="$t('editRestaurant.setting.userInfo')"
-      >
-        <q-item>
-          <q-item-section>
-            <q-input
-              v-model="getRestaurantInfoGetter.name"
-              disable
-              dense
-              outlined
-              :label="$t('editRestaurant.information.restaurantName')"
-            />
-          </q-item-section>
-        </q-item>
-      </q-expansion-item>
-      <q-expansion-item
-        expand-separator
-        switch-toggle-side
-        default-opened
         icon="ion-time"
         :label="$t('editRestaurant.setting.seatAvailableTodayTitle')"
       >

@@ -198,7 +198,7 @@ export default {
       menu: 'Menu',
       staff: 'Staff',
       review: 'Review',
-      setting: 'Setting',
+      settingSeatAvailable: 'Seat Available Today Setting',
     },
     editUser: {
       title: 'Edit User',
@@ -347,7 +347,8 @@ export default {
       addressLevelThree: 'Address Level Three',
       specificAddress: 'Specific Address',
       accessibility: 'Accessibility (transport)',
-      shortDescription: 'Short Description',
+      shortDescription: 'Short Description (Max 300 characters)',
+      descriptionMaxLength: 'Please use maximum 300 characters',
       openingHours: 'Opening Hours',
       openingHoursForSearch: 'Opening Hours (for Search)',
       regularHolidays: 'Regular Holidays',
@@ -396,7 +397,8 @@ export default {
       memberRegistrationDate: 'Member Registration Date',
       openDate: 'Open Date',
       maskDatetime: '####/##',
-      catchphrase: 'Catchphrase',
+      catchphrase: 'Catchphrase (Max 35 characters)',
+      catchphraseMaxLength: 'Please use maximum 35 characters',
 
       uploadPhoto: 'Upload Photo',
       confirmDeletePhoto: 'Are you sure you want to delete this photo?',
@@ -479,7 +481,6 @@ export default {
 
     setting: {
       title: 'Setting',
-      userInfo: 'Restaurant Login Information',
       seatAvailableTodayTitle: 'Seat Available Today Setting',
       seatAvailableTodayLabel: 'Seat Available Today',
       seatAvailable: 'Available',

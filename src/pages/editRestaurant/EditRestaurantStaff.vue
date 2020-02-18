@@ -128,26 +128,80 @@
             v-if="staff.isAddNew"
             outlined
             dense
-            v-model="newStaff.birthday"
-            :error="errors.newStaff.birthday"
-            :mask="$t('editRestaurant.staff.maskDate')"
-            fill-mask
-            @blur="(e) => checkOpenDate(e.target.value, staff.isAddNew)"
+            readonly
+            @click="displayNewStaffBirthday = true"
+            :value="
+              newStaff.birthday
+                ? new Date(newStaff.birthday).toLocaleDateString('ja', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                  })
+                : null
+            "
+            debounce="650"
             :label="$t('editRestaurant.staff.birthday')"
+            :mask="$t('editRestaurant.staff.maskDate')"
             class="q-py-sm"
-          />
+          >
+            <template v-slot:prepend>
+              <q-icon name="event" @click="displayNewStaffBirthday = true">
+                <q-dialog v-model="displayNewStaffBirthday">
+                  <v-datepicker
+                    :language="languages[language]"
+                    :inline="true"
+                    v-model="newStaff.birthday"
+                    @selected="displayNewStaffBirthday = false"
+                  />
+                </q-dialog>
+              </q-icon>
+            </template>
+            <template v-slot:append>
+              <q-icon
+                name="ion-close-circle"
+                @click="newStaff.birthday = null"
+              />
+            </template>
+          </q-input>
           <q-input
             v-else
             outlined
             dense
-            v-model="updatedStaff.birthday"
-            :error="errors.updatedStaff.birthday"
-            :mask="$t('editRestaurant.staff.maskDate')"
-            fill-mask
-            @blur="(e) => checkOpenDate(e.target.value, staff.isAddNew)"
+            readonly
+            @click="displayUpdatedStaffBirthday = true"
+            :value="
+              updatedStaff.birthday
+                ? new Date(updatedStaff.birthday).toLocaleDateString('ja', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                  })
+                : null
+            "
+            debounce="650"
             :label="$t('editRestaurant.staff.birthday')"
+            :mask="$t('editRestaurant.staff.maskDate')"
             class="q-py-sm"
-          />
+          >
+            <template v-slot:prepend>
+              <q-icon name="event" @click="displayUpdatedStaffBirthday = true">
+                <q-dialog v-model="displayUpdatedStaffBirthday">
+                  <v-datepicker
+                    :language="languages[language]"
+                    :inline="true"
+                    v-model="updatedStaff.birthday"
+                    @selected="displayUpdatedStaffBirthday = false"
+                  />
+                </q-dialog>
+              </q-icon>
+            </template>
+            <template v-slot:append>
+              <q-icon
+                name="ion-close-circle"
+                @click="updatedStaff.birthday = null"
+              />
+            </template>
+          </q-input>
         </q-card-section>
         <q-card-section class="q-py-none">
           <q-select
@@ -349,7 +403,7 @@
         </q-card-section>
       </q-card>
     </q-dialog>
-    <q-card>
+    <q-card v-if="getRestaurantInfoGetter.isVip">
       <q-card-section>
         <div class="row justify-between">
           <q-item
@@ -415,7 +469,8 @@
                 dense
                 outlined
                 readonly
-                v-model="getStaffGetter[staff.index].birthday"
+                v-if="getStaffGetter[staff.index].birthday"
+                v-model="getStaffGetter[staff.index].formattedBirthday"
                 :label="$t('editRestaurant.staff.birthday')"
                 :mask="$t('editRestaurant.staff.maskDate')"
                 class="full-width q-mt-md"
@@ -488,6 +543,11 @@
         </div>
       </q-card-section>
     </q-card>
+    <q-card v-else>
+      <q-card-section>
+        {{ $t('onlyForPremiumRestaurant') }}
+      </q-card-section>
+    </q-card>
   </q-page>
 </template>
 
@@ -495,10 +555,13 @@
 import { mapActions, mapGetters } from 'vuex';
 import VueCropper from 'vue-cropperjs';
 import 'cropperjs/dist/cropper.css';
+import Datepicker from 'vuejs-datepicker/dist/vuejs-datepicker.esm.js';
+import * as lang from 'vuejs-datepicker/src/locale';
 
 export default {
   components: {
     VueCropper,
+    'v-datepicker': Datepicker,
   },
   name: 'edit-restaurant-staff',
   data() {
@@ -556,7 +619,7 @@ export default {
         photoSrc: '',
         photoFile: '',
         name: '',
-        birthday: `${new Date().getFullYear() - 18}/01/01`,
+        birthday: null,
         birthplace: null,
         title: '',
         style: null,
@@ -567,7 +630,7 @@ export default {
         photoSrc: '',
         photoFile: '',
         name: '',
-        birthday: '',
+        birthday: null,
         birthplace: null,
         title: '',
         style: null,
@@ -577,6 +640,10 @@ export default {
       deletionStaff: {
         id: '',
       },
+      displayNewStaffBirthday: false,
+      displayUpdatedStaffBirthday: false,
+      language: this.$i18n.locale === 'en-US' ? 'en' : 'ja',
+      languages: lang,
     };
   },
   computed: {
@@ -590,28 +657,6 @@ export default {
       'apiUpdateRestaurantStaffAction',
       'apiDeleteRestaurantStaffAction',
     ]),
-    ...mapActions('common', ['isInvalidDatetimeAction']),
-
-    checkOpenDate(date, isAddNew) {
-      // not required field
-      if (isNaN(parseInt(date))) {
-        if (isAddNew) {
-          this.errors.newStaff.birthday = false;
-        } else {
-          this.errors.updatedStaff.birthday = false;
-        }
-
-        return;
-      }
-
-      this.isInvalidDatetimeAction(date).then((isInvalid) => {
-        if (isAddNew) {
-          this.errors.newStaff.birthday = isInvalid;
-        } else {
-          this.errors.updatedStaff.birthday = isInvalid;
-        }
-      });
-    },
 
     /* Staff Photo */
     onSelectStaffPhoto(isAddNew) {
@@ -680,7 +725,7 @@ export default {
           photoSrc: '',
           photoFile: '',
           name: '',
-          birthday: `${new Date().getFullYear() - 18}/01/01`,
+          birthday: null,
           birthplace: null,
           title: '',
           style: null,
@@ -713,6 +758,7 @@ export default {
     async createNewStaff() {
       this.dialogStaff[0].openDialog = false;
       this.loading = true;
+      this.$q.loading.show();
 
       this.errors.newStaff.photoFile = this.newStaff.photoFile === '';
       this.errors.newStaff.name = this.newStaff.name === '';
@@ -749,6 +795,7 @@ export default {
               color: 'green-5',
             });
             this.loading = false;
+            this.$q.loading.hide();
           });
         } else {
           result.systemError
@@ -766,12 +813,14 @@ export default {
               });
 
           this.loading = false;
+          this.$q.loading.hide();
         }
       }
     },
     async updateStaff() {
       this.dialogStaff[1].openDialog = false;
       this.loading = true;
+      this.$q.loading.show();
 
       this.errors.updatedStaff.photoFile = this.updatedStaff.photoFile === '';
       this.errors.updatedStaff.name = this.updatedStaff.name === '';
@@ -802,15 +851,12 @@ export default {
 
         if (result.requestResolved) {
           // Update success
-          this.fetchRestaurantStaff().then(() => {
-            this.$q.notify({
-              message: this.$t(
-                'api.editRestaurant.updateRestaurantStaffSuccess'
-              ),
-              color: 'green-5',
-            });
-            this.loading = false;
+          this.$q.notify({
+            message: this.$t('api.editRestaurant.updateRestaurantStaffSuccess'),
+            color: 'green-5',
           });
+          this.loading = false;
+          this.$q.loading.hide();
         } else {
           result.systemError
             ? // Update failed, got something wrong with system
@@ -827,12 +873,14 @@ export default {
               });
 
           this.loading = false;
+          this.$q.loading.hide();
         }
       }
     },
     async deleteStaff() {
       this.confirmToDeleteStaff = false;
       this.loading = true;
+      this.$q.loading.show();
 
       // Call API Delete Restaurant Staff
       const apolloClient = this.$apollo.provider.defaultClient;
@@ -847,13 +895,12 @@ export default {
 
       if (result.requestResolved) {
         // Delete success
-        this.fetchRestaurantStaff().then(() => {
-          this.$q.notify({
-            message: this.$t('api.editRestaurant.deleteRestaurantStaffSuccess'),
-            color: 'green-5',
-          });
-          this.loading = false;
+        this.$q.notify({
+          message: this.$t('api.editRestaurant.deleteRestaurantStaffSuccess'),
+          color: 'green-5',
         });
+        this.loading = false;
+        this.$q.loading.hide();
       } else {
         result.systemError
           ? // Delete failed, got something wrong with system
@@ -870,6 +917,7 @@ export default {
             });
 
         this.loading = false;
+        this.$q.loading.hide();
       }
     },
 
