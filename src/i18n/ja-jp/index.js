@@ -24,6 +24,7 @@ export default {
   notSupportedFileReaderAPI:
     'このブラウザーはFile Readerをサポートしていません',
   pleaseWaitABit: '<p style="font-weight: 700">少々お待ちくださいませ・・・<p>',
+  onlyForPremiumRestaurant: 'プレミアム会員にアップグレードしてください！',
 
   /* Call API */
   api: {
@@ -90,6 +91,12 @@ export default {
     /* Admin Setting */
     updateAdminPasswordFailed: 'パスワードを更新できませんでした！',
     updateAdminPasswordSuccess: 'パスワードを更新できました！',
+
+    /* Restaurant Setting */
+    updateRestaurantSeatAvailableTodayFailed:
+      '本日空席あり設定を更新できませんでした！',
+    updateRestaurantSeatAvailableTodaySuccess:
+      '本日空席あり設定を更新できました！',
 
     /* Edit Restaurant */
     editRestaurant: {
@@ -205,6 +212,7 @@ export default {
       menu: 'メニュー',
       staff: 'スタッフ',
       review: '口コミ',
+      setting: '設定',
     },
     editUser: {
       title: 'ユーザー編集',
@@ -485,6 +493,15 @@ export default {
       commentHeader: 'コメント',
       updatedAtHeader: '更新時間',
       confirmDeleteRestaurant: 'このレビューを削除しますか？',
+    },
+
+    setting: {
+      title: '設定',
+      userInfo: 'アカウント情報',
+      seatAvailableTodayTitle: '本日空席あり設定',
+      seatAvailableTodayLabel: '本日空席あり',
+      seatAvailable: '空席あり',
+      seatFull: '満席',
     },
   },
 
