@@ -20,13 +20,6 @@
             @blur="validateInput(newMessage.message, 'message')"
             :error="errors.newMessage.message"
           />
-          <q-input
-            outlined
-            :label="$t('notification.sendLink')"
-            v-model="newMessage.link"
-            @blur="validateInput(newMessage.link, 'link')"
-            :error="errors.newMessage.link"
-          />
         </q-card-section>
 
         <q-card-actions align="right" class="text-primary">
@@ -127,9 +120,9 @@ export default {
     return {
       loading: false,
       errors: {
-        newMessage: { message: false, link: false },
+        newMessage: { message: false },
       },
-      newMessage: { message: '', link: '' },
+      newMessage: { message: '' },
       openConfirmDelete: false,
       openSendDialog: false,
       filter: '',
@@ -148,13 +141,6 @@ export default {
           align: 'center',
           label: this.$t('notification.messageTableHeader'),
           field: 'notifyMessage',
-          sortable: true,
-        },
-        {
-          name: 'notifyLink',
-          align: 'center',
-          label: this.$t('notification.linkTableHeader'),
-          field: 'notifyLink',
           sortable: true,
         },
         {
@@ -186,24 +172,23 @@ export default {
         case 'message':
           this.errors.newMessage.message = value === '';
           break;
-        case 'link':
-          this.errors.newMessage.link = false;
+        default:
           break;
       }
     },
     onClearInput() {
-      this.errors.newMessage = { message: false, link: false };
-      this.newMessage = { message: '', link: '' };
+      this.errors.newMessage = { message: false };
+      this.newMessage = { message: '' };
     },
     onCreateNotification() {
-      this.errors.newMessage = { message: false, link: false };
+      this.errors.newMessage = { message: false };
       this.openSendDialog = true;
     },
     async sendNewNotification() {
       this.openSendDialog = false;
       this.loading = true;
 
-      if (this.errors.newMessage.message || this.errors.newMessage.link) {
+      if (this.errors.newMessage.message) {
         this.loading = false;
         this.openSendDialog = true;
       } else {
@@ -211,7 +196,7 @@ export default {
         const apolloClient = this.$apollo.provider.defaultClient;
         const input = {
           notifyMessage: this.newMessage.message,
-          notifyLink: this.newMessage.link,
+          notifySystemType: 'ADMIN',
         };
         const result = await this.apiCreateAdminNotificationAction({
           apolloClient,
@@ -226,7 +211,7 @@ export default {
               color: 'green-5',
             });
 
-            this.newMessage = { message: '', link: '' };
+            this.newMessage = { message: '' };
             this.loading = false;
           });
         } else {

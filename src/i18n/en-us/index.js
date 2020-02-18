@@ -125,6 +125,8 @@ export default {
         'Failed to delete restaurant menu category!',
       deleteRestaurantMenuCategorySuccess:
         'Success to delete restaurant menu category!',
+      apiUpdateCategoryTaxSuccess: 'Success to update restaurant tax category!',
+      apiUpdateCategoryTaxFailded: 'Failed to update restaurant tax category!',
 
       fetchRestaurantMenuFoodFailed: 'Failed to fetch menu food!',
       fetchRestaurantMenuFoodSuccess: 'Success to fetch menu food!',
@@ -416,6 +418,7 @@ export default {
       nameHeader: 'Item Name',
       priceHeader: 'Price',
       createdAtHeader: 'Created At',
+      haveNotMenuLabel: 'No data available',
 
       createNewCategory: 'Create new category',
       editCategory: 'Edit category',
@@ -423,7 +426,23 @@ export default {
       confirmDeleteCategory: 'Are you sure you want to delete this category?',
 
       addItem: 'Add Item',
+      taxed: 'Taxed',
+      noTax: 'No tax',
+      typeOfTaxedRound: 'Round',
+      typeOfTaxedRoundDescription: '4 give 5 taken',
+      typeOfTaxedFloor: 'Floor',
+      typeOfTaxedFloorDescription: 'Remove the decimal point',
+      typeOfTaxedCeil: 'Ceil',
+      typeOfTaxedCeilDescription:
+        'Remove decimal point and round up to the next higher integer',
+      typeOfTaxedManual: 'Manual',
+      typeOfTaxedManualDescription:
+        'This action will enable manual input taxed price when Add or Edit Menu!',
+      taxedTitle: 'All prices included tax',
+      noTaxedTitle: 'All prices are exclusive of tax',
       createNewMenuItem: 'Create new menu item',
+      createNewMenuItemApplyTax: 'This Category is being applied tax',
+      createNewMenuItemNoApplyTax: 'This Category is current no tax applies',
       editMenuItem: 'Edit menu item',
       menuItemName: 'Menu Item Name',
       menuItemPrice: 'Menu Item Price',

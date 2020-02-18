@@ -1020,10 +1020,10 @@ export default {
       }
     },
 
-    submit() {
+    async submit() {
       this.loading = true;
 
-      const gotError = Object.values(this.errors).filter(
+      const gotError = await Object.values(this.errors).filter(
         (isInvalid) => isInvalid
       );
 

@@ -21,9 +21,14 @@ export const ADMIN_MENU_RESTAURANT = gql`
             menuId
             name
             price
+            afterTaxedPrice
+            isManual
             createdAt
           }
           name
+          taxRate
+          taxFlag
+          typeOfTaxed
         }
       }
       error {
