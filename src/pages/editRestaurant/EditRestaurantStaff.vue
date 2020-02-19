@@ -748,6 +748,16 @@ export default {
       this.dialogStaff[0].openDialog = true;
     },
     onEditStaff(staff) {
+      this.errors.updatedStaff = {
+        photoFile: false,
+        name: false,
+        birthday: false,
+        birthplace: false,
+        title: false,
+        style: false,
+        profile: false,
+        canTalk: false,
+      };
       this.updatedStaff = { ...staff };
       this.dialogStaff[1].openDialog = true;
     },
@@ -775,6 +785,7 @@ export default {
           color: 'teal-8',
         });
         this.loading = false;
+        this.$q.loading.hide();
       } else {
         // Call API create new Restaurant Staff
         const apolloClient = this.$apollo.provider.defaultClient;
@@ -837,6 +848,7 @@ export default {
           color: 'teal-8',
         });
         this.loading = false;
+        this.$q.loading.hide();
       } else {
         // Call API update Restaurant Staff
         const apolloClient = this.$apollo.provider.defaultClient;
