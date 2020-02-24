@@ -55,7 +55,6 @@
             :label="$t('delete')"
             color="negative"
             @click="deleteSelectedNotification()"
-            v-close-popup
           />
         </q-card-actions>
       </q-card>
@@ -232,6 +231,7 @@ export default {
       }
     },
     async deleteSelectedNotification() {
+      this.openConfirmDelete = false;
       this.loading = true;
 
       // Call API Delete Admin Notification

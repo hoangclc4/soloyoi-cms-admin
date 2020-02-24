@@ -74,7 +74,6 @@
                 :label="$t('delete')"
                 @click="deleteMenuPhoto(deletePhotoIndex)"
                 color="negative"
-                v-close-popup
               />
             </q-card-actions>
           </q-card>
@@ -228,7 +227,6 @@
                 :label="$t('delete')"
                 @click="deleteCategory(deletionCategory)"
                 color="negative"
-                v-close-popup
               />
             </q-card-actions>
           </q-card>
@@ -318,7 +316,6 @@
                 :label="$t('delete')"
                 @click="deleteMenuItem(deletionMenuItem)"
                 color="negative"
-                v-close-popup
               />
             </q-card-actions>
           </q-card>
@@ -1278,6 +1275,7 @@ export default {
       this.deletePhotoIndex = photoIndex;
     },
     async deleteMenuPhoto(photoIndex) {
+      this.confirmToDeletePhoto = false;
       this.loading = true;
 
       // Call API Delete Restaurant Photo

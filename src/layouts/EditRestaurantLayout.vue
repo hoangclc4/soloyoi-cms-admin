@@ -111,7 +111,6 @@
                   :label="$t('auth.logout')"
                   @click="logout()"
                   color="negative"
-                  v-close-popup
                 />
               </q-card-actions>
             </q-card>
@@ -259,6 +258,7 @@ export default {
     ]),
 
     async logout() {
+      this.confirm = false;
       this.loading = true;
 
       // Call API Logout

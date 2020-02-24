@@ -33,7 +33,6 @@
             icon-right="ion-cloud-upload"
             :label="$t('upload')"
             @click="uploadRestarantPhoto($refs, selectedImage)"
-            v-close-popup
           />
         </q-card-actions>
       </q-card>
@@ -54,7 +53,6 @@
             :label="$t('delete')"
             @click="deleteRestaurantPhoto(deletePhotoIndex)"
             color="negative"
-            v-close-popup
           />
         </q-card-actions>
       </q-card>
@@ -1268,6 +1266,7 @@ export default {
       this.deletePhotoIndex = photoIndex;
     },
     async deleteRestaurantPhoto(photoIndex) {
+      this.confirmToDeletePhoto = false;
       this.loading = true;
 
       // Call API Delete Restaurant Photo

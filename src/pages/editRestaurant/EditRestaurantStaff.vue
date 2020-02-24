@@ -60,7 +60,6 @@
             :label="$t('delete')"
             @click="deleteStaff()"
             color="negative"
-            v-close-popup
           />
         </q-card-actions>
       </q-card>

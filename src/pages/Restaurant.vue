@@ -16,25 +16,13 @@
             outlined
             :label="$t('restaurant.newRestaurantName')"
             autofocus
-            autogrow
             v-model="newRestaurant.name"
             @blur="
               () => {
-                errors.newRestaurant.name = newRestaurant.name === '';
+                errors.newRestaurant.name = newRestaurant.name.trim() === '';
               }
             "
             :error="errors.newRestaurant.name"
-          />
-          <q-input
-            outlined
-            :label="$t('restaurant.newAddress')"
-            v-model="newRestaurant.address"
-            @blur="
-              () => {
-                errors.newRestaurant.address = newRestaurant.address === '';
-              }
-            "
-            :error="errors.newRestaurant.address"
           />
           <q-input
             outlined
@@ -42,7 +30,7 @@
             v-model="newRestaurant.email"
             @blur="
               () => {
-                errors.newRestaurant.email = newRestaurant.email === '';
+                errors.newRestaurant.email = newRestaurant.email.trim() === '';
               }
             "
             :error="errors.newRestaurant.email"
@@ -113,14 +101,6 @@
           <q-input
             outlined
             readonly
-            :label="$t('restaurant.newAddress')"
-            v-model="getCreatedRestaurantGetter.address"
-          />
-        </q-card-section>
-        <q-card-section>
-          <q-input
-            outlined
-            readonly
             :label="$t('restaurant.newEmail')"
             v-model="getCreatedRestaurantGetter.email"
           />
@@ -159,7 +139,6 @@
             :label="$t('delete')"
             @click="deleteRestaurant()"
             color="negative"
-            v-close-popup
           />
         </q-card-actions>
       </q-card>
@@ -246,10 +225,10 @@ export default {
       comingSoon: false,
       loading: false,
       errors: {
-        newRestaurant: { name: false, address: false, email: false },
+        newRestaurant: { name: false, email: false },
       },
       openCreateRestaurant: false,
-      newRestaurant: { name: '', address: '', email: '' },
+      newRestaurant: { name: '', email: '' },
       welcomeNewRestaurant: false,
       isNewRestaurantPassword: true,
       confirmDeleteRestaurant: false,
@@ -320,10 +299,10 @@ export default {
     ]),
 
     onClearInput() {
-      this.newRestaurant = { name: '', address: '', email: '' };
+      this.newRestaurant = { name: '', email: '' };
     },
     onCreateRestaurant() {
-      this.errors.newRestaurant = { name: false, address: false, email: false };
+      this.errors.newRestaurant = { name: false, email: false };
       this.onClearInput();
       this.openCreateRestaurant = true;
     },
@@ -343,6 +322,12 @@ export default {
     async createNewRestaurant() {
       this.openCreateRestaurant = false;
       this.loading = true;
+
+      this.newRestaurant.name = await this.newRestaurant.name.trim();
+      this.newRestaurant.email = await this.newRestaurant.email.trim();
+
+      this.errors.newRestaurant.name = this.newRestaurant.name === '';
+      this.errors.newRestaurant.email = this.newRestaurant.email === '';
 
       const gotError =
         (await Object.values(this.errors.newRestaurant).filter(
@@ -387,6 +372,7 @@ export default {
       }
     },
     async deleteRestaurant() {
+      this.confirmDeleteRestaurant = false;
       this.loading = true;
 
       // Call API Delete Restaurant
