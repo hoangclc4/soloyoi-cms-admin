@@ -9,7 +9,7 @@ import { LocalStorage } from 'quasar';
  * @param {*} response
  */
 export function saveNotificationMutation(state, { response }) {
-  state.notification = response.data.result.response.notificationAdmins;
+  state.notification = [...response.data.result.response.notificationAdmins];
 
   LocalStorage.set('ADMIN_NOTIFICATION', state.notification);
 }

@@ -67,7 +67,7 @@ export function saveUserInformationMutation(state, { response }) {
  * @param {*} response
  */
 export function saveUserPaymentLogMutation(state, { response }) {
-  state.userPaymentLog = response.data.result.response;
+  state.userPaymentLog = [...response.data.result.response];
 
   LocalStorage.set('ADMIN_USER_PAYMENT_LOG', state.userPaymentLog);
 }

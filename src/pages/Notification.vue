@@ -169,7 +169,7 @@ export default {
     validateInput(value, type) {
       switch (type) {
         case 'message':
-          this.errors.newMessage.message = value === '';
+          this.errors.newMessage.message = value.trim() === '';
           break;
         default:
           break;

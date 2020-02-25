@@ -266,6 +266,7 @@ export default {
           align: 'left',
           label: this.$t('restaurant.addressHeader'),
           field: 'address',
+          format: (val) => (val === 'none' ? '' : val),
           sortable: true,
         },
         {

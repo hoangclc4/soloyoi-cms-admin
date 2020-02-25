@@ -9,7 +9,9 @@ import { LocalStorage } from 'quasar';
  * @param {*} { response }
  */
 export function saveRestaurantReviewMutation(state, { response }) {
-  state.restaurantReview = response.data.result.response.reviewRestaurantList;
+  state.restaurantReview = [
+    ...response.data.result.response.reviewRestaurantList,
+  ];
 
   LocalStorage.set('ADMIN_RESTAURANT_REVIEW', state.restaurantReview);
 }

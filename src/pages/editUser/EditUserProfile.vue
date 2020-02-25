@@ -13,7 +13,7 @@
           <q-img
             spinner-color="orange-2"
             :src="getUserInfoGetter.facebookAvatar"
-            :ratio="1 / 1"
+            :ratio="1054 / 1270"
             class="rounded-borders shadow-8"
           >
             <div class="absolute-bottom-right text-subtitle2">
@@ -29,7 +29,7 @@
                 ? getUserInfoGetter.photos[photo.photoIndex].photoFullWidthUrl
                 : null
             "
-            :ratio="1 / 1"
+            :ratio="1054 / 1270"
             class="rounded-borders shadow-8"
           >
             <div class="absolute-bottom-right text-subtitle2">

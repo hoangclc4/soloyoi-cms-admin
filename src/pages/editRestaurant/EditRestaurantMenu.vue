@@ -21,7 +21,7 @@
             <q-card-section>
               <VueCropper
                 ref="cropper"
-                :aspect-ratio="3 / 2"
+                :aspect-ratio="1115 / 830"
                 :src="selectedImage.src"
                 preview=".preview"
                 class="full-width"
@@ -93,7 +93,7 @@
                     ? getMenuPhotoGetter[photo.photoIndex].photoFullWidthUrl
                     : null
                 "
-                :ratio="3 / 2"
+                :ratio="1115 / 830"
                 class="rounded-borders shadow-8"
               >
                 <div class="absolute-bottom-right text-subtitle2">

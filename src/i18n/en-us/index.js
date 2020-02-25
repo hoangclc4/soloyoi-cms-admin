@@ -24,6 +24,8 @@ export default {
   notSupportedFileReaderAPI: 'Not supported File Reader API',
   pleaseWaitABit: '<p style="font-weight: 700">Please wait a bit...<p>',
   onlyForPremiumRestaurant: 'Only PREMIUM RESTAURANT can use this feature!',
+  noSupportedBrowser: 'Please kindly use Chrome or Edge for more security',
+  ok: 'OK',
 
   /* Call API */
   api: {

@@ -25,6 +25,9 @@ export default {
     'このブラウザーはFile Readerをサポートしていません',
   pleaseWaitABit: '<p style="font-weight: 700">少々お待ちくださいませ・・・<p>',
   onlyForPremiumRestaurant: 'プレミアム会員にアップグレードしてください！',
+  noSupportedBrowser:
+    'セキュリティを強化するためにChromeまたはEdge等のブラウザーをご利用ください',
+  ok: 'OK',
 
   /* Call API */
   api: {

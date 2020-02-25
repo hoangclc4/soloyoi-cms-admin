@@ -20,7 +20,7 @@
         <q-card-section>
           <VueCropper
             ref="cropper"
-            :aspect-ratio="3 / 2"
+            :aspect-ratio="1242 / 875"
             :src="selectedImage.src"
             preview=".preview"
             class="full-width"
@@ -80,7 +80,7 @@
           <q-img
             spinner-color="orange-2"
             :src="staff.isAddNew ? newStaff.photoSrc : updatedStaff.photoSrc"
-            :ratio="3 / 2"
+            :ratio="1242 / 875"
             class="rounded-borders shadow-1"
             style="max-width: 19em"
           />
@@ -449,7 +449,7 @@
               <q-img
                 spinner-color="orange-2"
                 :src="getStaffGetter[staff.index].photoSrc"
-                :ratio="3 / 2"
+                :ratio="1242 / 875"
                 class="rounded-borders shadow-1 q-mt-md"
               >
                 <div class="absolute-bottom-right text-subtitle2">

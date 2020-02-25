@@ -9,7 +9,7 @@ import { LocalStorage } from 'quasar';
  * @param {*} response
  */
 export function saveUserMutation(state, { response }) {
-  state.userList = response.data.result.response.adminUserFacebookList;
+  state.userList = [...response.data.result.response.adminUserFacebookList];
 
   LocalStorage.set('ADMIN_USER_LIST', state.userList);
 }
