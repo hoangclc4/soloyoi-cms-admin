@@ -22,7 +22,6 @@
             :label="$t('delete')"
             @click="deleteReview(deletionReview)"
             color="negative"
-            v-close-popup
           />
         </q-card-actions>
       </q-card>
@@ -92,6 +91,7 @@ export default {
           align: 'left',
           label: this.$t('editRestaurant.review.actionHeader'),
           classes: 'bg-grey-2',
+          field: 'rate',
         },
         {
           name: 'nickname',
@@ -145,6 +145,7 @@ export default {
       this.confirmDeleteReview = true;
     },
     async deleteReview(deletionReview) {
+      this.confirmDeleteReview = false;
       this.loading = true;
 
       // Call API Delete Restaurant Review

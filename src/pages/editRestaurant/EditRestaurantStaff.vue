@@ -20,7 +20,7 @@
         <q-card-section>
           <VueCropper
             ref="cropper"
-            :aspect-ratio="3 / 2"
+            :aspect-ratio="1242 / 875"
             :src="selectedImage.src"
             preview=".preview"
             class="full-width"
@@ -60,7 +60,6 @@
             :label="$t('delete')"
             @click="deleteStaff()"
             color="negative"
-            v-close-popup
           />
         </q-card-actions>
       </q-card>
@@ -81,7 +80,7 @@
           <q-img
             spinner-color="orange-2"
             :src="staff.isAddNew ? newStaff.photoSrc : updatedStaff.photoSrc"
-            :ratio="3 / 2"
+            :ratio="1242 / 875"
             class="rounded-borders shadow-1"
             style="max-width: 19em"
           />
@@ -148,6 +147,13 @@
               <q-icon name="event" @click="displayNewStaffBirthday = true">
                 <q-dialog v-model="displayNewStaffBirthday">
                   <v-datepicker
+                    :disabledDates="{
+                      from: new Date(
+                        new Date().getFullYear() - 15,
+                        new Date().getMonth(),
+                        new Date().getDate()
+                      ),
+                    }"
                     :language="languages[language]"
                     :inline="true"
                     v-model="newStaff.birthday"
@@ -187,6 +193,13 @@
               <q-icon name="event" @click="displayUpdatedStaffBirthday = true">
                 <q-dialog v-model="displayUpdatedStaffBirthday">
                   <v-datepicker
+                    :disabledDates="{
+                      from: new Date(
+                        new Date().getFullYear() - 15,
+                        new Date().getMonth(),
+                        new Date().getDate()
+                      ),
+                    }"
                     :language="languages[language]"
                     :inline="true"
                     v-model="updatedStaff.birthday"
@@ -450,7 +463,7 @@
               <q-img
                 spinner-color="orange-2"
                 :src="getStaffGetter[staff.index].photoSrc"
-                :ratio="3 / 2"
+                :ratio="1242 / 875"
                 class="rounded-borders shadow-1 q-mt-md"
               >
                 <div class="absolute-bottom-right text-subtitle2">
@@ -557,6 +570,7 @@ import VueCropper from 'vue-cropperjs';
 import 'cropperjs/dist/cropper.css';
 import Datepicker from 'vuejs-datepicker/dist/vuejs-datepicker.esm.js';
 import * as lang from 'vuejs-datepicker/src/locale';
+import '../../utils/canvas-toBlob.js';
 
 export default {
   components: {
@@ -694,22 +708,26 @@ export default {
       this.$refs.changeStaffPhoto.value = '';
     },
     confirmStaffPhoto($refs, isAddNew) {
-      $refs.cropper.getCroppedCanvas().toBlob((blob) => {
-        const formData = new FormData();
-        formData.append('restaurant-staff-photo', blob, 'staff-photo.png');
+      $refs.cropper
+        .getCroppedCanvas({ maxWidth: 1024, maxHeight: 1024 })
+        .toBlob((blob) => {
+          const formData = new FormData();
+          formData.append('restaurant-staff-photo', blob, 'staff-photo.png');
 
-        if (isAddNew) {
-          this.newStaff.photoFile = formData.entries().next().value[1];
-        } else {
-          this.updatedStaff.photoFile = formData.entries().next().value[1];
-        }
-      });
+          if (isAddNew) {
+            this.newStaff.photoFile = formData.entries().next().value[1];
+          } else {
+            this.updatedStaff.photoFile = formData.entries().next().value[1];
+          }
+        });
 
       if (isAddNew) {
-        this.newStaff.photoSrc = $refs.cropper.getCroppedCanvas().toDataURL();
+        this.newStaff.photoSrc = $refs.cropper
+          .getCroppedCanvas({ maxWidth: 1024, maxHeight: 1024 })
+          .toDataURL();
       } else {
         this.updatedStaff.photoSrc = $refs.cropper
-          .getCroppedCanvas()
+          .getCroppedCanvas({ maxWidth: 1024, maxHeight: 1024 })
           .toDataURL();
       }
 

@@ -9,7 +9,7 @@ import { LocalStorage } from 'quasar';
  * @param {*} user
  */
 export function saveCurrentUserMutation(state, { response }) {
-  state.currentUser = response.data.result.response;
+  state.currentUser = { ...response.data.result.response };
 
   LocalStorage.set('ADMIN_INFO', state.currentUser);
 }

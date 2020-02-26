@@ -44,7 +44,7 @@ export function saveRestaurantMutation(state, { response, needGetMoreData }) {
  * @param {*} response
  */
 export function saveCreatedRestaurantMutation(state, { response }) {
-  state.createdRestaurant = response.data.result.response;
+  state.createdRestaurant = { ...response.data.result.response };
 
   LocalStorage.set('ADMIN_CREATED_RESTAURANT', state.createdRestaurant);
 
