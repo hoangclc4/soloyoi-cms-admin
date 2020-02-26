@@ -1,9 +1,10 @@
 import { LocalStorage } from 'quasar';
+import { decodeEmojiText } from '../../common/actions';
 
 /**
- * @description save Restaurant Staff
+ * @description save Restaurant Staff with decode staff profile
  * @author AnhTQ
- * @date 2020-01-15
+ * @date 2020-02-26
  * @export
  * @param {*} state
  * @param {*} { response }
@@ -27,7 +28,7 @@ export function saveRestaurantStaffMutation(state, { response }) {
       birthplace: data.staffBirthplace ? data.staffBirthplace[0] : null,
       title: data.staffTitle,
       style: data.staffStyle,
-      profile: data.staffProfile,
+      profile: decodeEmojiText(data.staffProfile),
       canTalk: data.staffCanTalk,
     });
   });
@@ -36,9 +37,9 @@ export function saveRestaurantStaffMutation(state, { response }) {
 }
 
 /**
- * @description save Updated Restaurant Staff Information
+ * @description save Updated Restaurant Staff Information with decode staff profile
  * @author AnhTQ
- * @date 2020-02-18
+ * @date 2020-02-26
  * @export
  * @param {*} state
  * @param {*} { input }
@@ -55,6 +56,7 @@ export function saveUpdatedStaffMutation(state, { input }) {
           day: '2-digit',
         }
       );
+      input.profile = decodeEmojiText(input.profile);
       return input;
     } else {
       return staff;

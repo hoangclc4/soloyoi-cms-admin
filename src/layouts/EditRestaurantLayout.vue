@@ -111,7 +111,6 @@
                   :label="$t('auth.logout')"
                   @click="logout()"
                   color="negative"
-                  v-close-popup
                 />
               </q-card-actions>
             </q-card>
@@ -259,6 +258,7 @@ export default {
     ]),
 
     async logout() {
+      this.confirm = false;
       this.loading = true;
 
       // Call API Logout
@@ -524,6 +524,7 @@ export default {
   },
   created() {
     this.loading = true;
+    this.$q.loading.show();
     Promise.all([
       this.fetchMasterdata(),
       this.fetchRestaurantInformation(),
@@ -534,6 +535,7 @@ export default {
       this.fetchRestaurantReview(),
     ]).then(() => {
       this.loading = false;
+      this.$q.loading.hide();
     });
   },
 };

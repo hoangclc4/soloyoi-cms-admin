@@ -21,7 +21,7 @@
             <q-card-section>
               <VueCropper
                 ref="cropper"
-                :aspect-ratio="3 / 2"
+                :aspect-ratio="1115 / 830"
                 :src="selectedImage.src"
                 preview=".preview"
                 class="full-width"
@@ -74,7 +74,6 @@
                 :label="$t('delete')"
                 @click="deleteMenuPhoto(deletePhotoIndex)"
                 color="negative"
-                v-close-popup
               />
             </q-card-actions>
           </q-card>
@@ -94,7 +93,7 @@
                     ? getMenuPhotoGetter[photo.photoIndex].photoFullWidthUrl
                     : null
                 "
-                :ratio="3 / 2"
+                :ratio="1115 / 830"
                 class="rounded-borders shadow-8"
               >
                 <div class="absolute-bottom-right text-subtitle2">
@@ -228,7 +227,6 @@
                 :label="$t('delete')"
                 @click="deleteCategory(deletionCategory)"
                 color="negative"
-                v-close-popup
               />
             </q-card-actions>
           </q-card>
@@ -318,7 +316,6 @@
                 :label="$t('delete')"
                 @click="deleteMenuItem(deletionMenuItem)"
                 color="negative"
-                v-close-popup
               />
             </q-card-actions>
           </q-card>
@@ -903,6 +900,7 @@
 import { mapActions, mapGetters } from 'vuex';
 import VueCropper from 'vue-cropperjs';
 import 'cropperjs/dist/cropper.css';
+import '../../utils/canvas-toBlob.js';
 
 export default {
   components: {
@@ -988,6 +986,7 @@ export default {
           align: 'right',
           label: this.$t('editRestaurant.menu.actionHeader'),
           classes: 'bg-grey-2',
+          field: 'name',
         },
         {
           name: 'name',
@@ -1002,6 +1001,7 @@ export default {
           required: true,
           align: 'right',
           label: this.$t('editRestaurant.menu.priceHeader'),
+          field: 'afterTaxedPrice',
           sortable: true,
         },
         {
@@ -1210,66 +1210,68 @@ export default {
         this.loading = false;
       } else {
         // Call API upload Restaurant Menu Photo
-        $refs.cropper.getCroppedCanvas().toBlob(async (blob) => {
-          const apolloClient = this.$apollo.provider.defaultClient;
-          const photoIndex = selectedImage.index;
+        $refs.cropper
+          .getCroppedCanvas({ maxWidth: 1024, maxHeight: 1024 })
+          .toBlob(async (blob) => {
+            const apolloClient = this.$apollo.provider.defaultClient;
+            const photoIndex = selectedImage.index;
 
-          const isAddNew = menuPhoto[photoIndex] ? false : true;
+            const isAddNew = menuPhoto[photoIndex] ? false : true;
 
-          const formData = new FormData();
-          formData.append('restaurant-menu-photo', blob, 'menu-photo.png');
+            const formData = new FormData();
+            formData.append('restaurant-menu-photo', blob, 'menu-photo.png');
 
-          const photo = formData.entries().next().value[1];
-          const input = isAddNew
-            ? {
-                restaurantId: this.$route.params.id,
-                menuTypes: 'FOOD',
-                description,
-              }
-            : {
-                restaurantId: this.$route.params.id,
-                oldPhotoId: menuPhoto[photoIndex].photoId,
-                description,
-              };
+            const photo = formData.entries().next().value[1];
+            const input = isAddNew
+              ? {
+                  restaurantId: this.$route.params.id,
+                  menuTypes: 'FOOD',
+                  description,
+                }
+              : {
+                  restaurantId: this.$route.params.id,
+                  oldPhotoId: menuPhoto[photoIndex].photoId,
+                  description,
+                };
 
-          const result = await this.apiUploadRestaurantMenuPhotoAction({
-            apolloClient,
-            input,
-            photo,
-            photoIndex,
-            isAddNew,
-          });
-
-          if (result.requestResolved) {
-            // Upload success
-
-            this.$q.notify({
-              message: this.$t(
-                'api.editRestaurant.uploadRestaurantMenuPhotoSuccess'
-              ),
-              color: 'green-5',
+            const result = await this.apiUploadRestaurantMenuPhotoAction({
+              apolloClient,
+              input,
+              photo,
+              photoIndex,
+              isAddNew,
             });
-            this.clearSelectedImage($refs, selectedImage);
-            this.loading = false;
-          } else {
-            result.systemError
-              ? // Upload failed, got something wrong with system
-                this.$q.notify({
-                  message: `${result.systemError}`,
-                  color: 'deep-orange-4',
-                })
-              : // Upload failed, got something wrong with user
-                this.$q.notify({
-                  message: this.$t(
-                    'api.editRestaurant.uploadRestaurantMenuPhotoFailed'
-                  ),
-                  color: 'deep-orange-4',
-                });
 
-            this.clearSelectedImage($refs, selectedImage);
-            this.loading = false;
-          }
-        });
+            if (result.requestResolved) {
+              // Upload success
+
+              this.$q.notify({
+                message: this.$t(
+                  'api.editRestaurant.uploadRestaurantMenuPhotoSuccess'
+                ),
+                color: 'green-5',
+              });
+              this.clearSelectedImage($refs, selectedImage);
+              this.loading = false;
+            } else {
+              result.systemError
+                ? // Upload failed, got something wrong with system
+                  this.$q.notify({
+                    message: `${result.systemError}`,
+                    color: 'deep-orange-4',
+                  })
+                : // Upload failed, got something wrong with user
+                  this.$q.notify({
+                    message: this.$t(
+                      'api.editRestaurant.uploadRestaurantMenuPhotoFailed'
+                    ),
+                    color: 'deep-orange-4',
+                  });
+
+              this.clearSelectedImage($refs, selectedImage);
+              this.loading = false;
+            }
+          });
       }
     },
 
@@ -1278,6 +1280,7 @@ export default {
       this.deletePhotoIndex = photoIndex;
     },
     async deleteMenuPhoto(photoIndex) {
+      this.confirmToDeletePhoto = false;
       this.loading = true;
 
       // Call API Delete Restaurant Photo

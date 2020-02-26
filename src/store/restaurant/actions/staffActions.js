@@ -2,6 +2,7 @@ import { ADMIN_STAFF_LIST } from '../../../graphql/queries/adminStaffRestaurantL
 import { ADMIN_CREATE_STAFF } from '../../../graphql/mutations/adminCreateStaffRestaurant';
 import { ADMIN_UPDATE_STAFF } from '../../../graphql/mutations/adminUpdateStaffRestaurant';
 import { ADMIN_DELETE_STAFF } from '../../../graphql/mutations/adminDeleteStaffRestaurant';
+import { encodeEmojiText } from '../../common/actions';
 
 /**
  * @description call API Fetch Restaurant Staff
@@ -37,9 +38,9 @@ export async function apiFetchRestaurantStaffAction(
 }
 
 /**
- * @description call API Create Restaurant Staff
+ * @description call API Create Restaurant Staff with encode staff profile
  * @author AnhTQ
- * @date 2020-01-08
+ * @date 2020-02-26
  * @export
  * @param {*} context
  * @param {*} { apolloClient, input }
@@ -59,7 +60,7 @@ export async function apiCreateRestaurantStaffAction(
         staffBirthplace: input.birthplace ? [input.birthplace] : null,
         staffTitle: input.title,
         staffStyle: input.style,
-        staffProfile: input.profile,
+        staffProfile: encodeEmojiText(input.profile),
         staffCanTalk: input.canTalk,
       },
       photo: input.photoFile,
@@ -83,9 +84,9 @@ export async function apiCreateRestaurantStaffAction(
 }
 
 /**
- * @description call API Update Restaurant Staff
+ * @description call API Update Restaurant Staff with encode staff profile
  * @author AnhTQ
- * @date 2020-02-18
+ * @date 2020-02-26
  * @export
  * @param {*} { commit }
  * @param {*} { apolloClient, input }
@@ -107,7 +108,7 @@ export async function apiUpdateRestaurantStaffAction(
         staffBirthplace: input.birthplace ? [input.birthplace] : null,
         staffTitle: input.title,
         staffStyle: input.style,
-        staffProfile: input.profile,
+        staffProfile: encodeEmojiText(input.profile),
         staffCanTalk: input.canTalk,
       },
       photo: input.photoFile,

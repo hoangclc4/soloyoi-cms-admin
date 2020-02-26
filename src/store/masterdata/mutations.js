@@ -151,16 +151,22 @@ export function saveUserMasterdataMutation(state, { response }) {
   response.data.result.response.forEach((data) => {
     switch (data.category.category) {
       case 'SinglePersonArea':
-        state.userMasterdata.SinglePersonArea.push({
-          id: data.masterId,
-          value: data.name,
-        });
+        // Ignore default master data その他 [Other]
+        if (data.id !== 'default' && data.name !== 'その他') {
+          state.userMasterdata.SinglePersonArea.push({
+            id: data.masterId,
+            value: data.name,
+          });
+        }
         break;
       case 'Occupation':
-        state.userMasterdata.Occupation.push({
-          id: data.masterId,
-          value: data.name,
-        });
+        // Ignore default master data その他 [Other]
+        if (data.id !== 'default' && data.name !== 'その他') {
+          state.userMasterdata.Occupation.push({
+            id: data.masterId,
+            value: data.name,
+          });
+        }
         break;
       case 'Sake':
         state.userMasterdata.Sake.push({ id: data.masterId, value: data.name });
@@ -178,10 +184,13 @@ export function saveUserMasterdataMutation(state, { response }) {
         });
         break;
       case 'FavoriteConversationGenre':
-        state.userMasterdata.FavoriteConversationGenre.push({
-          id: data.masterId,
-          value: data.name,
-        });
+        // Ignore default master data キングダム [Kingdom]
+        if (data.id !== 'default' && data.name !== 'キングダム') {
+          state.userMasterdata.FavoriteConversationGenre.push({
+            id: data.masterId,
+            value: data.name,
+          });
+        }
         break;
       case 'Personal':
         state.userMasterdata.Personal.push({
@@ -241,17 +250,27 @@ export function saveAddressLevelOneMutation(state, { response }) {
     };
   });
 
-  LocalStorage.set('ADDRESS_LEVEL_ONE_MASTER', state.addressLevelOneMaster);
+  state.addressLevelOneMaster = state.addressLevelOneMaster.filter((data) => {
+    const isJapan =
+      data.id !== 'level0_0' &&
+      data.id !== 'default' &&
+      data.value !== '未選択' &&
+      data.value !== '海外';
 
-  // Add masterdata for StaffBirthplace and UserBirthplace
-  let birthplace = [{ id: 'default', value: '海外' }];
-  state.addressLevelOneMaster.forEach((data) => {
-    birthplace.push(data);
+    return isJapan;
   });
 
-  state.restaurantMasterdata.StaffBirthplace = [...birthplace];
+  LocalStorage.set('ADDRESS_LEVEL_ONE_MASTER', state.addressLevelOneMaster);
+
+  state.restaurantMasterdata.StaffBirthplace = [...state.addressLevelOneMaster];
+  state.restaurantMasterdata.StaffBirthplace.push({
+    id: 'default',
+    value: '海外',
+  });
   LocalStorage.set('ADMIN_RESTAURANT_MASTERDATA', state.restaurantMasterdata);
-  state.userMasterdata.UserBirthplace = [...birthplace];
+
+  state.userMasterdata.UserBirthplace = [...state.addressLevelOneMaster];
+  state.userMasterdata.UserBirthplace.push({ id: 'default', value: '海外' });
   LocalStorage.set('ADMIN_USER_MASTERDATA', state.userMasterdata);
 }
 

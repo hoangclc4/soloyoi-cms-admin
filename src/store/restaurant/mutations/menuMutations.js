@@ -12,9 +12,11 @@ export function saveMenuPhotoMutation(state, { response, photoIndex }) {
   const saveAllPhoto = photoIndex === 'saveAllPhoto';
 
   if (saveAllPhoto) {
-    state.restaurantMenuPhotos = response.data.result.response.photos;
+    state.restaurantMenuPhotos = [...response.data.result.response.photos];
   } else {
-    state.restaurantMenuPhotos[photoIndex] = response.data.result.response;
+    state.restaurantMenuPhotos[photoIndex] = {
+      ...response.data.result.response,
+    };
   }
 
   LocalStorage.set('ADMIN_RESTAURANT_MENU_PHOTOS', state.restaurantMenuPhotos);
@@ -31,12 +33,12 @@ export function saveMenuPhotoMutation(state, { response, photoIndex }) {
 export function saveMenuItemMutation(state, { response, input }) {
   switch (input.menuTypes) {
     case 'FOOD':
-      state.restaurantFoods = response.data.result.response.categories;
+      state.restaurantFoods = [...response.data.result.response.categories];
 
       LocalStorage.set('ADMIN_RESTAURANT_MENU_FOODS', state.restaurantFoods);
       break;
     case 'DRINK':
-      state.restaurantDrinks = response.data.result.response.categories;
+      state.restaurantDrinks = [...response.data.result.response.categories];
 
       LocalStorage.set('ADMIN_RESTAURANT_MENU_DRINKS', state.restaurantDrinks);
       break;

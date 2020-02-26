@@ -13,7 +13,7 @@
         <q-card-section>
           <VueCropper
             ref="cropper"
-            :aspect-ratio="3 / 2"
+            :aspect-ratio="1242 / 880"
             :src="selectedImage.src"
             preview=".preview"
             class="full-width"
@@ -33,7 +33,6 @@
             icon-right="ion-cloud-upload"
             :label="$t('upload')"
             @click="uploadRestarantPhoto($refs, selectedImage)"
-            v-close-popup
           />
         </q-card-actions>
       </q-card>
@@ -54,7 +53,6 @@
             :label="$t('delete')"
             @click="deleteRestaurantPhoto(deletePhotoIndex)"
             color="negative"
-            v-close-popup
           />
         </q-card-actions>
       </q-card>
@@ -69,7 +67,7 @@
                 ? getRestaurantInfoGetter.avatar
                 : null
             "
-            :ratio="3 / 2"
+            :ratio="1242 / 880"
             class="rounded-borders shadow-8"
           >
             <div class="absolute-bottom-right text-subtitle2">
@@ -104,6 +102,13 @@
         switch-toggle-side
         icon="ion-information-circle-outline"
         :label="$t('editRestaurant.information.freeRestaurantInformation')"
+        @before-show="
+          () => {
+            showAddressThree =
+              getRestaurantInfoGetter.addressLevelThree === null ||
+              getRestaurantInfoGetter.addressLevelThree.value !== '';
+          }
+        "
       >
         <q-item>
           <q-item-section>
@@ -141,13 +146,7 @@
               outlined
               v-model="getRestaurantInfoGetter.addressLevelOne"
               :error="errors.addressLevelOne"
-              @input="
-                () => {
-                  getRestaurantInfoGetter.addressLevelTwo = null;
-                  getRestaurantInfoGetter.addressLevelThree = null;
-                  reloadAddressLevelTwo = true;
-                }
-              "
+              @input="onChangeAddress('One')"
               :label="$t('editRestaurant.information.addressLevelOne')"
               :options="getAddressLevelOneGetter"
               option-label="value"
@@ -175,23 +174,9 @@
               v-model="getRestaurantInfoGetter.addressLevelTwo"
               :error="errors.addressLevelTwo"
               :disable="getRestaurantInfoGetter.addressLevelOne === null"
-              @input="
-                () => {
-                  getRestaurantInfoGetter.addressLevelThree = null;
-                  reloadAddressLevelThree = true;
-                }
-              "
+              @input="onChangeAddress('Two')"
               :label="$t('editRestaurant.information.addressLevelTwo')"
-              :options="options.addressLevelTwo"
-              @filter="
-                (val, update, abort) =>
-                  fetchChildProvinceLevel(
-                    'Two',
-                    reloadAddressLevelTwo,
-                    getRestaurantInfoGetter.addressLevelOne.id,
-                    update
-                  )
-              "
+              :options="getAddressLevelTwoGetter"
               option-label="value"
               options-dense
               dense
@@ -210,7 +195,7 @@
             </q-select>
           </q-item-section>
         </q-item>
-        <q-item>
+        <q-item v-if="showAddressThree">
           <q-item-section>
             <q-select
               outlined
@@ -218,16 +203,7 @@
               :error="errors.addressLevelThree"
               :disable="getRestaurantInfoGetter.addressLevelTwo === null"
               :label="$t('editRestaurant.information.addressLevelThree')"
-              :options="options.addressLevelThree"
-              @filter="
-                (val, update, abort) =>
-                  fetchChildProvinceLevel(
-                    'Three',
-                    reloadAddressLevelThree,
-                    getRestaurantInfoGetter.addressLevelTwo.id,
-                    update
-                  )
-              "
+              :options="getAddressLevelThreeGetter"
               option-label="value"
               options-dense
               dense
@@ -541,7 +517,7 @@
                         .photoFullWidthUrl
                     : null
                 "
-                :ratio="3 / 2"
+                :ratio="1242 / 880"
                 class="rounded-borders shadow-8"
               >
                 <div class="absolute-bottom-right text-subtitle2">
@@ -970,6 +946,7 @@ import VueCropper from 'vue-cropperjs';
 import 'cropperjs/dist/cropper.css';
 import Datepicker from 'vuejs-datepicker/dist/vuejs-datepicker.esm.js';
 import * as lang from 'vuejs-datepicker/src/locale';
+import '../../utils/canvas-toBlob.js';
 
 export default {
   components: {
@@ -992,9 +969,6 @@ export default {
         addressLevelThree: false,
         specificAddress: false,
       },
-      options: { addressLevelTwo: null, addressLevelThree: null },
-      reloadAddressLevelTwo: true,
-      reloadAddressLevelThree: true,
       avatar: { photoIndex: 0 },
       selectedImage: {
         index: -1,
@@ -1010,6 +984,7 @@ export default {
       language: this.$i18n.locale === 'en-US' ? 'en' : 'ja',
       languages: lang,
       displayDialogOpenDate: false,
+      showAddressThree: true,
     };
   },
   computed: {
@@ -1046,59 +1021,80 @@ export default {
       }
     },
 
-    async fetchChildProvinceLevel(addressLevel, needReload, parentId, update) {
-      if (needReload) {
-        this.loading = true;
-
-        // Call API fetch Child Province
-        const apolloClient = this.$apollo.provider.defaultClient;
-        const input = { parentId };
-        const result = await this.apiFetchChildProvinceAction({
-          apolloClient,
-          input,
-          addressLevel,
-        });
-
-        if (result.requestResolved) {
-          // Fetch success
-          switch (addressLevel) {
-            case 'Two':
-              update(() => {
-                this.options.addressLevelTwo = this.getAddressLevelTwoGetter;
-              });
-              this.reloadAddressLevelTwo = false;
-              break;
-            case 'Three':
-              update(() => {
-                this.options.addressLevelThree = this.getAddressLevelThreeGetter;
-              });
-              this.reloadAddressLevelThree = false;
-              break;
+    onChangeAddress(level) {
+      switch (level) {
+        case 'One':
+          if (this.getRestaurantInfoGetter.addressLevelOne !== null) {
+            this.fetchChildProvinceLevel(
+              'Two',
+              this.getRestaurantInfoGetter.addressLevelOne.id
+            );
           }
-          this.loading = false;
-        } else {
-          result.systemError
-            ? // Fetch failed, got something wrong with system
-              this.$q.notify({
-                message: `${result.systemError}`,
-                color: 'deep-orange-4',
-              })
-            : // Fetch failed, got something wrong with user
-              this.$q.notify({
-                message: this.$t('api.fetchChildProvinceFailed'),
-                color: 'deep-orange-4',
-              });
+          this.getRestaurantInfoGetter.addressLevelTwo = null;
+          this.getRestaurantInfoGetter.addressLevelThree = null;
+          this.showAddressThree = true;
 
-          this.loading = false;
+          break;
+        case 'Two':
+          if (this.getRestaurantInfoGetter.addressLevelTwo !== null) {
+            this.fetchChildProvinceLevel(
+              'Three',
+              this.getRestaurantInfoGetter.addressLevelTwo.id
+            );
+          }
+          this.getRestaurantInfoGetter.addressLevelThree = null;
+          this.showAddressThree = true;
+
+          break;
+      }
+    },
+    async fetchChildProvinceLevel(addressLevel, parentId) {
+      this.loading = true;
+      this.$q.loading.show();
+
+      // Call API fetch Child Province
+      const apolloClient = this.$apollo.provider.defaultClient;
+      const input = { parentId };
+      const result = await this.apiFetchChildProvinceAction({
+        apolloClient,
+        input,
+        addressLevel,
+      });
+
+      if (result.requestResolved) {
+        // Fetch success
+        if (addressLevel === 'Three') {
+          if (this.getAddressLevelThreeGetter[0].value === '') {
+            this.showAddressThree = false;
+            this.getRestaurantInfoGetter.addressLevelThree = this.getAddressLevelThreeGetter[0];
+          } else {
+            this.showAddressThree = true;
+          }
         }
+
+        this.loading = false;
+        this.$q.loading.hide();
       } else {
-        update();
-        return;
+        result.systemError
+          ? // Fetch failed, got something wrong with system
+            this.$q.notify({
+              message: `${result.systemError}`,
+              color: 'deep-orange-4',
+            })
+          : // Fetch failed, got something wrong with user
+            this.$q.notify({
+              message: this.$t('api.fetchChildProvinceFailed'),
+              color: 'deep-orange-4',
+            });
+
+        this.loading = false;
+        this.$q.loading.hide();
       }
     },
 
     async submit() {
       this.loading = true;
+      this.$q.loading.show();
 
       this.errors.addressLevelOne =
         this.getRestaurantInfoGetter.addressLevelOne === null;
@@ -1107,7 +1103,8 @@ export default {
       this.errors.addressLevelThree =
         this.getRestaurantInfoGetter.addressLevelThree === null;
       this.errors.specificAddress =
-        this.getRestaurantInfoGetter.specificAddress === '';
+        this.getRestaurantInfoGetter.specificAddress === '' ||
+        this.getRestaurantInfoGetter.specificAddress === null;
 
       const gotError = await Object.values(this.errors).filter(
         (isInvalid) => isInvalid
@@ -1117,6 +1114,7 @@ export default {
         this.updateRestaurantInformation(this.getRestaurantInfoGetter);
       } else {
         this.loading = false;
+        this.$q.loading.hide();
         this.$q.notify({
           message: this.$t('reviewFieldAgain'),
           color: 'teal-8',
@@ -1140,6 +1138,7 @@ export default {
           color: 'green-5',
         });
         this.loading = false;
+        this.$q.loading.hide();
       } else {
         result.systemError
           ? // Update failed, got something wrong with system
@@ -1156,6 +1155,7 @@ export default {
             });
 
         this.loading = false;
+        this.$q.loading.hide();
       }
     },
 
@@ -1205,62 +1205,66 @@ export default {
       this.loading = true;
 
       // Call API upload Restaurant Photo
-      $refs.cropper.getCroppedCanvas().toBlob(async (blob) => {
-        const apolloClient = this.$apollo.provider.defaultClient;
-        const restaurantPhoto = this.getRestaurantInfoGetter.photos;
-        const photoIndex = selectedImage.index;
-        const photoTypes = selectedImage.type;
+      $refs.cropper
+        .getCroppedCanvas({ maxWidth: 1024, maxHeight: 1024 })
+        .toBlob(async (blob) => {
+          const apolloClient = this.$apollo.provider.defaultClient;
+          const restaurantPhoto = this.getRestaurantInfoGetter.photos;
+          const photoIndex = selectedImage.index;
+          const photoTypes = selectedImage.type;
 
-        const isAddNew =
-          restaurantPhoto[photoIndex] === undefined ||
-          restaurantPhoto[photoIndex] === 'FirstIndexForAvatar';
+          const isAddNew =
+            restaurantPhoto[photoIndex] === undefined ||
+            restaurantPhoto[photoIndex] === 'FirstIndexForAvatar';
 
-        const formData = new FormData();
-        formData.append('restaurant-menu-photo', blob, 'menu-photo.png');
+          const formData = new FormData();
+          formData.append('restaurant-menu-photo', blob, 'menu-photo.png');
 
-        const photo = formData.entries().next().value[1];
-        const input = isAddNew
-          ? { restaurantId: this.$route.params.id, photoTypes }
-          : {
-              restaurantId: this.$route.params.id,
-              oldPhotoId: restaurantPhoto[photoIndex].photoId,
-              photoTypes,
-            };
+          const photo = formData.entries().next().value[1];
+          const input = isAddNew
+            ? { restaurantId: this.$route.params.id, photoTypes }
+            : {
+                restaurantId: this.$route.params.id,
+                oldPhotoId: restaurantPhoto[photoIndex].photoId,
+                photoTypes,
+              };
 
-        const result = await this.apiUpdateRestaurantPhotoAction({
-          apolloClient,
-          input,
-          photo,
-          photoIndex,
-        });
-
-        if (result.requestResolved) {
-          // Upload success
-          this.$q.notify({
-            message: this.$t('api.editRestaurant.uploadRestaurantPhotoSuccess'),
-            color: 'green-5',
+          const result = await this.apiUpdateRestaurantPhotoAction({
+            apolloClient,
+            input,
+            photo,
+            photoIndex,
           });
-          this.clearSelectedImage($refs, selectedImage);
-          this.loading = false;
-        } else {
-          result.systemError
-            ? // Upload failed, got something wrong with system
-              this.$q.notify({
-                message: `${result.systemError}`,
-                color: 'deep-orange-4',
-              })
-            : // Upload failed, got something wrong with user
-              this.$q.notify({
-                message: this.$t(
-                  'api.editRestaurant.uploadRestaurantPhotoFailed'
-                ),
-                color: 'deep-orange-4',
-              });
 
-          this.clearSelectedImage($refs, selectedImage);
-          this.loading = false;
-        }
-      });
+          if (result.requestResolved) {
+            // Upload success
+            this.$q.notify({
+              message: this.$t(
+                'api.editRestaurant.uploadRestaurantPhotoSuccess'
+              ),
+              color: 'green-5',
+            });
+            this.clearSelectedImage($refs, selectedImage);
+            this.loading = false;
+          } else {
+            result.systemError
+              ? // Upload failed, got something wrong with system
+                this.$q.notify({
+                  message: `${result.systemError}`,
+                  color: 'deep-orange-4',
+                })
+              : // Upload failed, got something wrong with user
+                this.$q.notify({
+                  message: this.$t(
+                    'api.editRestaurant.uploadRestaurantPhotoFailed'
+                  ),
+                  color: 'deep-orange-4',
+                });
+
+            this.clearSelectedImage($refs, selectedImage);
+            this.loading = false;
+          }
+        });
     },
 
     onDeletePhoto(photoIndex) {
@@ -1268,6 +1272,7 @@ export default {
       this.deletePhotoIndex = photoIndex;
     },
     async deleteRestaurantPhoto(photoIndex) {
+      this.confirmToDeletePhoto = false;
       this.loading = true;
 
       // Call API Delete Restaurant Photo

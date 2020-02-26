@@ -9,7 +9,7 @@ import { LocalStorage } from 'quasar';
  * @param {*} response
  */
 export function saveRestaurantInformationMutation(state, { response }) {
-  state.restaurantInfo = response.data.result.response;
+  state.restaurantInfo = { ...response.data.result.response };
 
   // If select one got value, so set array value for sync with Mobile App
   state.restaurantInfo.addressLevelOne = state.restaurantInfo.addressLevelOne
@@ -57,7 +57,9 @@ export function saveRestaurantInformationMutation(state, { response }) {
  * @param {*} { response, photoIndex }
  */
 export function saveRestaurantPhotoMutation(state, { response, photoIndex }) {
-  state.restaurantInfo.photos[photoIndex] = response.data.result.response;
+  state.restaurantInfo.photos[photoIndex] = {
+    ...response.data.result.response,
+  };
 
   const isAvatar = photoIndex === 0;
   if (isAvatar) {

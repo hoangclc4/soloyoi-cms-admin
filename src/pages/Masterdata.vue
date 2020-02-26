@@ -70,7 +70,6 @@
                 : deleteUserMasterdata()
             "
             color="negative"
-            v-close-popup
           />
         </q-card-actions>
       </q-card>
@@ -315,6 +314,7 @@ export default {
       }
     },
     async deleteRestaurantMasterdata() {
+      this.confirmDeleteMasterdata = false;
       this.loading = true;
 
       // Call API Delete Restaurant Master Data
@@ -410,6 +410,7 @@ export default {
       }
     },
     async deleteUserMasterdata() {
+      this.confirmDeleteMasterdata = false;
       this.loading = true;
 
       // Call API Delete User Master Data
