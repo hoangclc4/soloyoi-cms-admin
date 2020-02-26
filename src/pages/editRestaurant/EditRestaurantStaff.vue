@@ -147,6 +147,13 @@
               <q-icon name="event" @click="displayNewStaffBirthday = true">
                 <q-dialog v-model="displayNewStaffBirthday">
                   <v-datepicker
+                    :disabledDates="{
+                      from: new Date(
+                        new Date().getFullYear() - 15,
+                        new Date().getMonth(),
+                        new Date().getDate()
+                      ),
+                    }"
                     :language="languages[language]"
                     :inline="true"
                     v-model="newStaff.birthday"
@@ -186,6 +193,13 @@
               <q-icon name="event" @click="displayUpdatedStaffBirthday = true">
                 <q-dialog v-model="displayUpdatedStaffBirthday">
                   <v-datepicker
+                    :disabledDates="{
+                      from: new Date(
+                        new Date().getFullYear() - 15,
+                        new Date().getMonth(),
+                        new Date().getDate()
+                      ),
+                    }"
                     :language="languages[language]"
                     :inline="true"
                     v-model="updatedStaff.birthday"
@@ -556,6 +570,7 @@ import VueCropper from 'vue-cropperjs';
 import 'cropperjs/dist/cropper.css';
 import Datepicker from 'vuejs-datepicker/dist/vuejs-datepicker.esm.js';
 import * as lang from 'vuejs-datepicker/src/locale';
+import '../../utils/canvas-toBlob.js';
 
 export default {
   components: {
@@ -693,22 +708,26 @@ export default {
       this.$refs.changeStaffPhoto.value = '';
     },
     confirmStaffPhoto($refs, isAddNew) {
-      $refs.cropper.getCroppedCanvas().toBlob((blob) => {
-        const formData = new FormData();
-        formData.append('restaurant-staff-photo', blob, 'staff-photo.png');
+      $refs.cropper
+        .getCroppedCanvas({ maxWidth: 1024, maxHeight: 1024 })
+        .toBlob((blob) => {
+          const formData = new FormData();
+          formData.append('restaurant-staff-photo', blob, 'staff-photo.png');
 
-        if (isAddNew) {
-          this.newStaff.photoFile = formData.entries().next().value[1];
-        } else {
-          this.updatedStaff.photoFile = formData.entries().next().value[1];
-        }
-      });
+          if (isAddNew) {
+            this.newStaff.photoFile = formData.entries().next().value[1];
+          } else {
+            this.updatedStaff.photoFile = formData.entries().next().value[1];
+          }
+        });
 
       if (isAddNew) {
-        this.newStaff.photoSrc = $refs.cropper.getCroppedCanvas().toDataURL();
+        this.newStaff.photoSrc = $refs.cropper
+          .getCroppedCanvas({ maxWidth: 1024, maxHeight: 1024 })
+          .toDataURL();
       } else {
         this.updatedStaff.photoSrc = $refs.cropper
-          .getCroppedCanvas()
+          .getCroppedCanvas({ maxWidth: 1024, maxHeight: 1024 })
           .toDataURL();
       }
 

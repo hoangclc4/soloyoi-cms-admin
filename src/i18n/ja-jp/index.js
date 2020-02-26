@@ -26,7 +26,7 @@ export default {
   pleaseWaitABit: '<p style="font-weight: 700">少々お待ちくださいませ・・・<p>',
   onlyForPremiumRestaurant: 'プレミアム会員にアップグレードしてください！',
   noSupportedBrowser:
-    'セキュリティを強化するためにChromeまたはEdge等のブラウザーをご利用ください',
+    'セキュリティを強化するためにChromeまたはEdgeを推奨しています',
   ok: 'OK',
 
   /* Call API */

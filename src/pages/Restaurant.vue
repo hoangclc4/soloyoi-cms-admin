@@ -240,6 +240,7 @@ export default {
           align: 'left',
           label: this.$t('restaurant.actionHeader'),
           classes: 'bg-grey-2',
+          field: 'isVip',
         },
         {
           name: 'role',

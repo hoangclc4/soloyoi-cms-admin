@@ -91,6 +91,7 @@ export default {
           align: 'left',
           label: this.$t('editRestaurant.review.actionHeader'),
           classes: 'bg-grey-2',
+          field: 'rate',
         },
         {
           name: 'nickname',

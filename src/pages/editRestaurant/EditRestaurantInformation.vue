@@ -946,6 +946,7 @@ import VueCropper from 'vue-cropperjs';
 import 'cropperjs/dist/cropper.css';
 import Datepicker from 'vuejs-datepicker/dist/vuejs-datepicker.esm.js';
 import * as lang from 'vuejs-datepicker/src/locale';
+import '../../utils/canvas-toBlob.js';
 
 export default {
   components: {
@@ -1204,62 +1205,66 @@ export default {
       this.loading = true;
 
       // Call API upload Restaurant Photo
-      $refs.cropper.getCroppedCanvas().toBlob(async (blob) => {
-        const apolloClient = this.$apollo.provider.defaultClient;
-        const restaurantPhoto = this.getRestaurantInfoGetter.photos;
-        const photoIndex = selectedImage.index;
-        const photoTypes = selectedImage.type;
+      $refs.cropper
+        .getCroppedCanvas({ maxWidth: 1024, maxHeight: 1024 })
+        .toBlob(async (blob) => {
+          const apolloClient = this.$apollo.provider.defaultClient;
+          const restaurantPhoto = this.getRestaurantInfoGetter.photos;
+          const photoIndex = selectedImage.index;
+          const photoTypes = selectedImage.type;
 
-        const isAddNew =
-          restaurantPhoto[photoIndex] === undefined ||
-          restaurantPhoto[photoIndex] === 'FirstIndexForAvatar';
+          const isAddNew =
+            restaurantPhoto[photoIndex] === undefined ||
+            restaurantPhoto[photoIndex] === 'FirstIndexForAvatar';
 
-        const formData = new FormData();
-        formData.append('restaurant-menu-photo', blob, 'menu-photo.png');
+          const formData = new FormData();
+          formData.append('restaurant-menu-photo', blob, 'menu-photo.png');
 
-        const photo = formData.entries().next().value[1];
-        const input = isAddNew
-          ? { restaurantId: this.$route.params.id, photoTypes }
-          : {
-              restaurantId: this.$route.params.id,
-              oldPhotoId: restaurantPhoto[photoIndex].photoId,
-              photoTypes,
-            };
+          const photo = formData.entries().next().value[1];
+          const input = isAddNew
+            ? { restaurantId: this.$route.params.id, photoTypes }
+            : {
+                restaurantId: this.$route.params.id,
+                oldPhotoId: restaurantPhoto[photoIndex].photoId,
+                photoTypes,
+              };
 
-        const result = await this.apiUpdateRestaurantPhotoAction({
-          apolloClient,
-          input,
-          photo,
-          photoIndex,
-        });
-
-        if (result.requestResolved) {
-          // Upload success
-          this.$q.notify({
-            message: this.$t('api.editRestaurant.uploadRestaurantPhotoSuccess'),
-            color: 'green-5',
+          const result = await this.apiUpdateRestaurantPhotoAction({
+            apolloClient,
+            input,
+            photo,
+            photoIndex,
           });
-          this.clearSelectedImage($refs, selectedImage);
-          this.loading = false;
-        } else {
-          result.systemError
-            ? // Upload failed, got something wrong with system
-              this.$q.notify({
-                message: `${result.systemError}`,
-                color: 'deep-orange-4',
-              })
-            : // Upload failed, got something wrong with user
-              this.$q.notify({
-                message: this.$t(
-                  'api.editRestaurant.uploadRestaurantPhotoFailed'
-                ),
-                color: 'deep-orange-4',
-              });
 
-          this.clearSelectedImage($refs, selectedImage);
-          this.loading = false;
-        }
-      });
+          if (result.requestResolved) {
+            // Upload success
+            this.$q.notify({
+              message: this.$t(
+                'api.editRestaurant.uploadRestaurantPhotoSuccess'
+              ),
+              color: 'green-5',
+            });
+            this.clearSelectedImage($refs, selectedImage);
+            this.loading = false;
+          } else {
+            result.systemError
+              ? // Upload failed, got something wrong with system
+                this.$q.notify({
+                  message: `${result.systemError}`,
+                  color: 'deep-orange-4',
+                })
+              : // Upload failed, got something wrong with user
+                this.$q.notify({
+                  message: this.$t(
+                    'api.editRestaurant.uploadRestaurantPhotoFailed'
+                  ),
+                  color: 'deep-orange-4',
+                });
+
+            this.clearSelectedImage($refs, selectedImage);
+            this.loading = false;
+          }
+        });
     },
 
     onDeletePhoto(photoIndex) {

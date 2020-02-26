@@ -27,6 +27,11 @@ export default {
         // returns the value of your prop
         return this.value;
       },
+      set(newValue) {
+        // v-model listens to the input event, so emitting `input` with a value
+        // will update the model with that value
+        this.$emit('input', newValue);
+      },
     },
   },
 };
