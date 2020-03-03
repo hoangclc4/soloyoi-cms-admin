@@ -30,7 +30,7 @@
       </template>
 
       <template v-slot:body-cell-action="props">
-        <q-td :props="props" auto-width>
+        <q-td :props="props" style="width: 5em">
           <q-item class="q-pa-none">
             <q-item-section>
               <q-btn

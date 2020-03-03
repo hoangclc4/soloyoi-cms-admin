@@ -3,7 +3,7 @@
     <q-header elevated class="bg-header">
       <q-toolbar>
         <q-btn dense flat round icon="menu" @click="left = !left" />
-        <q-item v-ripple :to="{ name: 'edit-user' }">
+        <q-item v-ripple :to="{ name: 'edit-user' }" class="width-100">
           <q-item-section
             class="text-uppercase text-weight-bold text-grey-1 text-h5"
           >
@@ -274,13 +274,10 @@ export default {
       const input = {
         userId: this.$route.params.id,
         startDate: '2019-06-04',
-        endDate: new Date()
-          .toLocaleDateString('ja', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-          })
-          .replace(/\//gi, '-'),
+        endDate: `${new Date().getFullYear()}-${(
+          '0' +
+          (new Date().getMonth() + 1)
+        ).slice(-2)}-${('0' + new Date().getDate()).slice(-2)}`,
       };
       const result = await this.apiFetchUserPaymentLogAction({
         apolloClient,

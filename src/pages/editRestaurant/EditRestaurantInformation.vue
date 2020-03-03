@@ -11,7 +11,7 @@
         </q-card-section>
 
         <q-card-section>
-          <VueCropper
+          <v-cropper
             ref="cropper"
             :aspect-ratio="1242 / 880"
             :src="selectedImage.src"
@@ -58,8 +58,8 @@
       </q-card>
     </q-dialog>
     <q-card>
-      <q-item class="justify-center">
-        <q-item-section round style="max-width: 30%">
+      <q-item>
+        <q-item-section round>
           <q-img
             spinner-color="orange-2"
             :src="
@@ -69,6 +69,7 @@
             "
             :ratio="1242 / 880"
             class="rounded-borders shadow-8"
+            style="margin-left: auto; margin-right: auto; max-width: 30%;"
           >
             <div class="absolute-bottom-right text-subtitle2">
               {{ avatar.photoIndex + 1 }}
@@ -270,9 +271,10 @@
           <q-item-section>
             <q-input
               outlined
+              type="textarea"
+              rows="2"
               v-model="getRestaurantInfoGetter.openTimes"
               :label="$t('editRestaurant.information.openingHours')"
-              autogrow
               dense
             />
           </q-item-section>
@@ -342,6 +344,15 @@
               type="number"
               :prefix="$t('editRestaurant.information.ratioMan')"
               dense
+              :error="errors.genderRatioMan"
+              :rules="[
+                (val) =>
+                  validateForm(
+                    'genderRatioMan',
+                    getRestaurantInfoGetter.genderRatioMan
+                  ),
+              ]"
+              class="q-pa-none"
             />
           </q-item-section>
           <q-item-label class="q-mx-sm q-mt-sm text-h5">
@@ -355,6 +366,15 @@
               type="number"
               :prefix="$t('editRestaurant.information.ratioLady')"
               dense
+              :error="errors.genderRatioLady"
+              :rules="[
+                (val) =>
+                  validateForm(
+                    'genderRatioLady',
+                    getRestaurantInfoGetter.genderRatioLady
+                  ),
+              ]"
+              class="q-pa-none"
             />
           </q-item-section>
         </q-item>
@@ -367,6 +387,15 @@
               type="number"
               :suffix="$t('editRestaurant.information.yearsOld')"
               dense
+              :error="errors.customerAgeMin"
+              :rules="[
+                (val) =>
+                  validateForm(
+                    'customerAgeMin',
+                    getRestaurantInfoGetter.customerAgeMin
+                  ),
+              ]"
+              class="q-pa-none"
             />
           </q-item-section>
           <q-item-label class="q-mx-sm q-mt-sm text-h5">
@@ -380,6 +409,15 @@
               type="number"
               :suffix="$t('editRestaurant.information.yearsOld')"
               dense
+              :error="errors.customerAgeMax"
+              :rules="[
+                (val) =>
+                  validateForm(
+                    'customerAgeMax',
+                    getRestaurantInfoGetter.customerAgeMax
+                  ),
+              ]"
+              class="q-pa-none"
             />
           </q-item-section>
         </q-item>
@@ -416,6 +454,15 @@
               :suffix="$t('editRestaurant.information.moreThansKind')"
               type="number"
               dense
+              :error="errors.typeOfSake"
+              :rules="[
+                (val) =>
+                  validateForm(
+                    'typeOfSake',
+                    getRestaurantInfoGetter.typeOfSake
+                  ),
+              ]"
+              class="q-pa-none"
             />
           </q-item-section>
         </q-item>
@@ -427,6 +474,16 @@
               :label="$t('editRestaurant.information.budgetPerPersonLow')"
               :suffix="$t('editRestaurant.information.japaneseYen')"
               dense
+              type="number"
+              :error="errors.priceRangeLow"
+              :rules="[
+                (val) =>
+                  validateForm(
+                    'priceRangeLow',
+                    getRestaurantInfoGetter.priceRangeLow
+                  ),
+              ]"
+              class="q-pa-none"
             />
           </q-item-section>
           <q-item-label class="q-mx-sm q-mt-sm text-h5">
@@ -439,6 +496,16 @@
               :label="$t('editRestaurant.information.budgetPerPersonHigh')"
               :suffix="$t('editRestaurant.information.japaneseYen')"
               dense
+              type="number"
+              :error="errors.priceRangeHigh"
+              :rules="[
+                (val) =>
+                  validateForm(
+                    'priceRangeHigh',
+                    getRestaurantInfoGetter.priceRangeHigh
+                  ),
+              ]"
+              class="q-pa-none"
             />
           </q-item-section>
         </q-item>
@@ -658,6 +725,15 @@
                 :suffix="$t('editRestaurant.information.seat')"
                 type="number"
                 dense
+                :error="errors.numberOfSeatCounter"
+                :rules="[
+                  (val) =>
+                    validateForm(
+                      'numberOfSeatCounter',
+                      getRestaurantInfoGetter.vipRestaurant.numberOfSeatCounter
+                    ),
+                ]"
+                class="q-pa-none"
               />
             </q-item-section>
             <q-item-section class="col-2">
@@ -670,6 +746,15 @@
                 :suffix="$t('editRestaurant.information.seat')"
                 type="number"
                 dense
+                :error="errors.numberOfSeatTable"
+                :rules="[
+                  (val) =>
+                    validateForm(
+                      'numberOfSeatTable',
+                      getRestaurantInfoGetter.vipRestaurant.numberOfSeatTable
+                    ),
+                ]"
+                class="q-pa-none"
               />
             </q-item-section>
           </q-item>
@@ -945,12 +1030,11 @@ import { mapActions, mapGetters } from 'vuex';
 import VueCropper from 'vue-cropperjs';
 import 'cropperjs/dist/cropper.css';
 import Datepicker from 'vuejs-datepicker/dist/vuejs-datepicker.esm.js';
-import * as lang from 'vuejs-datepicker/src/locale';
-import '../../utils/canvas-toBlob.js';
+import * as lang from 'vuejs-datepicker/dist/locale';
 
 export default {
   components: {
-    VueCropper,
+    'v-cropper': VueCropper,
     'v-datepicker': Datepicker,
   },
   name: 'edit-restaurant-information',
@@ -968,6 +1052,15 @@ export default {
         addressLevelTwo: false,
         addressLevelThree: false,
         specificAddress: false,
+        genderRatioMan: false,
+        genderRatioLady: false,
+        customerAgeMin: false,
+        customerAgeMax: false,
+        typeOfSake: false,
+        priceRangeLow: false,
+        priceRangeHigh: false,
+        numberOfSeatCounter: false,
+        numberOfSeatTable: false,
       },
       avatar: { photoIndex: 0 },
       selectedImage: {
@@ -1018,6 +1111,33 @@ export default {
           return this.errors.catchphrase
             ? this.$t('editRestaurant.information.catchphraseMaxLength')
             : true;
+        case 'genderRatioMan':
+          this.errors.genderRatioMan = value.match(/[^0-9]/gi) !== null;
+          break;
+        case 'genderRatioLady':
+          this.errors.genderRatioLady = value.match(/[^0-9]/gi) !== null;
+          break;
+        case 'customerAgeMin':
+          this.errors.customerAgeMin = value.match(/[^0-9]/gi) !== null;
+          break;
+        case 'customerAgeMax':
+          this.errors.customerAgeMax = value.match(/[^0-9]/gi) !== null;
+          break;
+        case 'typeOfSake':
+          this.errors.typeOfSake = value.match(/[^0-9]/gi) !== null;
+          break;
+        case 'priceRangeLow':
+          this.errors.priceRangeLow = value.match(/[^0-9]/gi) !== null;
+          break;
+        case 'priceRangeHigh':
+          this.errors.priceRangeHigh = value.match(/[^0-9]/gi) !== null;
+          break;
+        case 'numberOfSeatCounter':
+          this.errors.numberOfSeatCounter = value.match(/[^0-9]/gi) !== null;
+          break;
+        case 'numberOfSeatTable':
+          this.errors.numberOfSeatTable = value.match(/[^0-9]/gi) !== null;
+          break;
       }
     },
 
