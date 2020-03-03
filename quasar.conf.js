@@ -45,56 +45,20 @@ module.exports = function(ctx) {
     },
     // framework: 'all' --- includes everything; for dev only!
     framework: {
-      components: [
-        'QAvatar',
-        'QBadge',
-        'QBtn',
-        'QBtnToggle',
-        'QCard',
-        'QCardActions',
-        'QCardSection',
-        'QCheckbox',
-        'QChip',
-        'QDate',
-        'QDialog',
-        'QDrawer',
-        'QExpansionItem',
-        'QFooter',
-        'QHeader',
-        'QIcon',
-        'QImg',
-        'QInput',
-        'QItem',
-        'QItemLabel',
-        'QItemSection',
-        'QLayout',
-        'QLinearProgress',
-        'QList',
-        'QMenu',
-        'QPage',
-        'QPageContainer',
-        'QPopupProxy',
-        'QSelect',
-        'QSeparator',
-        'QTabs',
-        'QTab',
-        'QRouteTab',
-        'QTabPanels',
-        'QTabPanel',
-        'QTable',
-        'QTd',
-        'QTh',
-        'QToolbar',
-        'QToolbarTitle',
-        'QToggle',
-        'QTooltip',
-        'QTr',
-        'QUploader',
-      ],
+      // Possible values for "all":
+      // * 'auto' - Auto-import needed Quasar components & directives
+      //            (slightly higher compile time; next to minimum bundle size; most convenient)
+      // * false  - Manually specify what to import
+      //            (fastest compile time; minimum bundle size; most tedious)
+      // * true   - Import everything from Quasar
+      //            (not treeshaking Quasar; biggest bundle size; convenient)
+      all: 'auto',
+      // autoImportComponentCase: 'kebab', // 'kebab' (default) or 'pascal' or 'combined'
       iconSet: 'fontawesome-v5',
-      directives: ['Ripple', 'ClosePopup'],
+      components: [],
+      directives: [],
       // Quasar plugins
-      plugins: ['Notify', 'Loading', 'LocalStorage', 'SessionStorage'],
+      plugins: ['Notify', 'Loading', 'LocalStorage'],
       // iconSet: ctx.theme.mat ? 'material-icons' : 'ionicons'
       // i18n: 'de' // Quasar language
     },

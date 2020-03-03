@@ -3,7 +3,7 @@
     <q-header elevated class="bg-header">
       <q-toolbar>
         <q-btn dense flat round icon="menu" @click="left = !left" />
-        <q-item v-ripple to="/">
+        <q-item v-ripple to="/" class="width-100">
           <q-item-section
             class="text-uppercase text-weight-bold text-grey-1 text-h5"
           >

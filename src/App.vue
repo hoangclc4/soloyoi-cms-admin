@@ -7,6 +7,8 @@
 
 <script>
 import NoSupportedBrowserDialog from 'components/NoSupportedBrowserDialog';
+import './utils/canvas-toBlob.js';
+import './utils/formData.js';
 
 export default {
   name: 'App',
