@@ -19,7 +19,7 @@
             </q-card-section>
 
             <q-card-section>
-              <VueCropper
+              <v-cropper
                 ref="cropper"
                 :aspect-ratio="1115 / 830"
                 :src="selectedImage.src"
@@ -114,14 +114,14 @@
                     : ''
                 "
               />
-              <q-item-label class="row justify-center">
+              <q-item-label class="row justify-center q-my-sm">
                 <q-btn
                   :disable="getMenuPhotoGetter[photo.photoIndex] === undefined"
                   round
                   dense
                   color="negative"
                   icon="ion-trash"
-                  class="q-ma-sm"
+                  class="q-mx-sm"
                   @click="onDeletePhoto(photo.photoIndex)"
                 />
                 <q-btn
@@ -134,7 +134,7 @@
                   color="primary"
                   icon="ion-cloud-upload"
                   @click="$refs.changePhoto[photo.photoIndex].click()"
-                  class="q-ma-sm"
+                  class="q-mx-sm"
                 />
                 <input
                   @change="(e) => onFileChange(e, photo.photoIndex)"
@@ -368,7 +368,7 @@
               >
                 <template v-slot:top>
                   <div class="row items-center no-wrap" style="width: 100%">
-                    <div class="col-4 items-start">
+                    <div class="col-3 items-start">
                       <q-btn
                         dense
                         round
@@ -391,11 +391,8 @@
                       </span>
                     </div>
 
-                    <div
-                      class="column items-center"
-                      style="text-align: center;"
-                    >
-                      <span class="q-table__title" style="padding: 0 15px;">
+                    <div class="col">
+                      <span>
                         {{
                           food.taxFlag
                             ? `${$t('editRestaurant.menu.taxedTitle')} (10%)`
@@ -451,7 +448,7 @@
                             :content-style="{
                               background: 'white',
                               color: 'Black',
-                              'font-size': '18px',
+                              'font-size': '16px',
                             }"
                             >{{
                               `${$t(
@@ -467,7 +464,7 @@
                             :content-style="{
                               background: 'white',
                               color: 'Black',
-                              'font-size': '18px',
+                              'font-size': '16px',
                             }"
                             >{{
                               `${$t(
@@ -483,7 +480,7 @@
                             :content-style="{
                               background: 'white',
                               color: 'Black',
-                              'font-size': '18px',
+                              'font-size': '16px',
                             }"
                             >{{
                               `${$t(
@@ -499,7 +496,7 @@
                             :content-style="{
                               background: 'white',
                               color: 'Black',
-                              'font-size': '18px',
+                              'font-size': '16px',
                             }"
                             >{{
                               `${$t(
@@ -511,7 +508,7 @@
                       </q-btn-toggle>
                     </div>
 
-                    <div class="col-4 items-end">
+                    <div class="col items-end">
                       <div class="row inline no-wrap">
                         <q-input
                           outlined
@@ -545,7 +542,7 @@
                 </template>
 
                 <template v-slot:body-cell-action="props">
-                  <q-td :props="props" auto-width>
+                  <q-td :props="props" style="width: 8em">
                     <q-item class="q-pa-none">
                       <q-item-section>
                         <q-btn
@@ -636,7 +633,7 @@
               >
                 <template v-slot:top>
                   <div class="row items-center no-wrap" style="width: 100%">
-                    <div class="col-4 items-start">
+                    <div class="col-3 items-start">
                       <q-btn
                         dense
                         round
@@ -663,11 +660,8 @@
                       </span>
                     </div>
 
-                    <div
-                      class="column items-center"
-                      style="text-align: center;"
-                    >
-                      <span class="q-table__title" style="padding: 0 15px;">
+                    <div class="col">
+                      <span>
                         {{
                           drink.taxFlag
                             ? `${$t('editRestaurant.menu.taxedTitle')} (10%)`
@@ -723,7 +717,7 @@
                             :content-style="{
                               background: 'white',
                               color: 'Black',
-                              'font-size': '18px',
+                              'font-size': '16px',
                             }"
                             >{{
                               `${$t(
@@ -739,7 +733,7 @@
                             :content-style="{
                               background: 'white',
                               color: 'Black',
-                              'font-size': '18px',
+                              'font-size': '16px',
                             }"
                             >{{
                               `${$t(
@@ -755,7 +749,7 @@
                             :content-style="{
                               background: 'white',
                               color: 'Black',
-                              'font-size': '18px',
+                              'font-size': '16px',
                             }"
                             >{{
                               `${$t(
@@ -771,7 +765,7 @@
                             :content-style="{
                               background: 'white',
                               color: 'Black',
-                              'font-size': '18px',
+                              'font-size': '16px',
                             }"
                             >{{
                               `${$t(
@@ -783,7 +777,7 @@
                       </q-btn-toggle>
                     </div>
 
-                    <div class="col-4 items-end">
+                    <div class="col items-end">
                       <div class="row inline no-wrap">
                         <q-input
                           outlined
@@ -817,7 +811,7 @@
                 </template>
 
                 <template v-slot:body-cell-action="props">
-                  <q-td :props="props" auto-width>
+                  <q-td :props="props" style="width: 8em">
                     <q-item class="q-pa-none">
                       <q-item-section>
                         <q-btn
@@ -900,11 +894,10 @@
 import { mapActions, mapGetters } from 'vuex';
 import VueCropper from 'vue-cropperjs';
 import 'cropperjs/dist/cropper.css';
-import '../../utils/canvas-toBlob.js';
 
 export default {
   components: {
-    VueCropper,
+    'v-cropper': VueCropper,
   },
   name: 'edit-restaurant-menu',
   data() {

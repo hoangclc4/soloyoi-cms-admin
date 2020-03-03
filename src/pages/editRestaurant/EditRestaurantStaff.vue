@@ -18,7 +18,7 @@
         </q-card-section>
 
         <q-card-section>
-          <VueCropper
+          <v-cropper
             ref="cropper"
             :aspect-ratio="1242 / 875"
             :src="selectedImage.src"
@@ -569,12 +569,11 @@ import { mapActions, mapGetters } from 'vuex';
 import VueCropper from 'vue-cropperjs';
 import 'cropperjs/dist/cropper.css';
 import Datepicker from 'vuejs-datepicker/dist/vuejs-datepicker.esm.js';
-import * as lang from 'vuejs-datepicker/src/locale';
-import '../../utils/canvas-toBlob.js';
+import * as lang from 'vuejs-datepicker/dist/locale';
 
 export default {
   components: {
-    VueCropper,
+    'v-cropper': VueCropper,
     'v-datepicker': Datepicker,
   },
   name: 'edit-restaurant-staff',
