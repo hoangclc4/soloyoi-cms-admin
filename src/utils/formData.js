@@ -180,13 +180,14 @@ if (
      * @param   {string}           name      field name
      * @param   {string|Blob|File} value     string / blob / file
      * @param   {string=}          filename  filename to use with blob
-     * @return  {undefined}
+     * @return  {undefined} // [name, value, filename]
      */
     append(name, value, filename) {
-      console.info(name, value, filename);
       ensureArgs(arguments, 2);
       var [a, s, d] = normalizeArgs.apply(null, arguments);
       this._data.push([a, s, d]);
+
+      return [name, value, filename];
     }
 
     /**
@@ -306,10 +307,9 @@ if (
      * @param   {string}    name      Filed name
      * @param   {string}    value     Field value
      * @param   {string=}   filename  Filename (optional)
-     * @return  {undefined}
+     * @return  {undefined} // [value, filename]
      */
     set(name, value, filename) {
-      console.info(value, filename);
       ensureArgs(arguments, 2);
       name = String(name);
       const result = [];
@@ -332,6 +332,8 @@ if (
       }
 
       this._data = result;
+
+      return [value, filename];
     }
 
     /**
