@@ -285,7 +285,6 @@ export async function apiFetchChildProvinceAction(
   }
 }
 
-
 /**
  * @description Call API update Restaurant Master Data
  * @author TungPT
@@ -317,7 +316,6 @@ export async function apiEditRestaurantMasterdataAction(
     return { requestResolved: false, systemError };
   }
 }
-
 
 /**
  * @description Call API update User Master Data
