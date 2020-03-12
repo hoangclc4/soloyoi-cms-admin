@@ -2,9 +2,11 @@ import { ALL_PROVINCE } from '../../graphql/queries/getAllProvince';
 import { CHILD_POSTAL_CODE } from '../../graphql/queries/getChildPostalCode';
 import { RESTAURANT_ALL_MASTER } from '../../graphql/queries/getAllMasterRestaurant';
 import { CREATE_MASTER_RESTAURANT } from '../../graphql/mutations/createMasterRestaurant';
+import { UPDATE_MASTER_RESTAURANT } from '../../graphql/mutations/updateMasterRestaurant';
 import { DELETE_MASTER_RESTAURANT } from '../../graphql/mutations/deleteMasterRestaurant';
 import { USER_ALL_MASTER } from '../../graphql/queries/getAllMasterUser';
 import { CREATE_MASTER_USER } from '../../graphql/mutations/createMasterUser';
+import { UPDATE_MASTER_USER } from '../../graphql/mutations/updateMasterUser';
 import { DELETE_MASTER_USER } from '../../graphql/mutations/deleteMasterUser';
 
 /**
@@ -275,6 +277,70 @@ export async function apiFetchChildProvinceAction(
       return { requestResolved: true };
     }
     // Fetch Child Province Failed
+    else {
+      return { requestResolved: false, systemError: null };
+    }
+  } catch (systemError) {
+    return { requestResolved: false, systemError };
+  }
+}
+
+/**
+ * @description Call API update Restaurant Master Data
+ * @author TungPT
+ * @date 2020-03-06
+ * @export
+ * @param {*} context
+ * @param {*} { apolloClient, input }
+ * @returns
+ */
+export async function apiEditRestaurantMasterdataAction(
+  context,
+  { apolloClient, input }
+) {
+  try {
+    const response = await apolloClient.mutate({
+      mutation: UPDATE_MASTER_RESTAURANT,
+      variables: { input },
+    });
+
+    // Update Master Restaurant Success
+    if (response.data.result.requestResolved) {
+      return { requestResolved: true };
+    }
+    // Update Master Restaurant Failed
+    else {
+      return { requestResolved: false, systemError: null };
+    }
+  } catch (systemError) {
+    return { requestResolved: false, systemError };
+  }
+}
+
+/**
+ * @description Call API update User Master Data
+ * @author TungPT
+ * @date 2020-03-06
+ * @export
+ * @param {*} context
+ * @param {*} { apolloClient, input }
+ * @returns
+ */
+export async function apiEditUserMasterdataAction(
+  context,
+  { apolloClient, input }
+) {
+  try {
+    const response = await apolloClient.mutate({
+      mutation: UPDATE_MASTER_USER,
+      variables: { input },
+    });
+
+    // Update Master User Success
+    if (response.data.result.requestResolved) {
+      return { requestResolved: true };
+    }
+    // Update Master User Failed
     else {
       return { requestResolved: false, systemError: null };
     }

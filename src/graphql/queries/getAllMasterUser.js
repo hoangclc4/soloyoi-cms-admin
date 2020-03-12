@@ -11,6 +11,7 @@ export const USER_ALL_MASTER = gql`
         }
         name
         description
+        order
       }
       error {
         requestResolved

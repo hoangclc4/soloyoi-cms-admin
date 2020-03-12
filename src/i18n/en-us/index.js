@@ -53,8 +53,11 @@ export default {
     fetchRestaurantMasterdataSuccess:
       'Success to fetch Restaurant master data!',
     createRestaurantMasterdataFailed: 'Failed to create Restaurant masterdata',
+    updateRestaurantMasterdataFailed: 'Failed to update Restaurant masterdata',
     createRestaurantMasterdataSuccess:
       'Success to create Restaurant masterdata',
+    updateRestaurantMasterdataSuccess:
+      'Success to update Restaurant masterdata',
     deleteRestaurantMasterdataFailed: 'Failed to delete Restaurant masterdata',
     deleteRestaurantMasterdataSuccess:
       'Success to delete Restaurant masterdata',
@@ -63,6 +66,8 @@ export default {
     fetchUserMasterdataSuccess: 'Success to fetch User master data!',
     createUserMasterdataFailed: 'Failed to create User masterdata',
     createUserMasterdataSuccess: 'Success to create User masterdata',
+    updateUserMasterdataFailed: 'Failed to update User masterdata',
+    updateUserMasterdataSuccess: 'Success to update User masterdata',
     deleteUserMasterdataFailed: 'Failed to delete User masterdata',
     deleteUserMasterdataSuccess: 'Success to delete User masterdata',
     /* Japan's Province */
@@ -273,9 +278,11 @@ export default {
   /* Master Data Page */
   masterdata: {
     createMasterdata: 'Create Masterdata',
+    editMasterdata: 'Edit Masterdata',
     confirmDeleteMasterdata: 'Are you sure you want to delete this masterdata?',
     name: 'Name',
     category: 'Category',
+    order: 'Order',
 
     /* Restaurant masterdata label */
     restaurant: {

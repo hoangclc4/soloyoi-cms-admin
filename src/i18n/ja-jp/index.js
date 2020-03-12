@@ -59,6 +59,8 @@ export default {
       '店舗向けの入力項目の選択肢を登録できませんでした！',
     createRestaurantMasterdataSuccess:
       '店舗向けの入力項目の選択肢を登録できました！',
+    updateRestaurantMasterdataSuccess:
+      '店舗向けの入力項目の選択肢を更新できました！',
     deleteRestaurantMasterdataFailed:
       '店舗向けの入力項目の選択肢を削除できませんでした！',
     deleteRestaurantMasterdataSuccess:
@@ -72,6 +74,10 @@ export default {
       'ユーザー向けの入力項目の選択肢を登録できませんでした！',
     createUserMasterdataSuccess:
       'ユーザー向けの入力項目の選択肢を登録できました！',
+    updateUserMasterdataFailed:
+      'ユーザー向けの入力項目の選択肢を更新できませんでした！',
+    updateUserMasterdataSuccess:
+      'ユーザー向けの入力項目の選択肢を更新できました！',
     deleteUserMasterdataFailed:
       'ユーザー向けの入力項目の選択肢を削除できませんでした！',
     deleteUserMasterdataSuccess:
@@ -292,9 +298,11 @@ export default {
   /* Master Data Page */
   masterdata: {
     createMasterdata: '新規追加',
+    editMasterdata: '編集',
     confirmDeleteMasterdata: 'このマスターデータを削除しますか？',
     name: '名前',
     category: 'カテゴリー',
+    order: '注文',
 
     /* Restaurant masterdata label */
     restaurant: {

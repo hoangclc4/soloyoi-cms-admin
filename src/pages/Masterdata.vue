@@ -46,6 +46,51 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+    <q-dialog v-model="openToEditMasterdata">
+      <q-card class="full-width">
+        <q-card-section>
+          <div class="text-h6">{{ $t('masterdata.editMasterdata') }}</div>
+        </q-card-section>
+        <q-card-section>
+          <q-input
+            v-model="newMasterdata.category"
+            outlined
+            readonly
+            :label="$t('masterdata.category')"
+          />
+        </q-card-section>
+        <q-card-section>
+          <q-input
+            v-model="editMasterdata.value"
+            :error="errors.editMasterdata.value"
+            outlined
+            autofocus
+            :label="$t('masterdata.name')"
+          />
+        </q-card-section>
+        <q-card-section>
+          <q-input
+            v-model="editMasterdata.order"
+            :error="errors.editMasterdata.order"
+            outlined
+            :label="$t('masterdata.order')"
+          />
+        </q-card-section>
+        <q-card-actions align="right" class="text-primary">
+          <q-btn flat :label="$t('cancel')" v-close-popup />
+          <q-btn
+            color="primary"
+            icon-right="ion-checkmark-circle"
+            :label="$t('edit')"
+            @click="
+              tab === 'restaurant'
+                ? updateRestaurantMasterdata()
+                : updateUserMasterdata()
+            "
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
     <q-dialog v-model="confirmDeleteMasterdata">
       <q-card>
         <q-card-section class="row items-center">
@@ -58,7 +103,6 @@
             }}
           </span>
         </q-card-section>
-
         <q-card-actions align="right">
           <q-btn flat :label="$t('cancel')" color="primary" v-close-popup />
           <q-btn
@@ -120,11 +164,17 @@
                 </template>
                 <template v-slot:selected-item="scope">
                   <q-chip
+                    v-if="category !== 'StaffBirthplace'"
+                    :clickable="category !== 'StaffBirthplace'"
+                    @click="onEditRestaurantMasterdata(scope, category)"
                     :removable="category !== 'StaffBirthplace'"
                     dense
                     @remove="onRemoveRestaurantMasterdata(scope)"
                     :tabindex="scope.tabindex"
                   >
+                    {{ scope.opt.order + '. ' + scope.opt.value }}
+                  </q-chip>
+                  <q-chip v-else dense :tabindex="scope.tabindex">
                     {{ scope.opt.value }}
                   </q-chip>
                 </template>
@@ -162,11 +212,17 @@
                 </template>
                 <template v-slot:selected-item="scope">
                   <q-chip
+                    v-if="category !== 'UserBirthplace'"
+                    :clickable="category !== 'UserBirthplace'"
+                    @click="onEditUserMasterdata(scope, category)"
                     :removable="category !== 'UserBirthplace'"
                     dense
                     @remove="onRemoveUserMasterdata(scope)"
                     :tabindex="scope.tabindex"
                   >
+                    {{ scope.opt.order + '. ' + scope.opt.value }}
+                  </q-chip>
+                  <q-chip v-else dense :tabindex="scope.tabindex">
                     {{ scope.opt.value }}
                   </q-chip>
                 </template>
@@ -188,6 +244,7 @@ export default {
       loading: false,
       errors: {
         newMasterdata: { name: false },
+        editMasterdata: { value: false, order: false },
       },
       tab: 'restaurant',
       restaurantCategoryLabel: {
@@ -231,9 +288,11 @@ export default {
         UserBirthplace: this.$t('masterdata.user.UserBirthplaceLabel'),
       },
       openToCreateMasterdata: false,
+      openToEditMasterdata: false,
       newMasterdata: { name: '', category: '' },
       confirmDeleteMasterdata: false,
       deletionMasterdata: { id: '', value: '' },
+      editMasterdata: { id: '', value: '', order: '' },
     };
   },
   computed: {
@@ -246,9 +305,11 @@ export default {
     ...mapActions('masterdata', [
       'apiFetchRestaurantMasterdataAction',
       'apiCreateRestaurantMasterdataAction',
+      'apiEditRestaurantMasterdataAction',
       'apiDeleteRestaurantMasterdataAction',
       'apiFetchUserMasterdataAction',
       'apiCreateUserMasterdataAction',
+      'apiEditUserMasterdataAction',
       'apiDeleteUserMasterdataAction',
     ]),
 
@@ -259,6 +320,16 @@ export default {
     onAddRestaurantMasterdata(category) {
       this.errors.newMasterdata = { name: false };
       this.openToCreateMasterdata = true;
+      this.newMasterdata.category = category;
+    },
+    onEditRestaurantMasterdata(scope, category) {
+      this.errors.editMasterdata = { value: false };
+      this.editMasterdata = {
+        id: scope.opt.id,
+        value: scope.opt.value,
+        order: scope.opt.order,
+      };
+      this.openToEditMasterdata = true;
       this.newMasterdata.category = category;
     },
     onRemoveRestaurantMasterdata(scope) {
@@ -313,6 +384,57 @@ export default {
         }
       }
     },
+    async updateRestaurantMasterdata() {
+      this.openToEditMasterdata = false;
+      this.loading = true;
+      this.errors.editMasterdata.value = this.editMasterdata.value === '';
+      this.errors.editMasterdata.order = this.editMasterdata.order === '';
+
+      if (
+        this.errors.editMasterdata.value ||
+        this.errors.editMasterdata.order
+      ) {
+        this.loading = false;
+        this.openToEditMasterdata = true;
+      } else {
+        // Call API update Restaurant Master Data
+        const apolloClient = this.$apollo.provider.defaultClient;
+        const input = {
+          masterId: this.editMasterdata.id,
+          name: this.editMasterdata.value,
+          order: Number(this.editMasterdata.order),
+        };
+        const result = await this.apiEditRestaurantMasterdataAction({
+          apolloClient,
+          input,
+        });
+        if (result.requestResolved) {
+          // Updated success
+          this.fetchRestaurantMasterdata().then(() => {
+            this.clearInput();
+            this.$q.notify({
+              message: this.$t('api.updateRestaurantMasterdataSuccess'),
+              color: 'green-5',
+            });
+            this.loading = false;
+          });
+        } else {
+          result.systemError
+            ? // Update failed, got something wrong with system
+              this.$q.notify({
+                message: `${result.systemError}`,
+                color: 'deep-orange-4',
+              })
+            : // Update failed, got something wrong with user
+              this.$q.notify({
+                message: this.$t('api.updateRestaurantMasterdataFailed'),
+                color: 'deep-orange-4',
+              });
+
+          this.loading = false;
+        }
+      }
+    },
     async deleteRestaurantMasterdata() {
       this.confirmDeleteMasterdata = false;
       this.loading = true;
@@ -355,6 +477,16 @@ export default {
     onAddUserMasterdata(category) {
       this.errors.newMasterdata = { name: false };
       this.openToCreateMasterdata = true;
+      this.newMasterdata.category = category;
+    },
+    onEditUserMasterdata(scope, category) {
+      this.errors.editMasterdata = { value: false };
+      this.editMasterdata = {
+        id: scope.opt.id,
+        value: scope.opt.value,
+        order: scope.opt.order,
+      };
+      this.openToEditMasterdata = true;
       this.newMasterdata.category = category;
     },
     onRemoveUserMasterdata(scope) {
@@ -402,6 +534,53 @@ export default {
             : // Create failed, got something wrong with user
               this.$q.notify({
                 message: this.$t('api.createUserMasterdataFailed'),
+                color: 'deep-orange-4',
+              });
+
+          this.loading = false;
+        }
+      }
+    },
+    async updateUserMasterdata() {
+      this.openToEditMasterdata = false;
+      this.loading = true;
+      this.errors.editMasterdata.value = this.editMasterdata.value === '';
+
+      if (this.errors.editMasterdata.value) {
+        this.loading = false;
+        this.openToEditMasterdata = true;
+      } else {
+        // Call API update User Master Data
+        const apolloClient = this.$apollo.provider.defaultClient;
+        const input = {
+          masterId: this.editMasterdata.id,
+          name: this.editMasterdata.value,
+          order: Number(this.editMasterdata.order),
+        };
+        const result = await this.apiEditUserMasterdataAction({
+          apolloClient,
+          input,
+        });
+        if (result.requestResolved) {
+          // Updated success
+          this.fetchUserMasterdata().then(() => {
+            this.clearInput();
+            this.$q.notify({
+              message: this.$t('api.updateUserMasterdataSuccess'),
+              color: 'green-5',
+            });
+            this.loading = false;
+          });
+        } else {
+          result.systemError
+            ? // Update failed, got something wrong with system
+              this.$q.notify({
+                message: `${result.systemError}`,
+                color: 'deep-orange-4',
+              })
+            : // Update failed, got something wrong with user
+              this.$q.notify({
+                message: this.$t('api.updateUserMasterdataFailed'),
                 color: 'deep-orange-4',
               });
 
