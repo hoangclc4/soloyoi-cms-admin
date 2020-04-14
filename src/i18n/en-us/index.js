@@ -172,11 +172,15 @@ export default {
       /* User Payment */
       fetchUserPaymentLogFailed: 'Failed to fetch user payment log',
       fetchUserPaymentLogSuccess: 'Success to fetch user payment log',
+      createUserPaymentPeriodSuccess: 'Create user payment period success',
+      createUserPaymentPeriodFailed: 'Create user payment period failed',
+      createUserPaymentForeverSuccess: 'Create user payment forever success',
+      createUserPaymentForeverFailed: 'Create user payment forever failed',
 
       /* User Profile */
       fetchUserInformationFailed: 'Failed to fetch user information',
       fetchUserInformationSuccess: 'Success to fetch user information',
-
+      fetchUserPaymentInfoFailed: 'Failed to fetch user payment information',
       /* User Feeling Today */
     },
   },
@@ -212,6 +216,7 @@ export default {
       payment: 'Payment',
       profile: 'Profile',
       feelingToday: 'Feeling Today',
+      userSetting: 'User Setting',
     },
   },
 
@@ -257,6 +262,8 @@ export default {
     nickNameHeader: 'nickName',
     facebookFullNameHeader: 'Facebook FullName',
     createdAtHeader: 'Created At',
+    typePaymentRegisterHeader: 'Payment Register',
+    endDateHeader: 'Expired Date',
   },
 
   /* Notification Page */
@@ -554,6 +561,16 @@ export default {
       timeFeeling: 'Time Feeling',
       updatedAt: 'Updated At',
       maskDatetime: '####/##/## ##:##:##',
+    },
+
+    /* User Setting */
+    userSetting: {
+      pageTitle: 'User Setting',
+      startDate: 'Start Date',
+      endDate: 'End Date',
+      saveBtn: 'Save User Setting',
+      makeForever: 'Make forever',
+      payPeriod: 'Set the pay period',
     },
   },
 };

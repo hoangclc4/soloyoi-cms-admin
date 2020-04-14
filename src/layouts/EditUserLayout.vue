@@ -163,6 +163,19 @@
             {{ $t('navigation.editUser.feelingToday') }}
           </q-item-section>
         </q-item>
+        <q-item
+          clickable
+          active-class="text-orange"
+          v-ripple
+          :to="{ name: 'edit-user-setting' }"
+        >
+          <q-item-section avatar class="icon__menu">
+            <q-icon name="ion-settings" />
+          </q-item-section>
+          <q-item-section class="text-body1">
+            {{ $t('navigation.editUser.userSetting') }}
+          </q-item-section>
+        </q-item>
       </q-list>
     </q-drawer>
 
@@ -210,6 +223,7 @@ export default {
     ...mapActions('user', [
       'apiFetchUserInformationAction',
       'apiFetchUserPaymentLogAction',
+      'apiFetchUserPaymentInfoAction',
     ]),
 
     async logout() {
@@ -368,12 +382,38 @@ export default {
             });
       }
     },
+    async fetchUserPayment() {
+      // Call API fetch User Master Data
+      const apolloClient = this.$apollo.provider.defaultClient;
+      const input = { userId: this.$route.params.id };
+      const result = await this.apiFetchUserPaymentInfoAction({
+        apolloClient,
+        input,
+      });
+
+      if (result.requestResolved) {
+        // Fetch success
+      } else {
+        result.systemError
+          ? // Fetch failed, got something wrong with system
+            this.$q.notify({
+              message: `${result.systemError}`,
+              color: 'deep-orange-4',
+            })
+          : // Fetch failed, got something wrong with user
+            this.$q.notify({
+              message: this.$t('api.editUser.fetchUserPaymentInfoFailed'),
+              color: 'deep-orange-4',
+            });
+      }
+    },
   },
   created() {
     this.loading = true;
     Promise.all([
       this.fetchUserInformation(),
       this.fetchUserPaymentLog(),
+      this.fetchUserPayment(),
       this.fetchMasterdata(),
     ]).then(() => {
       this.loading = false;

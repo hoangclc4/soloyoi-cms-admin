@@ -28,7 +28,6 @@
           </template>
         </q-input>
       </template>
-
       <template v-slot:body-cell-action="props">
         <q-td :props="props" style="width: 5em">
           <q-item class="q-pa-none">
@@ -92,6 +91,33 @@ export default {
           field: (row) => new Date(row.createdAt),
           format: (val) =>
             `${val.toLocaleDateString('ja')} ${val.toLocaleTimeString('ja')}`,
+          sortable: true,
+          sort: (a, b) => b - a,
+        },
+        {
+          name: 'typePaymentRegister',
+          align: 'left',
+          label: this.$t('user.typePaymentRegisterHeader'),
+          field: (row) =>
+            row.paymentInfo
+              ? row.paymentInfo.typePaymentRegister === 'LIFETIME'
+                ? 'forever'
+                : 'period'
+              : null,
+          sortable: true,
+        },
+        {
+          name: 'endDate',
+          align: 'left',
+          label: this.$t('user.endDateHeader'),
+          field: (row) =>
+            row.paymentInfo ? new Date(row.paymentInfo.endDate) : null,
+          format: (val) =>
+            val
+              ? `${val.toLocaleDateString('ja')} ${val.toLocaleTimeString(
+                  'ja'
+                )}`
+              : null,
           sortable: true,
           sort: (a, b) => b - a,
         },

@@ -33,3 +33,27 @@ export function getUserInfoGetter(state) {
 export function getUserPaymentLogGetter(state) {
   return state.userPaymentLog ? state.userPaymentLog : [];
 }
+
+/**
+ * @description get user payment info from state
+ * @author TungPT
+ * @date 2020-04-09
+ * @export
+ * @param {*} state
+ * @returns
+ */
+export function getUserPaymentInfoGetter2(state) {
+  return state.userPaymentInfo ? state.userPaymentInfo : [];
+}
+
+/**
+ * @description get user payment info from state
+ * @author TungPT
+ * @date 2020-04-09
+ * @export
+ * @param {*} state
+ * @returns
+ */
+export function getUserPaymentInfoGetter(state) {
+  return state.userPaymentInformation ? state.userPaymentInformation : [];
+}
