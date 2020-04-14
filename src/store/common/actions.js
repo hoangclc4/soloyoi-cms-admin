@@ -51,3 +51,20 @@ export function encodeEmojiText(str) {
     })
     .join('');
 }
+
+export function validateDates(startDate, endDate) {
+  if (startDate == null || endDate == null) {
+    return {
+      requestResolved: false,
+      errorMessage: 'Start date and end date are required.',
+    };
+  }
+
+  if (startDate != null && endDate != null && endDate < startDate) {
+    return {
+      requestResolved: false,
+      errorMessage: 'End date should be grater then start date.',
+    };
+  }
+  return true;
+}

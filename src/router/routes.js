@@ -92,6 +92,11 @@ const routes = [
         name: 'edit-user-feeling-today',
         component: () => import('pages/editUser/EditUserFeelingToday'),
       },
+      {
+        path: 'user-setting',
+        name: 'edit-user-setting',
+        component: () => import('pages/editUser/EditUserSetting'),
+      },
     ],
   },
 

@@ -59,6 +59,8 @@ export default {
       '店舗向けの入力項目の選択肢を登録できませんでした！',
     createRestaurantMasterdataSuccess:
       '店舗向けの入力項目の選択肢を登録できました！',
+    updateRestaurantMasterdataSuccess:
+      '店舗向けの入力項目の選択肢を更新できました！',
     deleteRestaurantMasterdataFailed:
       '店舗向けの入力項目の選択肢を削除できませんでした！',
     deleteRestaurantMasterdataSuccess:
@@ -72,6 +74,10 @@ export default {
       'ユーザー向けの入力項目の選択肢を登録できませんでした！',
     createUserMasterdataSuccess:
       'ユーザー向けの入力項目の選択肢を登録できました！',
+    updateUserMasterdataFailed:
+      'ユーザー向けの入力項目の選択肢を更新できませんでした！',
+    updateUserMasterdataSuccess:
+      'ユーザー向けの入力項目の選択肢を更新できました！',
     deleteUserMasterdataFailed:
       'ユーザー向けの入力項目の選択肢を削除できませんでした！',
     deleteUserMasterdataSuccess:
@@ -182,6 +188,10 @@ export default {
       /* User Payment */
       fetchUserPaymentLogFailed: 'ユーザーの課金履歴を取得できませんでした！',
       fetchUserPaymentLogSuccess: 'ユーザーの課金履歴を取得できました！',
+      createUserPaymentPeriodSuccess: 'ユーザー支払い期間の成功を作成する',
+      createUserPaymentPeriodFailed: 'ユーザーの支払い期間の作成に失敗しました',
+      createUserPaymentForeverSuccess: 'ユーザーの支払いを永遠に成功させる',
+      createUserPaymentForeverFailed: '永遠に失敗したユーザー支払いの作成',
 
       /* User Profile */
       fetchUserInformationFailed: 'ユーザー情報を取得できませんでした！',
@@ -222,6 +232,7 @@ export default {
       payment: '課金',
       profile: 'プロフィール',
       feelingToday: '今夜の気分',
+      userSetting: 'ユーザー設定',
     },
   },
 
@@ -272,6 +283,8 @@ export default {
     nickNameHeader: 'ニックネーム',
     facebookFullNameHeader: 'Facebookのフルネーム',
     createdAtHeader: '作成時間',
+    typePaymentRegisterHeader: '支払い台帳',
+    endDateHeader: '有効期限',
   },
 
   /* Notification Page */
@@ -292,9 +305,11 @@ export default {
   /* Master Data Page */
   masterdata: {
     createMasterdata: '新規追加',
+    editMasterdata: '編集',
     confirmDeleteMasterdata: 'このマスターデータを削除しますか？',
     name: '名前',
     category: 'カテゴリー',
+    order: '注文',
 
     /* Restaurant masterdata label */
     restaurant: {
@@ -567,6 +582,16 @@ export default {
       timeFeeling: '何時からあいてる',
       updatedAt: '更新時間',
       maskDatetime: '####年##月##日 ##時##分##秒',
+    },
+
+    /* User Setting */
+    userSetting: {
+      pageTitle: 'ユーザー設定',
+      startDate: '開始日',
+      endDate: '終了日',
+      saveBtn: 'ユーザー設定を保存',
+      makeForever: '永久にする',
+      payPeriod: '有料期間を設定する',
     },
   },
 };

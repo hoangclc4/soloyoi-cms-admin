@@ -55,6 +55,17 @@ export const ADMIN_USER_FACEBOOK_LIST = gql`
           }
           createdAt
           updatedAt
+          paymentInfo {
+            createdAt
+            updatedAt
+            userPaymentId
+            userId
+            startDate
+            endDate
+            app
+            status
+            typePaymentRegister
+          }
         }
       }
       error {

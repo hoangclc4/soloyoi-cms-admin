@@ -74,3 +74,29 @@ export function saveUserPaymentLogMutation(state, { response }) {
 
   LocalStorage.set('ADMIN_USER_PAYMENT_LOG', state.userPaymentLog);
 }
+
+/**
+ * @description save user payment data as a state
+ * @author TungPT
+ * @date 2020-04-09
+ * @export
+ * @param {*} state
+ * @param {*} response
+ */
+export function saveCreateUserPaymentMutation(state, { response }) {
+  state.userPaymentInfo = { ...response.data.result.response };
+  LocalStorage.set('ADMIN_CREATED_USER_PAYMENT', state.userPaymentInfo);
+}
+
+/**
+ * @description save user information as a state with decode self introduction and today comment
+ * @author TungPT
+ * @date 2020-04-09
+ * @export
+ * @param {*} state
+ * @param {*} { response }
+ */
+export function saveUserPaymentInfoMutation(state, { response }) {
+  state.userPaymentInformation = { ...response.data.result.response };
+  LocalStorage.set('ADMIN_USER_PAYMENT_INFO', state.userPaymentInformation);
+}

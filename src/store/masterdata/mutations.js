@@ -36,89 +36,102 @@ export function saveRestaurantMasterdataMutation(state, { response }) {
         state.restaurantMasterdata.OpenTimeSearch.push({
           id: data.masterId,
           value: data.name,
+          order: data.order,
         });
         break;
       case 'AloneMenu':
         state.restaurantMasterdata.AloneMenu.push({
           id: data.masterId,
           value: data.name,
+          order: data.order,
         });
         break;
       case 'Sake':
         state.restaurantMasterdata.Sake.push({
           id: data.masterId,
           value: data.name,
+          order: data.order,
         });
         break;
       case 'LonelyScene':
         state.restaurantMasterdata.LonelyScene.push({
           id: data.masterId,
           value: data.name,
+          order: data.order,
         });
         break;
       case 'RestaurantPayment':
         state.restaurantMasterdata.RestaurantPayment.push({
           id: data.masterId,
           value: data.name,
+          order: data.order,
         });
         break;
       case 'Smoking':
         state.restaurantMasterdata.Smoking.push({
           id: data.masterId,
           value: data.name,
+          order: data.order,
         });
         break;
       case 'Languages':
         state.restaurantMasterdata.Languages.push({
           id: data.masterId,
           value: data.name,
+          order: data.order,
         });
         break;
       case 'Features':
         state.restaurantMasterdata.Features.push({
           id: data.masterId,
           value: data.name,
+          order: data.order,
         });
         break;
       case 'SalesInformations':
         state.restaurantMasterdata.SalesInformations.push({
           id: data.masterId,
           value: data.name,
+          order: data.order,
         });
         break;
       case 'TypeOfMenu':
         state.restaurantMasterdata.TypeOfMenu.push({
           id: data.masterId,
           value: data.name,
+          order: data.order,
         });
         break;
       case 'TheAtmosphereOfTheCounter':
         state.restaurantMasterdata.TheAtmosphereOfTheCounter.push({
           id: data.masterId,
           value: data.name,
+          order: data.order,
         });
         break;
       case 'Location':
         state.restaurantMasterdata.Location.push({
           id: data.masterId,
           value: data.name,
+          order: data.order,
         });
         break;
       case 'StaffStyle':
         state.restaurantMasterdata.StaffStyle.push({
           id: data.masterId,
           value: data.name,
+          order: data.order,
         });
         break;
       case 'StaffCanTalk':
         state.restaurantMasterdata.StaffCanTalk.push({
           id: data.masterId,
           value: data.name,
+          order: data.order,
         });
         break;
     }
   });
-
   LocalStorage.set('ADMIN_RESTAURANT_MASTERDATA', state.restaurantMasterdata);
 }
 
@@ -156,6 +169,7 @@ export function saveUserMasterdataMutation(state, { response }) {
           state.userMasterdata.SinglePersonArea.push({
             id: data.masterId,
             value: data.name,
+            order: data.order,
           });
         }
         break;
@@ -165,22 +179,29 @@ export function saveUserMasterdataMutation(state, { response }) {
           state.userMasterdata.Occupation.push({
             id: data.masterId,
             value: data.name,
+            order: data.order,
           });
         }
         break;
       case 'Sake':
-        state.userMasterdata.Sake.push({ id: data.masterId, value: data.name });
+        state.userMasterdata.Sake.push({
+          id: data.masterId,
+          value: data.name,
+          order: data.order,
+        });
         break;
       case 'Smoking':
         state.userMasterdata.Smoking.push({
           id: data.masterId,
           value: data.name,
+          order: data.order,
         });
         break;
       case 'StoryStance':
         state.userMasterdata.StoryStance.push({
           id: data.masterId,
           value: data.name,
+          order: data.order,
         });
         break;
       case 'FavoriteConversationGenre':
@@ -189,6 +210,7 @@ export function saveUserMasterdataMutation(state, { response }) {
           state.userMasterdata.FavoriteConversationGenre.push({
             id: data.masterId,
             value: data.name,
+            order: data.order,
           });
         }
         break;
@@ -196,36 +218,42 @@ export function saveUserMasterdataMutation(state, { response }) {
         state.userMasterdata.Personal.push({
           id: data.masterId,
           value: data.name,
+          order: data.order,
         });
         break;
       case 'WhenDrinkingAlone':
         state.userMasterdata.WhenDrinkingAlone.push({
           id: data.masterId,
           value: data.name,
+          order: data.order,
         });
         break;
       case 'GenderOfPartner':
         state.userMasterdata.GenderOfPartner.push({
           id: data.masterId,
           value: data.name,
+          order: data.order,
         });
         break;
       case 'YourFeeling':
         state.userMasterdata.YourFeeling.push({
           id: data.masterId,
           value: data.name,
+          order: data.order,
         });
         break;
       case 'PaymentFeeling':
         state.userMasterdata.PaymentFeeling.push({
           id: data.masterId,
           value: data.name,
+          order: data.order,
         });
         break;
       case 'TimeFeeling':
         state.userMasterdata.TimeFeeling.push({
           id: data.masterId,
           value: data.name,
+          order: data.order,
         });
         break;
     }
