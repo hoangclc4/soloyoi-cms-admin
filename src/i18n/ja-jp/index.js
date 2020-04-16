@@ -309,7 +309,7 @@ export default {
     confirmDeleteMasterdata: 'このマスターデータを削除しますか？',
     name: '名前',
     category: 'カテゴリー',
-    order: '注文',
+    order: '並び順の番号',
 
     /* Restaurant masterdata label */
     restaurant: {
