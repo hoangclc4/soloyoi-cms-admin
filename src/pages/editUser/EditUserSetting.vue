@@ -10,7 +10,7 @@
       </q-item>
       <q-separator />
       <q-item class="q-pa-md q-gutter-sm">
-        <q-item-section class="q-gutter-sm">
+        <q-item-section class="q-gutter-sm" v-if="activeUser">
           <q-radio dense v-model="setting" val="lifetime">
             {{ (label = $t('editUser.userSetting.makeForever')) }}
           </q-radio>
@@ -214,7 +214,7 @@ export default {
       displayCreateUserPayment: false,
       displayUpdateUserPayment: false,
       languages: lang,
-      setting: 'line',
+      setting: 'lifetime',
       errors: {
         createUser: {
           startDate: false,
@@ -242,6 +242,14 @@ export default {
   },
   computed: {
     ...mapGetters('user', ['getUserPaymentInfoGetter']),
+    activeUser() {
+      if (this.getUserPaymentInfoGetter.typePaymentRegister === 'CUSTOM') {
+        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+        return (this.setting = 'fee');
+      }
+      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+      return (this.setting = 'lifetime');
+    },
   },
   methods: {
     ...mapActions('user', [
