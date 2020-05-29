@@ -215,9 +215,13 @@ export default {
     home: 'ホーム',
     restaurant: '店舗',
     user: 'ユーザー',
+    report: '報告',
     notification: '通知',
     masterdata: 'マスターデータ',
     setting: '設定',
+    userReported: 'レポートされた人',
+    restaurantReported: 'レポートされた店舗',
+    newsfeedReported: 'Reported Newsfeed',
     editRestaurant: {
       title: '店舗編集',
       payment: '課金',
@@ -285,6 +289,23 @@ export default {
     createdAtHeader: '作成時間',
     typePaymentRegisterHeader: '支払い台帳',
     endDateHeader: '有効期限',
+  },
+
+  /* Report Page */
+  report: {
+    pageTitle: 'Report List',
+    actionHeader: 'チェック結果',
+    reporterId: 'レポーター',
+    userId: 'レポートされた人',
+    restaurantId: 'レポートされた店舗',
+    conntentNewsFeed: 'つぶやき内容',
+    newsFeedByUser: 'ユーザーのつぶやき',
+    newsFeedByRestaurant: '店舗のつぶやき',
+    reason: '理由',
+    createdAt: '作成日',
+    confirmApproval:
+      '承認するとレポートされている対象をシステムから削除されます。このレポートを本当に承認しますか？',
+    confirmDelete: 'このレポートを削除しますか？',
   },
 
   /* Notification Page */
