@@ -5,6 +5,7 @@ import auth from './auth';
 import common from './common';
 import restaurant from './restaurant';
 import user from './user';
+import report from './report';
 import notification from './notification';
 import masterdata from './masterdata';
 import setting from './setting';
@@ -22,6 +23,7 @@ export default function(/* { ssrContext } */) {
       common,
       restaurant,
       user,
+      report,
       notification,
       masterdata,
       setting,

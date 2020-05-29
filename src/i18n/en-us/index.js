@@ -199,9 +199,13 @@ export default {
     home: 'Home',
     restaurant: 'Restaurant',
     user: 'User',
+    report: 'Report',
     notification: 'Notification',
     masterdata: 'Masterdata',
     setting: 'Setting',
+    userReported: 'Reported User',
+    restaurantReported: 'Reported Restaurant',
+    newsfeedReported: 'Reported Newsfeed',
     editRestaurant: {
       title: 'Edit Restaurant',
       payment: 'Payment',
@@ -264,6 +268,23 @@ export default {
     createdAtHeader: 'Created At',
     typePaymentRegisterHeader: 'Payment Register',
     endDateHeader: 'Expired Date',
+  },
+
+  /* Report Page */
+  report: {
+    pageTitle: 'Report List',
+    actionHeader: 'Action',
+    reporterId: 'Reporter',
+    userId: 'Reported User',
+    restaurantId: 'Reported Restaurant',
+    conntentNewsFeed: 'Content NewsFeed',
+    newsFeedByUser: 'NewsFeed By User',
+    newsFeedByRestaurant: 'NewsFeed By Restaurant',
+    reason: 'Reason',
+    createdAt: 'Created At',
+    confirmApproval:
+      'Approval will remove the reported subject from the system. Do you really approve this report?',
+    confirmDelete: 'Are you sure you want to delete this report?',
   },
 
   /* Notification Page */
