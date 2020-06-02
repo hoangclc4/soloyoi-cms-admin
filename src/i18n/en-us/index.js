@@ -462,6 +462,7 @@ export default {
       createNewCategory: 'Create new category',
       editCategory: 'Edit category',
       categoryName: 'Category Name',
+      categoryOrder: 'Category Order',
       confirmDeleteCategory: 'Are you sure you want to delete this category?',
 
       addItem: 'Add Item',

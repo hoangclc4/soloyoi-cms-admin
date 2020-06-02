@@ -1,4 +1,5 @@
 import { LocalStorage } from 'quasar';
+import { decodeEmojiText } from '../common/actions';
 
 /**
  * @description save user reported list data as a state
@@ -47,6 +48,12 @@ export function saveNewsFeedReportedMutation(state, { response }) {
   state.newsfeedReportedList = [
     ...response.data.result.response.adminUserReportList,
   ];
+  state.newsfeedReportedList = state.newsfeedReportedList.map((newsFeed) => {
+    newsFeed.newsFeed.description = decodeEmojiText(
+      newsFeed.newsFeed.description
+    );
+    return newsFeed;
+  });
 
   LocalStorage.set('ADMIN_NEWSFEED_REPORTED_LIST', state.newsfeedReportedList);
 }
