@@ -481,6 +481,7 @@ export default {
       createNewCategory: 'カテゴリー追加',
       editCategory: 'カテゴリー名編集',
       categoryName: 'カテゴリー名',
+      categoryOrder: '並び順の番号',
       confirmDeleteCategory: 'このカテゴリーを削除しますか？',
 
       addItem: 'アイテム追加',

@@ -174,24 +174,32 @@
               <div class="text-h6">{{ category.title }}</div>
             </q-card-section>
 
-            <q-card-section>
+            <q-card-section v-if="category.isAddNew">
               <q-input
-                v-if="category.isAddNew"
                 v-model="newCategory.name"
                 :error="errors.newCategory"
+                outlined
+                autogrow
+                autofocus
+                :label="$t('editRestaurant.menu.categoryNameNEW')"
+              />
+            </q-card-section>
+            <q-card-section v-else>
+              <q-input
+                v-model="updatedCategory.name"
+                :error="errors.updatedCategory.name"
                 outlined
                 autogrow
                 autofocus
                 :label="$t('editRestaurant.menu.categoryName')"
               />
               <q-input
-                v-else
-                v-model="updatedCategory.name"
-                :error="errors.updatedCategory"
+                v-model="updatedCategory.order"
+                :error="errors.updatedCategory.order"
                 outlined
                 autogrow
                 autofocus
-                :label="$t('editRestaurant.menu.categoryName')"
+                :label="$t('editRestaurant.menu.categoryOrder')"
               />
             </q-card-section>
 
@@ -382,12 +390,17 @@
                         color="secondary"
                         icon="ion-create"
                         @click="
-                          onEditCategory(food.menuCategoryId, food.name, 'FOOD')
+                          onEditCategory(
+                            food.menuCategoryId,
+                            food.name,
+                            food.order,
+                            'FOOD'
+                          )
                         "
                         class="q-mx-sm"
                       />
                       <span class="q-table__title">
-                        {{ food.name }}
+                        {{ food.order + '. ' + food.name }}
                       </span>
                     </div>
 
@@ -650,13 +663,14 @@
                           onEditCategory(
                             drink.menuCategoryId,
                             drink.name,
+                            drink.order,
                             'DRINK'
                           )
                         "
                         class="q-mx-sm"
                       />
                       <span class="q-table__title">
-                        {{ drink.name }}
+                        {{ drink.order + '. ' + drink.name }}
                       </span>
                     </div>
 
@@ -906,7 +920,7 @@ export default {
       errors: {
         photoDescription: false,
         newCategory: false,
-        updatedCategory: false,
+        updatedCategory: { name: false, order: false },
         menuItem: { name: false, price: false },
       },
       openDialogToUpload: false,
@@ -944,7 +958,7 @@ export default {
       ],
       openDialogToConfirmDeleteCategory: false,
       newCategory: { name: '', menuTypes: '' },
-      updatedCategory: { id: '', name: '', menuTypes: '' },
+      updatedCategory: { id: '', name: '', order: '', menuTypes: '' },
       deletionCategory: { id: '', menuTypes: '' },
       dialogMenuItem: [
         {
@@ -1328,13 +1342,15 @@ export default {
       this.errors.newCategory = false;
       this.dialogMenuCategory[0].openDialog = true;
     },
-    onEditCategory(id, name, menuTypes) {
+    onEditCategory(id, name, order, menuTypes) {
       this.updatedCategory = {
         id,
         name,
+        order,
         menuTypes,
       };
-      this.errors.updatedCategory = false;
+      this.errors.updatedCategory.name = false;
+      this.errors.updatedCategory.order = false;
       this.dialogMenuCategory[1].openDialog = true;
     },
     onDeleteCategory(id, menuTypes) {
@@ -1422,9 +1438,13 @@ export default {
       this.dialogMenuCategory[1].openDialog = false;
       this.loading = true;
 
-      this.errors.updatedCategory = this.updatedCategory.name === '';
+      this.errors.updatedCategory.name = this.updatedCategory.name === '';
+      this.errors.updatedCategory.order = this.updatedCategory.order === '';
 
-      if (this.errors.updatedCategory) {
+      if (
+        this.errors.updatedCategory.name ||
+        this.errors.updatedCategory.order
+      ) {
         this.dialogMenuCategory[1].openDialog = true;
         this.$q.notify({
           message: this.$t('reviewFieldAgain'),
@@ -1438,6 +1458,7 @@ export default {
           restaurantId: this.$route.params.id,
           menuCategoryId: this.updatedCategory.id,
           name: this.updatedCategory.name,
+          order: Number(this.updatedCategory.order),
           menuTypes: this.updatedCategory.menuTypes,
         };
         const result = await this.apiUpdateRestaurantMenuCategoryAction({

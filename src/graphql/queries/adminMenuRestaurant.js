@@ -26,6 +26,7 @@ export const ADMIN_MENU_RESTAURANT = gql`
             createdAt
           }
           name
+          order
           taxRate
           taxFlag
           typeOfTaxed
