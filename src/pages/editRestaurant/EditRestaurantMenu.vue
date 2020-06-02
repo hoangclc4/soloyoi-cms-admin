@@ -181,7 +181,7 @@
                 outlined
                 autogrow
                 autofocus
-                :label="$t('editRestaurant.menu.categoryNameNEW')"
+                :label="$t('editRestaurant.menu.categoryName')"
               />
             </q-card-section>
             <q-card-section v-else>
