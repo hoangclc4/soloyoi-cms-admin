@@ -14,6 +14,11 @@ const routes = [
       },
       { path: 'user', name: 'user', component: () => import('pages/User') },
       {
+        path: 'report',
+        name: 'report',
+        component: () => import('pages/Report'),
+      },
+      {
         path: 'notification',
         name: 'notification',
         component: () => import('pages/Notification'),

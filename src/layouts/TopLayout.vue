@@ -42,6 +42,14 @@
             $t('navigation.user')
           }}</q-item-section>
         </q-item>
+        <q-item clickable active-class="text-orange" v-ripple to="/report">
+          <q-item-section avatar class="icon__menu">
+            <q-icon name="ion-contact" />
+          </q-item-section>
+          <q-item-section class="text-body1">{{
+            $t('navigation.report')
+          }}</q-item-section>
+        </q-item>
         <q-item
           clickable
           active-class="text-orange"
