@@ -256,7 +256,6 @@ export default {
     submit() {
       this.loading = true;
       this.$v.form.$touch();
-      console.log(this.$v.form);
       if (this.$v.form.$error) {
         this.loading = false;
         this.$q.notify({
@@ -268,7 +267,6 @@ export default {
       }
     },
     async saveResetPassword(newPassword) {
-      console.log(this.$route.query.token);
       // Call API reset Password User
       const apolloClient = this.$apollo.provider.defaultClient;
       const input = { newPassword, token: this.$route.query.token };
