@@ -208,6 +208,7 @@ export default {
     username: 'ユーザー名',
     password: 'パスワード',
     confirmLogout: 'ログアウトしますか？',
+    forgotPassword: 'アカウントにアクセスできない場合',
   },
 
   /* Navigation Bar */

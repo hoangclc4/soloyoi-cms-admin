@@ -1,5 +1,6 @@
 import { ADMIN_LOGIN } from '../../graphql/mutations/adminLogin';
 import { ADMIN_LOGOUT } from '../../graphql/mutations/adminLogout';
+import { RESET_PASSWORD_USER } from '../../graphql/mutations/resetPasswordUser';
 import common from '../common';
 
 /**
@@ -81,4 +82,38 @@ export async function apiLogoutAction(context, { apolloClient }) {
 export async function forceLogout() {
   common.mutations.clearDataMutation(common.state);
   window.history.go();
+}
+
+/**
+ * @description call API Reset Password for User
+ * @author TungPT
+ * @date 2020-06-10
+ * @export
+ * @param {*} context
+ * @param {*} { apolloClient, input }
+ * @returns
+ */
+export async function apiResetPasswordUserAction(
+  context,
+  { apolloClient, input }
+) {
+  try {
+    const response = await apolloClient.mutate({
+      mutation: RESET_PASSWORD_USER,
+      variables: {
+        input,
+      },
+    });
+
+    // Reset Password Success
+    if (response.data.result.requestResolved) {
+      return { requestResolved: true };
+    }
+    // Reset Password Failed
+    else {
+      return { requestResolved: false, systemError: null };
+    }
+  } catch (systemError) {
+    return { requestResolved: false, systemError };
+  }
 }

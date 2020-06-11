@@ -1,0 +1,11 @@
+/* Syntax: font format */
+@font-face {
+	font-family: "YuGothM";
+	src: url("../font/YuGothM.ttc"); /* IE9+ Compat Modes */
+	src:
+		url("../font/YuGothM.eot?#iefix") format("embedded-opentype"), /* IE6-IE8 */
+		url("../font/YuGothM.woff2") format("woff2"), /* Super modern browsers */
+		url("../font/YuGothM.woff") format("woff"), /* Modern browsers */
+		url("../font/YuGothM.ttf")  format("truetype"), /* Safari, Android, iOS */
+		url("../font/YuGothM.svg#YuGothM") format("svg"); /* Legacy iOS */
+}

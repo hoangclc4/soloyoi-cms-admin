@@ -118,6 +118,16 @@ const routes = [
       },
     ],
   },
+  {
+    path: '/user/reset-password',
+    name: 'user-reset-password',
+    component: () => import('pages/User/ResetPassword'),
+  },
+  {
+    path: '/restaurant/reset-password',
+    name: 'restaurant-reset-password',
+    component: () => import('pages/Restaurant/ResetPassword'),
+  },
 ];
 // Always leave this as last one
 if (process.env.MODE !== 'ssr') {

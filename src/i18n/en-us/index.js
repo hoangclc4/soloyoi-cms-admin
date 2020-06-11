@@ -192,6 +192,7 @@ export default {
     username: 'Username',
     password: 'Password',
     confirmLogout: 'Are you sure you want to log out?',
+    forgotPassword: "If you can't access your account",
   },
 
   /* Navigation Bar */
