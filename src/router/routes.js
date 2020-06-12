@@ -119,14 +119,30 @@ const routes = [
     ],
   },
   {
-    path: '/user/reset-password',
-    name: 'user-reset-password',
-    component: () => import('pages/User/ResetPassword'),
+    path: '/user',
+    name: 'user-layout',
+    meta: { guest: true },
+    component: () => import('layouts/UserLayout'),
+    children: [
+      {
+        path: 'reset-password',
+        name: 'reset-password',
+        component: () => import('pages/User/ResetPassword'),
+      },
+    ],
   },
   {
-    path: '/restaurant/reset-password',
-    name: 'restaurant-reset-password',
-    component: () => import('pages/Restaurant/ResetPassword'),
+    path: '/restaurant',
+    name: 'restaurant-layout',
+    meta: { guest: true },
+    component: () => import('layouts/RestaurantLayout'),
+    children: [
+      {
+        path: 'reset-password',
+        name: 'reset-password',
+        component: () => import('pages/Restaurant/ResetPassword'),
+      },
+    ],
   },
 ];
 // Always leave this as last one
