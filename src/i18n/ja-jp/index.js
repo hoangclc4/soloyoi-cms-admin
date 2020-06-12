@@ -617,4 +617,13 @@ export default {
       payPeriod: '有料期間を設定する',
     },
   },
+  reset: {
+    resetPasswordTitle: 'パスワードの再設定',
+    resetPasswordContent1: '新しいパスワードを入力してください。',
+    resetPasswordContent2:
+      'パスワードは8文字以上の半角英数字を指定してください。',
+    newPassword: '新しいパスワード',
+    confirmPassword: '新しいパスワード（確認用）',
+    btnReset: 'パスワードを再設定する',
+  },
 };
