@@ -596,4 +596,13 @@ export default {
       payPeriod: 'Set the pay period',
     },
   },
+  reset: {
+    resetPasswordTitle: 'Password Reset',
+    resetPasswordContent1: 'Please enter a new password',
+    resetPasswordContent2:
+      'Specify a password with 8 or more single-byte alphanumeric characters.',
+    newPassword: 'New password',
+    confirmPassword: 'Confirm password',
+    btnReset: 'Reset password',
+  },
 };
