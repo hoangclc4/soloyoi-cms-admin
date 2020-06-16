@@ -625,5 +625,7 @@ export default {
     newPassword: '新しいパスワード',
     confirmPassword: '新しいパスワード（確認用）',
     btnReset: 'パスワードを再設定する',
+    resetPasswordSuccess:
+      'パスワードは正常にリセットされました。新しいパスワードでログインできます',
   },
 };
