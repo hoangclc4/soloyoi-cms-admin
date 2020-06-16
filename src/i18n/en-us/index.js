@@ -604,5 +604,7 @@ export default {
     newPassword: 'New password',
     confirmPassword: 'Confirm password',
     btnReset: 'Reset password',
+    resetPasswordSuccess:
+      'Your password has been successful reset, you can now login with your new password',
   },
 };

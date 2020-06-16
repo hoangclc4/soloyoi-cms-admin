@@ -129,6 +129,11 @@ const routes = [
         name: 'reset-password',
         component: () => import('pages/User/ResetPassword'),
       },
+      {
+        path: 'reset-password/success',
+        name: 'user-reset-password-success',
+        component: () => import('pages/User/ResetPasswordSuccess'),
+      },
     ],
   },
   {
@@ -141,6 +146,11 @@ const routes = [
         path: 'reset-password',
         name: 'reset-password',
         component: () => import('pages/Restaurant/ResetPassword'),
+      },
+      {
+        path: 'reset-password/success',
+        name: 'res-reset-password-success',
+        component: () => import('pages/Restaurant/ResetPasswordSuccess'),
       },
     ],
   },
