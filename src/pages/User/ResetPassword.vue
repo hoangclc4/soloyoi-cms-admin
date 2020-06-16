@@ -105,6 +105,7 @@ export default {
           color: 'green-5',
         });
         this.loading = false;
+        this.$router.push({ path: '/user/reset-password/success' });
       } else {
         result.systemError
           ? // Reset failed, got something wrong with system
