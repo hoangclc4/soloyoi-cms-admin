@@ -380,6 +380,7 @@ export default {
       restaurantName: 'Restaurant Name',
       email: 'Email',
       phoneNumber: 'Phone Number',
+      address: 'Address',
       addressLevelOne: 'Address Level One',
       addressLevelTwo: 'Address Level Two',
       addressLevelThree: 'Address Level Three',

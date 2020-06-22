@@ -147,7 +147,7 @@
               outlined
               readonly
               v-model="getRestaurantInfoGetter.address"
-              :label="$t('information.address')"
+              :label="$t('editRestaurant.information.address')"
               dense
             />
           </q-item-section>
