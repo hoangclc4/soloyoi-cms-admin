@@ -143,6 +143,17 @@
         </q-item>
         <q-item>
           <q-item-section>
+            <q-input
+              outlined
+              readonly
+              v-model="getRestaurantInfoGetter.address"
+              :label="$t('editRestaurant.information.address')"
+              dense
+            />
+          </q-item-section>
+        </q-item>
+        <q-item>
+          <q-item-section>
             <q-select
               outlined
               v-model="getRestaurantInfoGetter.addressLevelOne"
