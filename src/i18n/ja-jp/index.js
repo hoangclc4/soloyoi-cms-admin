@@ -399,6 +399,7 @@ export default {
       restaurantName: '店名',
       email: 'Eメール',
       phoneNumber: '電話番号',
+      address: '住所',
       addressLevelOne: '都道府県',
       addressLevelTwo: '市区町村',
       addressLevelThree: '町名',
