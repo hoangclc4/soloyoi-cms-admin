@@ -265,10 +265,13 @@ export default {
     pageTitle: 'User List',
     actionHeader: 'action',
     nickNameHeader: 'nickName',
-    facebookFullNameHeader: 'Facebook FullName',
+    facebookFullNameHeader: 'FullName',
     createdAtHeader: 'Created At',
     typePaymentRegisterHeader: 'Payment Register',
     endDateHeader: 'Expired Date',
+    userType: 'User Type',
+    app: 'App',
+    productId: 'Product',
   },
 
   /* Report Page */

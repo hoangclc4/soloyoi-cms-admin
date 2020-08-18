@@ -286,10 +286,13 @@ export default {
     pageTitle: 'ユーザーリスト',
     actionHeader: '詳細',
     nickNameHeader: 'ニックネーム',
-    facebookFullNameHeader: 'Facebookのフルネーム',
+    facebookFullNameHeader: 'フルネーム',
     createdAtHeader: '作成時間',
     typePaymentRegisterHeader: '支払い台帳',
     endDateHeader: '有効期限',
+    userType: 'ユーザータイプ',
+    app: '課金プラットフォーム',
+    productId: '課金プラン',
   },
 
   /* Report Page */
