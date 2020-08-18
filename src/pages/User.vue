@@ -85,14 +85,14 @@ export default {
           sortable: true,
         },
         {
-          name: 'createdAt',
+          name: 'productId',
           align: 'left',
-          label: this.$t('user.createdAtHeader'),
-          field: (row) => new Date(row.createdAt),
-          format: (val) =>
-            `${val.toLocaleDateString('ja')} ${val.toLocaleTimeString('ja')}`,
+          label: this.$t('user.productId'),
+          field: (row) =>
+            row.paymentInfo && row.paymentInfo.productId
+              ? row.paymentInfo.productId
+              : null,
           sortable: true,
-          sort: (a, b) => b - a,
         },
         {
           name: 'typePaymentRegister',
@@ -105,6 +105,38 @@ export default {
                 : 'period'
               : null,
           sortable: true,
+        },
+        {
+          name: 'userType',
+          align: 'left',
+          label: this.$t('user.userType'),
+          field: (row) =>
+            row.userType ? (row.userType === 1 ? 'SMS' : 'Apple') : 'Facebook',
+          sortable: true,
+        },
+        {
+          name: 'app',
+          align: 'left',
+          label: this.$t('user.app'),
+          field: (row) =>
+            row.paymentInfo
+              ? row.paymentInfo && row.paymentInfo.app !== 'OTHER'
+                ? row.paymentInfo.app === 'ANDROID'
+                  ? 'ANDROID'
+                  : 'IOS'
+                : '管理者で設定'
+              : null,
+          sortable: true,
+        },
+        {
+          name: 'createdAt',
+          align: 'left',
+          label: this.$t('user.createdAtHeader'),
+          field: (row) => new Date(row.createdAt),
+          format: (val) =>
+            `${val.toLocaleDateString('ja')} ${val.toLocaleTimeString('ja')}`,
+          sortable: true,
+          sort: (a, b) => b - a,
         },
         {
           name: 'endDate',

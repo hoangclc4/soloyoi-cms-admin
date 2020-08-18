@@ -43,6 +43,7 @@ export const ADMIN_USER_FACEBOOK_LIST = gql`
           residence
           placeOfBirth
           paymentStatus
+          userType
           myFeeling {
             drinkingArea
             todayComment
@@ -65,6 +66,7 @@ export const ADMIN_USER_FACEBOOK_LIST = gql`
             app
             status
             typePaymentRegister
+            productId
           }
         }
       }
