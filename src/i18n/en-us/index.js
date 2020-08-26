@@ -183,6 +183,10 @@ export default {
       fetchUserPaymentInfoFailed: 'Failed to fetch user payment information',
       /* User Feeling Today */
     },
+    banner: {
+      uploadBannerPhotoSuccess: 'Upload banner photo success',
+      uploadBannerPhotoFailed: 'Upload banner photo failed',
+    },
   },
 
   /* Authentication */
@@ -207,6 +211,7 @@ export default {
     userReported: 'Reported User',
     restaurantReported: 'Reported Restaurant',
     newsfeedReported: 'Reported Newsfeed',
+    banner: 'Banner',
     editRestaurant: {
       title: 'Edit Restaurant',
       payment: 'Payment',
@@ -356,6 +361,18 @@ export default {
 
       UserBirthplaceLabel: 'User Birth Place - User Profile',
     },
+  },
+
+  /* Banner Page */
+  banner: {
+    pageTitle: 'Banner List',
+    actionHeader: 'action',
+    photoName: 'Photo Name',
+    photoTypes: 'Type',
+    category: 'Category',
+    createdAt: 'Created At',
+    createNewBanner: 'Create New Banner',
+    newBannerName: 'Banner Name',
   },
 
   /* Setting Page */
