@@ -46,12 +46,12 @@ export async function apiUpdatePasswordAdminAction(
  */
 export async function apiUpdateBannerPhotoAction(
   { commit },
-  { apolloClient, photo }
+  { apolloClient, input, photo }
 ) {
   try {
     const response = await apolloClient.mutate({
       mutation: ADMIN_UPDATE_BANNER_PHOTO,
-      variables: { photo },
+      variables: { input, photo },
     });
     // Update Photo Success
     if (response.data.result.error.requestResolved) {
