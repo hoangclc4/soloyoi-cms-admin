@@ -185,7 +185,7 @@ export default {
         .toBlob(async (blob) => {
           const apolloClient = this.$apollo.provider.defaultClient;
           const bannerPhoto = this.getBannerInfoGetter.photoId;
-          const isAddNew = bannerPhoto === undefined || bannerPhoto === null;
+          const isAddNew = bannerPhoto === null || bannerPhoto === '';
           //const photoTypes = selectedImage.type;
 
           const formData = new FormData();
