@@ -71,7 +71,14 @@
             $t('navigation.masterdata')
           }}</q-item-section>
         </q-item>
-
+        <!-- <q-item :to="{ name: 'banner' }" active-class="text-orange" v-ripple>
+          <q-item-section avatar class="icon__menu">
+            <q-icon name="ion-settings" />
+          </q-item-section>
+          <q-item-section>
+            {{ $t('navigation.banner') }}
+          </q-item-section>
+        </q-item> -->
         <q-item :to="{ name: 'setting' }" active-class="text-orange" v-ripple>
           <q-item-section avatar class="icon__menu">
             <q-icon name="ion-settings" />

@@ -199,6 +199,10 @@ export default {
 
       /* User Feeling Today */
     },
+    banner: {
+      uploadBannerPhotoSuccess: 'Upload banner photo success',
+      uploadBannerPhotoFailed: 'Upload banner photo failed',
+    },
   },
 
   /* Authentication */
@@ -223,6 +227,7 @@ export default {
     userReported: 'レポートされた人',
     restaurantReported: 'レポートされた店舗',
     newsfeedReported: 'Reported Newsfeed',
+    banner: 'Banner',
     editRestaurant: {
       title: '店舗編集',
       payment: '課金',
@@ -374,6 +379,18 @@ export default {
 
       UserBirthplaceLabel: '出身地・プロフィール情報',
     },
+  },
+
+  /* Banner Page */
+  banner: {
+    pageTitle: 'Banner List',
+    actionHeader: 'action',
+    photoName: 'Photo Name',
+    photoTypes: 'Type',
+    category: 'Category',
+    createdAt: 'Created At',
+    createNewBanner: 'Create New Banner',
+    newBannerName: 'Banner Name',
   },
 
   /* Setting Page */

@@ -29,6 +29,11 @@ const routes = [
         component: () => import('pages/Masterdata'),
       },
       {
+        path: 'banner',
+        name: 'banner',
+        component: () => import('pages/Banner'),
+      },
+      {
         path: 'setting',
         name: 'setting',
         component: () => import('pages/Setting'),
