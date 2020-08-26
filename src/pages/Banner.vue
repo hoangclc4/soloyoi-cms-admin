@@ -138,10 +138,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters('restaurant', [
-      'getRestaurantListGetter',
-      'getCreatedRestaurantGetter',
-    ]),
+    ...mapGetters('setting', ['getBannerInfoGetter']),
   },
   methods: {
     ...mapActions('setting', ['apiUpdateBannerPhotoAction']),
@@ -187,16 +184,22 @@ export default {
         .getCroppedCanvas({ maxWidth: 1024, maxHeight: 1024 })
         .toBlob(async (blob) => {
           const apolloClient = this.$apollo.provider.defaultClient;
+          const bannerPhoto = this.getBannerInfoGetter.photoId;
+          const isAddNew = bannerPhoto === undefined || bannerPhoto === null;
           //const photoTypes = selectedImage.type;
 
           const formData = new FormData();
           formData.append('banner-photos', blob, 'banner-photo.png');
 
           const photo = formData.entries().next().value[1];
-          //const input = photoTypes;
+          const input = isAddNew
+            ? null
+            : {
+                oldPhotoId: bannerPhoto,
+              };
           const result = await this.apiUpdateBannerPhotoAction({
             apolloClient,
-            //input,
+            input,
             photo,
           });
           if (result.requestResolved) {
