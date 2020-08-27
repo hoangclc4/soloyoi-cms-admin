@@ -151,7 +151,7 @@ export default {
     onSelectBannerPhoto() {
       this.$refs.newBannerPhoto.click();
     },
-    async onFileChange(e) {
+    onFileChange(e) {
       const file = e.target.files[0] || e.dataTransfer.files[0];
       const isNotAnImageFile = file.type.indexOf('image/') === -1;
       const isSupportFileReaderAPI = typeof FileReader === 'function';
