@@ -17,6 +17,13 @@ export function saveUserMutation(state, { response }) {
       user.paymentInfo.endDate = endDate.setDate(endDate.getDate() + 1);
     } else if (
       user.paymentInfo &&
+      user.paymentInfo.productId === 'food.day.365'
+    ) {
+      user.paymentInfo.productId = '半額キャンペーン';
+      const endDate = new Date(user.paymentInfo.endDate);
+      user.paymentInfo.endDate = endDate.setDate(endDate.getDate() + 1);
+    } else if (
+      user.paymentInfo &&
       user.paymentInfo.productId === 'food.sub.month.3600'
     ) {
       user.paymentInfo.productId = '1ヶ月';
