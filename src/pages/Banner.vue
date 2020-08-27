@@ -35,6 +35,11 @@
         <q-item-section round>
           <q-img
             spinner-color="orange-2"
+            :src="
+              getBannerInfoGetter.photoFullWidthUrl
+                ? getBannerInfoGetter.photoFullWidthUrl
+                : null
+            "
             :ratio="1242 / 880"
             class="rounded-borders shadow-8"
             style="margin-left: auto; margin-right: auto; max-width: 30%;"
