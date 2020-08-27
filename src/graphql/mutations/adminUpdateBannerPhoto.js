@@ -12,10 +12,10 @@ export const ADMIN_UPDATE_BANNER_PHOTO = gql`
         photoMimeType
         photoEncoding
         photoFullWidthUrl
-        #photoTypes
-        #category
-        #active
-        #createdAt
+        photoTypes
+        category
+        active
+        createdAt
       }
       error {
         requestResolved

@@ -35,6 +35,11 @@
         <q-item-section round>
           <q-img
             spinner-color="orange-2"
+            :src="
+              getBannerInfoGetter.photoFullWidthUrl
+                ? getBannerInfoGetter.photoFullWidthUrl
+                : null
+            "
             :ratio="1242 / 880"
             class="rounded-borders shadow-8"
             style="margin-left: auto; margin-right: auto; max-width: 30%;"
@@ -146,7 +151,7 @@ export default {
     onSelectBannerPhoto() {
       this.$refs.newBannerPhoto.click();
     },
-    onFileChange(e) {
+    async onFileChange(e) {
       const file = e.target.files[0] || e.dataTransfer.files[0];
       const isNotAnImageFile = file.type.indexOf('image/') === -1;
       const isSupportFileReaderAPI = typeof FileReader === 'function';
