@@ -10,13 +10,10 @@
           </div>
         </q-card-section>
         <q-card-section>
-          <v-cropper
-            ref="cropper"
-            :aspect-ratio="1242 / 880"
+          <q-img
+            spinner-color="orange-2"
             :src="selectedImage.src"
-            preview=".preview"
-            class="full-width"
-            style="max-height: 25em"
+            class="rounded-borders shadow-8"
           />
         </q-card-section>
         <q-card-actions align="right" class="text-primary">
@@ -25,7 +22,7 @@
             color="primary"
             icon-right="ion-cloud-upload"
             :label="$t('upload')"
-            @click="uploadBannerPhoto($refs, selectedImage)"
+            @click="uploadBannerPhoto(selectedImage)"
           />
         </q-card-actions>
       </q-card>
@@ -40,9 +37,9 @@
                 ? getBannerInfoGetter.photoFullWidthUrl
                 : null
             "
-            :ratio="1242 / 880"
+            :ratio="1 / 1"
             class="rounded-borders shadow-8"
-            style="margin-left: auto; margin-right: auto; max-width: 30%;"
+            style="margin-left: auto; margin-right: auto; max-height: 150px; max-width: 30%;"
           >
           </q-img>
         </q-item-section>
@@ -70,14 +67,10 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex';
-import VueCropper from 'vue-cropperjs';
 import 'cropperjs/dist/cropper.css';
 
 export default {
   name: 'setting',
-  components: {
-    'v-cropper': VueCropper,
-  },
   data() {
     return {
       loading: false,
@@ -133,6 +126,7 @@ export default {
         index: -1,
         src: '',
         type: '',
+        upload: '',
       },
       newBanner: {
         photoSrc: '',
@@ -168,7 +162,8 @@ export default {
         reader.onload = (event) => {
           this.selectedImage = {
             src: event.target.result,
-            //type: photoTypes,
+            // type: photoTypes,
+            upload: file,
           };
           this.openDialogToUploadBanner = true;
         };
@@ -180,56 +175,59 @@ export default {
         });
       }
     },
-    async uploadBannerPhoto($refs) {
+    async uploadBannerPhoto() {
       this.openDialogToUploadBanner = false;
       this.loading = true;
-
       // Call API upload Banner Photo
-      $refs.cropper
-        .getCroppedCanvas({ maxWidth: 1024, maxHeight: 1024 })
-        .toBlob(async (blob) => {
-          const apolloClient = this.$apollo.provider.defaultClient;
-          const bannerPhoto = this.getBannerInfoGetter.photoId;
-          const isAddNew = bannerPhoto === null || bannerPhoto === '';
-          //const photoTypes = selectedImage.type;
+      // $refs.cropper
+      // .getCroppedCanvas({ maxWidth: 1024, maxHeight: 1024 })
+      // .toBlob(async (blob) => {
+      const apolloClient = this.$apollo.provider.defaultClient;
+      const bannerPhoto = this.getBannerInfoGetter.photoId;
+      const isAddNew = bannerPhoto === null || bannerPhoto === '';
+      //const photoTypes = selectedImage.type;
 
-          const formData = new FormData();
-          formData.append('banner-photos', blob, 'banner-photo.png');
+      const formData = new FormData();
+      formData.append(
+        'banner-photos',
+        this.selectedImage.upload,
+        'banner-photo.png'
+      );
 
-          const photo = formData.entries().next().value[1];
-          const input = isAddNew
-            ? null
-            : {
-                oldPhotoId: bannerPhoto,
-              };
-          const result = await this.apiUpdateBannerPhotoAction({
-            apolloClient,
-            input,
-            photo,
-          });
-          if (result.requestResolved) {
-            // Upload success
-            this.$q.notify({
-              message: this.$t('api.banner.uploadBannerPhotoSuccess'),
-              color: 'green-5',
-            });
-            this.loading = false;
-          } else {
-            result.systemError
-              ? // Upload failed, got something wrong with system
-                this.$q.notify({
-                  message: `${result.systemError}`,
-                  color: 'deep-orange-4',
-                })
-              : // Upload failed, got something wrong with user
-                this.$q.notify({
-                  message: this.$t('api.banner.uploadBannerPhotoFailed'),
-                  color: 'deep-orange-4',
-                });
-
-            this.loading = false;
-          }
+      const photo = formData.entries().next().value[1];
+      const input = isAddNew
+        ? null
+        : {
+            oldPhotoId: bannerPhoto,
+          };
+      const result = await this.apiUpdateBannerPhotoAction({
+        apolloClient,
+        input,
+        photo,
+      });
+      if (result.requestResolved) {
+        // Upload success
+        this.$q.notify({
+          message: this.$t('api.banner.uploadBannerPhotoSuccess'),
+          color: 'green-5',
         });
+        this.loading = false;
+      } else {
+        result.systemError
+          ? // Upload failed, got something wrong with system
+            this.$q.notify({
+              message: `${result.systemError}`,
+              color: 'deep-orange-4',
+            })
+          : // Upload failed, got something wrong with user
+            this.$q.notify({
+              message: this.$t('api.banner.uploadBannerPhotoFailed'),
+              color: 'deep-orange-4',
+            });
+
+        this.loading = false;
+      }
+      // });
     },
   },
   created() {},
