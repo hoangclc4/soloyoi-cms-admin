@@ -20,6 +20,15 @@
             @blur="validateInput(newMessage.message, 'message')"
             :error="errors.newMessage.message"
           />
+          <q-input
+            outlined
+            :label="$t('notification.sendLink')"
+            autofocus
+            autogrow
+            v-model="newMessage.link"
+            @blur="validateInput(newMessage.link, 'link')"
+            :error="errors.newMessage.link"
+          />
         </q-card-section>
 
         <q-card-actions align="right" class="text-primary">
@@ -119,9 +128,9 @@ export default {
     return {
       loading: false,
       errors: {
-        newMessage: { message: false },
+        newMessage: { message: false, link: false },
       },
-      newMessage: { message: '' },
+      newMessage: { message: '', link: '' },
       openConfirmDelete: false,
       openSendDialog: false,
       filter: '',
@@ -195,6 +204,7 @@ export default {
         const apolloClient = this.$apollo.provider.defaultClient;
         const input = {
           notifyMessage: this.newMessage.message,
+          notifyLink: this.newMessage.link,
           notifySystemType: 'ADMIN',
         };
         const result = await this.apiCreateAdminNotificationAction({
