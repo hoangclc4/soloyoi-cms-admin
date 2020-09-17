@@ -18,7 +18,13 @@
     <q-drawer v-model="left" side="left" bordered :width="200">
       <!-- drawer content -->
       <q-list>
-        <q-item clickable active-class="text-orange" v-ripple to="/home">
+        <q-item
+          clickable
+          active-class="text-orange"
+          v-ripple
+          to="/home"
+          @click="removeStorageUserAndRestaurant"
+        >
           <q-item-section avatar class="icon__menu">
             <q-icon name="ion-home" />
           </q-item-section>
@@ -26,7 +32,13 @@
             $t('navigation.home')
           }}</q-item-section>
         </q-item>
-        <q-item clickable active-class="text-orange" v-ripple to="/restaurant">
+        <q-item
+          clickable
+          active-class="text-orange"
+          v-ripple
+          to="/restaurant"
+          @click="removeStorageUser"
+        >
           <q-item-section avatar class="icon__menu">
             <q-icon name="ion-wine" />
           </q-item-section>
@@ -34,7 +46,13 @@
             $t('navigation.restaurant')
           }}</q-item-section>
         </q-item>
-        <q-item clickable active-class="text-orange" v-ripple to="/user">
+        <q-item
+          clickable
+          active-class="text-orange"
+          v-ripple
+          to="/user"
+          @click="removeStorageRestaurant"
+        >
           <q-item-section avatar class="icon__menu">
             <q-icon name="ion-contact" />
           </q-item-section>
@@ -42,7 +60,13 @@
             $t('navigation.user')
           }}</q-item-section>
         </q-item>
-        <q-item clickable active-class="text-orange" v-ripple to="/report">
+        <q-item
+          clickable
+          active-class="text-orange"
+          v-ripple
+          to="/report"
+          @click="removeStorageUserAndRestaurant"
+        >
           <q-item-section avatar class="icon__menu">
             <q-icon name="ion-contact" />
           </q-item-section>
@@ -55,6 +79,7 @@
           active-class="text-orange"
           v-ripple
           to="/notification"
+          @click="removeStorageUserAndRestaurant"
         >
           <q-item-section avatar class="icon__menu">
             <q-icon name="ion-notifications" />
@@ -63,7 +88,13 @@
             $t('navigation.notification')
           }}</q-item-section>
         </q-item>
-        <q-item clickable active-class="text-orange" v-ripple to="/masterdata">
+        <q-item
+          clickable
+          active-class="text-orange"
+          v-ripple
+          to="/masterdata"
+          @click="removeStorageUserAndRestaurant"
+        >
           <q-item-section avatar class="icon__menu">
             <q-icon name="ion-list" />
           </q-item-section>
@@ -71,7 +102,12 @@
             $t('navigation.masterdata')
           }}</q-item-section>
         </q-item>
-        <q-item :to="{ name: 'banner' }" active-class="text-orange" v-ripple>
+        <q-item
+          :to="{ name: 'banner' }"
+          active-class="text-orange"
+          v-ripple
+          @click="removeStorageUserAndRestaurant"
+        >
           <q-item-section avatar class="icon__menu">
             <q-icon name="ion-settings" />
           </q-item-section>
@@ -79,7 +115,12 @@
             {{ $t('navigation.banner') }}
           </q-item-section>
         </q-item>
-        <q-item :to="{ name: 'setting' }" active-class="text-orange" v-ripple>
+        <q-item
+          :to="{ name: 'setting' }"
+          active-class="text-orange"
+          v-ripple
+          @click="removeStorageUserAndRestaurant"
+        >
           <q-item-section avatar class="icon__menu">
             <q-icon name="ion-settings" />
           </q-item-section>
@@ -402,6 +443,84 @@ export default {
               message: this.$t('api.fetchAdminNotificationFailed'),
               color: 'deep-orange-4',
             });
+      }
+    },
+    removeStorageUser() {
+      if (localStorage.getItem('ADMIN_USER_LIST')) {
+        localStorage.removeItem('ADMIN_USER_LIST');
+      }
+      if (localStorage.getItem('ADMIN_USER_INFO')) {
+        localStorage.removeItem('ADMIN_USER_INFO');
+      }
+      if (localStorage.getItem('ADMIN_USER_PAYMENT_INFO')) {
+        localStorage.removeItem('ADMIN_USER_PAYMENT_INFO');
+      }
+      if (localStorage.getItem('ADMIN_USER_PAYMENT_LOG')) {
+        localStorage.removeItem('ADMIN_USER_PAYMENT_LOG');
+      }
+      if (localStorage.getItem('ADMIN_NOTIFICATION')) {
+        localStorage.removeItem('ADMIN_NOTIFICATION');
+      }
+    },
+    removeStorageRestaurant() {
+      if (localStorage.getItem('ADMIN_RESTAURANT_LIST')) {
+        localStorage.removeItem('ADMIN_RESTAURANT_LIST');
+      }
+      if (localStorage.getItem('ADMIN_RESTAURANT_INFO')) {
+        localStorage.removeItem('ADMIN_RESTAURANT_INFO');
+      }
+      if (localStorage.getItem('ADMIN_RESTAURANT_MENU_PHOTOS')) {
+        localStorage.removeItem('ADMIN_RESTAURANT_MENU_PHOTOS');
+      }
+      if (localStorage.getItem('ADMIN_RESTAURANT_MENU_FOODS')) {
+        localStorage.removeItem('ADMIN_RESTAURANT_MENU_FOODS');
+      }
+      if (localStorage.getItem('ADMIN_RESTAURANT_MENU_DRINKS')) {
+        localStorage.removeItem('ADMIN_RESTAURANT_MENU_DRINKS');
+      }
+      if (localStorage.getItem('ADMIN_RESTAURANT_STAFF')) {
+        localStorage.removeItem('ADMIN_RESTAURANT_STAFF');
+      }
+      if (localStorage.getItem('ADMIN_RESTAURANT_REVIEW')) {
+        localStorage.removeItem('ADMIN_RESTAURANT_REVIEW');
+      }
+      if (localStorage.getItem('ADMIN_NOTIFICATION')) {
+        localStorage.removeItem('ADMIN_NOTIFICATION');
+      }
+    },
+    removeStorageUserAndRestaurant() {
+      if (localStorage.getItem('ADMIN_RESTAURANT_LIST')) {
+        localStorage.removeItem('ADMIN_RESTAURANT_LIST');
+      }
+      if (localStorage.getItem('ADMIN_RESTAURANT_INFO')) {
+        localStorage.removeItem('ADMIN_RESTAURANT_INFO');
+      }
+      if (localStorage.getItem('ADMIN_RESTAURANT_MENU_PHOTOS')) {
+        localStorage.removeItem('ADMIN_RESTAURANT_MENU_PHOTOS');
+      }
+      if (localStorage.getItem('ADMIN_RESTAURANT_MENU_FOODS')) {
+        localStorage.removeItem('ADMIN_RESTAURANT_MENU_FOODS');
+      }
+      if (localStorage.getItem('ADMIN_RESTAURANT_MENU_DRINKS')) {
+        localStorage.removeItem('ADMIN_RESTAURANT_MENU_DRINKS');
+      }
+      if (localStorage.getItem('ADMIN_RESTAURANT_STAFF')) {
+        localStorage.removeItem('ADMIN_RESTAURANT_STAFF');
+      }
+      if (localStorage.getItem('ADMIN_RESTAURANT_REVIEW')) {
+        localStorage.removeItem('ADMIN_RESTAURANT_REVIEW');
+      }
+      if (localStorage.getItem('ADMIN_USER_LIST')) {
+        localStorage.removeItem('ADMIN_USER_LIST');
+      }
+      if (localStorage.getItem('ADMIN_USER_INFO')) {
+        localStorage.removeItem('ADMIN_USER_INFO');
+      }
+      if (localStorage.getItem('ADMIN_USER_PAYMENT_INFO')) {
+        localStorage.removeItem('ADMIN_USER_PAYMENT_INFO');
+      }
+      if (localStorage.getItem('ADMIN_USER_PAYMENT_LOG')) {
+        localStorage.removeItem('ADMIN_USER_PAYMENT_LOG');
       }
     },
   },
