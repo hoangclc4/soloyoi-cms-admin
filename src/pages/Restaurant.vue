@@ -256,6 +256,13 @@ export default {
           sortable: true,
         },
         {
+          name: 'defaultId',
+          align: 'left',
+          label: this.$t('restaurant.defaultHeader'),
+          field: 'defaultId',
+          sortable: true,
+        },
+        {
           name: 'name',
           align: 'left',
           label: this.$t('restaurant.nameHeader'),
@@ -408,8 +415,47 @@ export default {
         this.loading = false;
       }
     },
+    async fetchRestaurantList() {
+      // Call API fetch restaurant list
+      const apolloClient = this.$apollo.provider.defaultClient;
+      // TODO: need to apply pagination for performance when fetch data
+      let needGetMoreData = true;
+      let pageNum = 1;
+      while (needGetMoreData) {
+        const pager = { limit: 500, pageNum: pageNum++ };
+        const result = await this.apiFetchRestaurantAction({
+          apolloClient,
+          pager,
+        });
+
+        if (result.requestResolved) {
+          // Fetch success
+          needGetMoreData = result.needGetMoreData;
+        } else {
+          result.systemError
+            ? // Fetch failed, got something wrong with system
+              this.$q.notify({
+                message: `${result.systemError}`,
+                color: 'deep-orange-4',
+              })
+            : // Fetch failed, got something wrong with user
+              this.$q.notify({
+                message: this.$t('api.fetchRestaurantListFailed'),
+                color: 'deep-orange-4',
+              });
+          break;
+        }
+      }
+    },
   },
-  created() {},
+  created() {
+    this.$q.loading.show({ message: this.$t('pleaseWaitABit') });
+    this.loading = true;
+    Promise.all([this.fetchRestaurantList()]).then(() => {
+      this.$q.loading.hide();
+      this.loading = false;
+    });
+  },
 };
 </script>
 
