@@ -28,7 +28,15 @@
       </q-card>
     </q-dialog>
     <q-card>
-      <q-item>
+      <q-item tag="label">
+        <q-item-section avatar>
+          <q-toggle
+            v-model="getStatusBannerGetter.status"
+            @input="updateStatusBanner(getStatusBannerGetter)"
+          />
+        </q-item-section>
+      </q-item>
+      <q-item v-if="getStatusBannerGetter.status">
         <q-item-section round>
           <q-img
             spinner-color="orange-2"
@@ -44,7 +52,7 @@
           </q-img>
         </q-item-section>
       </q-item>
-      <q-item class="justify-center">
+      <q-item v-if="getStatusBannerGetter.status" class="justify-center">
         <q-btn
           round
           color="primary"
@@ -61,6 +69,28 @@
           style="display: none;"
         />
       </q-item>
+      <q-item v-if="getStatusBannerGetter.status">
+        <q-item-section>
+          <q-input
+            outlined
+            v-model="getBannerInfoGetter.url"
+            :label="$t('editRestaurant.information.restaurantName')"
+            dense
+          />
+        </q-item-section>
+      </q-item>
+      <q-item v-if="getStatusBannerGetter.status" class="full-width">
+        <q-item-section class="full-width">
+          <q-btn
+            :disable="disableSaveButton"
+            icon="ion-save"
+            :label="$t('editRestaurant.information.saveBtn')"
+            color="primary"
+            class="full-width"
+            @click="submit"
+          />
+        </q-item-section>
+      </q-item>
     </q-card>
   </q-page>
 </template>
@@ -74,11 +104,11 @@ export default {
   data() {
     return {
       loading: false,
+      disableSaveButton: false,
       errors: {
-        newRestaurant: { name: false, email: false },
+        url: false,
       },
       openCreateRestaurant: false,
-      newRestaurant: { name: '', email: '' },
       welcomeNewRestaurant: false,
       isNewRestaurantPassword: true,
       confirmDeleteRestaurant: false,
@@ -137,10 +167,16 @@ export default {
     };
   },
   computed: {
-    ...mapGetters('setting', ['getBannerInfoGetter']),
+    ...mapGetters('setting', ['getBannerInfoGetter', 'getStatusBannerGetter']),
   },
   methods: {
-    ...mapActions('setting', ['apiUpdateBannerPhotoAction']),
+    ...mapActions('setting', [
+      'apiUpdateBannerPhotoAction',
+      'apiFetchBannerInformationAction',
+      'apiUpdateBannerAction',
+      'apiFetchStatusBannerAction',
+      'apiUpdateStatusBannerAction',
+    ]),
 
     onSelectBannerPhoto() {
       this.$refs.newBannerPhoto.click();
@@ -229,8 +265,148 @@ export default {
       }
       // });
     },
+    async fetchBannerInformation() {
+      // Call API fetch Restaurant Information
+      const apolloClient = this.$apollo.provider.defaultClient;
+      //const input = { restaurantId: this.$route.params.id };
+      const result = await this.apiFetchBannerInformationAction({
+        apolloClient,
+      });
+
+      if (result.requestResolved) {
+        // Fetch success
+      } else {
+        result.systemError
+          ? // Fetch failed, got something wrong with system
+            this.$q.notify({
+              message: `${result.systemError}`,
+              color: 'deep-orange-4',
+            })
+          : // Fetch failed, got something wrong with user
+            this.$q.notify({
+              message: this.$t(
+                'api.editRestaurant.fetchBannerInformationFailed'
+              ),
+              color: 'deep-orange-4',
+            });
+      }
+    },
+    async fetchStatusBanner() {
+      // Call API fetch Restaurant Information
+      const apolloClient = this.$apollo.provider.defaultClient;
+      //const input = { restaurantId: this.$route.params.id };
+      const result = await this.apiFetchStatusBannerAction({
+        apolloClient,
+      });
+
+      if (result.requestResolved) {
+        // Fetch success
+      } else {
+        result.systemError
+          ? // Fetch failed, got something wrong with system
+            this.$q.notify({
+              message: `${result.systemError}`,
+              color: 'deep-orange-4',
+            })
+          : // Fetch failed, got something wrong with user
+            this.$q.notify({
+              message: this.$t('api.banner.fetchStatusBannerFailed'),
+              color: 'deep-orange-4',
+            });
+      }
+    },
+    async submit() {
+      this.loading = true;
+      this.$q.loading.show();
+      this.errors.url =
+        this.getBannerInfoGetter.url === '' ||
+        this.getBannerInfoGetter.url === null;
+      const gotError = await Object.values(this.errors).filter(
+        (isInvalid) => isInvalid
+      );
+      if (gotError.length === 0) {
+        this.updateBannerInfo(this.getBannerInfoGetter);
+      } else {
+        this.loading = false;
+        this.$q.loading.hide();
+        this.$q.notify({
+          message: this.$t('reviewFieldAgain'),
+          color: 'teal-8',
+        });
+      }
+    },
+    async updateBannerInfo(input) {
+      const apolloClient = this.$apollo.provider.defaultClient;
+      const result = await this.apiUpdateBannerAction({
+        apolloClient,
+        input,
+      });
+      if (result.requestResolved) {
+        // Update success
+        this.$q.notify({
+          message: this.$t('api.banner.updateBannerInformationSuccess'),
+          color: 'green-5',
+        });
+        this.loading = false;
+        this.$q.loading.hide();
+      } else {
+        result.systemError
+          ? // Update failed, got something wrong with system
+            this.$q.notify({
+              message: `${result.systemError}`,
+              color: 'deep-orange-4',
+            })
+          : // Update failed, got something wrong with user
+            this.$q.notify({
+              message: this.$t('api.banner.updateBannerInformationFailed'),
+              color: 'deep-orange-4',
+            });
+
+        this.loading = false;
+        this.$q.loading.hide();
+      }
+    },
+    async updateStatusBanner(input) {
+      this.loading = true;
+      // Call API update Seat Available Restaurant
+      const apolloClient = this.$apollo.provider.defaultClient;
+      const result = await this.apiUpdateStatusBannerAction({
+        apolloClient,
+        input,
+      });
+
+      if (result.requestResolved) {
+        // Update success
+        this.$q.notify({
+          message: this.$t('api.banner.updateStatusBannerSuccess'),
+          color: 'green-5',
+        });
+        this.loading = false;
+      } else {
+        result.systemError
+          ? // Update failed, got something wrong with system
+            this.$q.notify({
+              message: `${result.systemError}`,
+              color: 'deep-orange-4',
+            })
+          : // Update failed, got something wrong with user
+            this.$q.notify({
+              message: this.$t('api.banner.updateStatusBannerFailed'),
+              color: 'deep-orange-4',
+            });
+
+        this.loading = false;
+      }
+    },
   },
-  created() {},
+  created() {
+    Promise.all([this.fetchBannerInformation(), this.fetchStatusBanner()]).then(
+      () => {
+        this.loading = false;
+        this.$q.loading.hide();
+      }
+    );
+  },
 };
 </script>
 

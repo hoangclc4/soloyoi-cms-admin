@@ -71,14 +71,14 @@
             $t('navigation.masterdata')
           }}</q-item-section>
         </q-item>
-        <!-- <q-item :to="{ name: 'banner' }" active-class="text-orange" v-ripple>
+        <q-item :to="{ name: 'banner' }" active-class="text-orange" v-ripple>
           <q-item-section avatar class="icon__menu">
             <q-icon name="ion-settings" />
           </q-item-section>
           <q-item-section>
             {{ $t('navigation.banner') }}
           </q-item-section>
-        </q-item> -->
+        </q-item>
         <q-item :to="{ name: 'setting' }" active-class="text-orange" v-ripple>
           <q-item-section avatar class="icon__menu">
             <q-icon name="ion-settings" />
@@ -409,9 +409,9 @@ export default {
     this.$q.loading.show({ message: this.$t('pleaseWaitABit') });
     this.loading = true;
     Promise.all([
-      this.fetchRestaurantList(),
-      this.fetchUserList(),
-      this.fetchAdminNotification(),
+      //this.fetchRestaurantList(),
+      //this.fetchUserList(),
+      //this.fetchAdminNotification(),
       this.fetchMasterdata(),
     ]).then(() => {
       this.$q.loading.hide();

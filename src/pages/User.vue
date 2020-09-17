@@ -193,7 +193,14 @@ export default {
       }
     },
   },
-  created() {},
+  created() {
+    this.$q.loading.show({ message: this.$t('pleaseWaitABit') });
+    this.loading = true;
+    Promise.all([this.fetchUserList()]).then(() => {
+      this.$q.loading.hide();
+      this.loading = false;
+    });
+  },
 };
 </script>
 

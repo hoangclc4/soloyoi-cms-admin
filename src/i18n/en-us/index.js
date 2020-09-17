@@ -186,6 +186,10 @@ export default {
     banner: {
       uploadBannerPhotoSuccess: 'Upload banner photo success',
       uploadBannerPhotoFailed: 'Upload banner photo failed',
+      updateBannerInformationSuccess: 'Success to update banner information!',
+      updateBannerInformationFailed: 'Failed to update banner information!',
+      updateStatusBannerSuccess: 'Success to update status banner',
+      updateStatusBannerFailed: 'Failed to update status banner',
     },
   },
 
@@ -260,6 +264,7 @@ export default {
     actionHeader: 'Action',
     roleHeader: 'Role',
     nameHeader: 'Restaurant Name',
+    defaultHeader: 'Login ID',
     addressHeader: 'Address',
     phoneHeader: 'Phone',
     emailHeader: 'Email',
