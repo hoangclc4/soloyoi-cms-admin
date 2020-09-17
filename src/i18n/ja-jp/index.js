@@ -202,6 +202,10 @@ export default {
     banner: {
       uploadBannerPhotoSuccess: 'Upload banner photo success',
       uploadBannerPhotoFailed: 'Upload banner photo failed',
+      updateBannerInformationSuccess: 'Success to update banner information!',
+      updateBannerInformationFailed: 'Failed to update banner information!',
+      updateStatusBannerSuccess: 'Success to update status banner',
+      updateStatusBannerFailed: 'Failed to update status banner',
     },
   },
 
@@ -227,7 +231,7 @@ export default {
     userReported: 'レポートされた人',
     restaurantReported: 'レポートされた店舗',
     newsfeedReported: 'Reported Newsfeed',
-    banner: 'Banner',
+    banner: 'バナー',
     editRestaurant: {
       title: '店舗編集',
       payment: '課金',
@@ -281,6 +285,7 @@ export default {
     actionHeader: '編集・削除',
     roleHeader: 'ロール',
     nameHeader: '店名',
+    defaultHeader: 'ログインID',
     addressHeader: '住所',
     phoneHeader: '電話番号',
     emailHeader: 'Eメール',

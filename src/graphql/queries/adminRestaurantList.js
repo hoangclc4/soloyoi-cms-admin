@@ -7,6 +7,7 @@ export const ADMIN_RESTAURANT_LIST = gql`
         adminRestaurantList {
           isVip
           restaurantId
+          defaultId
           name
           address
           addressLevelOne
